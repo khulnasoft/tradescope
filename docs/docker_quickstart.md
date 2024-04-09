@@ -19,7 +19,7 @@ Start by downloading and installing Docker / Docker Desktop for your platform:
 
 ## Tradescope with docker
 
-Tradescope provides an official Docker image on [Dockerhub](https://hub.docker.com/r/tradescopeorg/tradescope/), as well as a [docker compose file](https://github.com/khulnasoft/tradescope/blob/stable/docker-compose.yml) ready for usage.
+Tradescope provides an official Docker image on [Dockerhub](https://hub.docker.com/r/khulnasoft/tradescope/), as well as a [docker compose file](https://github.com/khulnasoft/tradescope/blob/stable/docker-compose.yml) ready for usage.
 
 !!! Note
     - The following section assumes that `docker` is installed and available to the logged in user.
@@ -134,7 +134,7 @@ All tradescope arguments will be available by running `docker compose run --rm t
 ??? Note "Using docker without docker compose"
     "`docker compose run --rm`" will require a compose file to be provided.
     Some tradescope commands that don't require authentication such as `list-pairs` can be run with "`docker run --rm`" instead.  
-    For example `docker run --rm tradescopeorg/tradescope:stable list-pairs --exchange binance --quote BTC --print-json`.  
+    For example `docker run --rm khulnasoft/tradescope:stable list-pairs --exchange binance --quote BTC --print-json`.  
     This can be useful for fetching exchange information to add to your `config.json` without affecting your running containers.
 
 #### Example: Download data with docker

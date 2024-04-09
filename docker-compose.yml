@@ -2,10 +2,10 @@
 version: '3'
 services:
   tradescope:
-    image: tradescopeorg/tradescope:stable
-    # image: tradescopeorg/tradescope:develop
+    image: khulnasoft/tradescope:stable
+    # image: khulnasoft/tradescope:develop
     # Use plotting image
-    # image: tradescopeorg/tradescope:develop_plot
+    # image: khulnasoft/tradescope:develop_plot
     # # Enable GPU Image and GPU Resources (only relevant for tradeAI)
     # # Make sure to uncomment the whole deploy section
     # deploy:

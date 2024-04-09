@@ -1,4 +1,4 @@
-ARG sourceimage=tradescopeorg/tradescope
+ARG sourceimage=khulnasoft/tradescope
 ARG sourcetag=develop_tradeai
 FROM ${sourceimage}:${sourcetag}
 

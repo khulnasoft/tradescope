@@ -1,4 +1,4 @@
-FROM tradescopeorg/tradescope:develop_tradeairl
+FROM khulnasoft/tradescope:develop_tradeairl
 
 USER root
 # Install dependencies

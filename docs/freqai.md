@@ -76,7 +76,7 @@ pip install -r requirements-tradeai.txt
 
 ### Usage with docker
 
-If you are using docker, a dedicated tag with TradeAI dependencies is available as `:tradeai`. As such - you can replace the image line in your docker compose file with `image: tradescopeorg/tradescope:develop_tradeai`. This image contains the regular TradeAI dependencies. Similar to native installs, Catboost will not be available on ARM based devices. If you would like to use PyTorch or Reinforcement learning, you should use the torch or RL tags, `image: tradescopeorg/tradescope:develop_tradeaitorch`, `image: tradescopeorg/tradescope:develop_tradeairl`.
+If you are using docker, a dedicated tag with TradeAI dependencies is available as `:tradeai`. As such - you can replace the image line in your docker compose file with `image: khulnasoft/tradescope:develop_tradeai`. This image contains the regular TradeAI dependencies. Similar to native installs, Catboost will not be available on ARM based devices. If you would like to use PyTorch or Reinforcement learning, you should use the torch or RL tags, `image: khulnasoft/tradescope:develop_tradeaitorch`, `image: khulnasoft/tradescope:develop_tradeairl`.
 
 !!! note "docker-compose-tradeai.yml"
    We do provide an explicit docker-compose file for this in `docker/docker-compose-tradeai.yml` - which can be used via `docker compose -f docker/docker-compose-tradeai.yml run ...` - or can be copied to replace the original docker file. This docker-compose file also contains a (disabled) section to enable GPU resources within docker containers. This obviously assumes the system has GPU resources available.

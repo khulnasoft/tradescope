@@ -1,4 +1,4 @@
-FROM tradescopeorg/tradescope:develop
+FROM khulnasoft/tradescope:develop
 
 # Install dependencies
 COPY requirements-dev.txt /tradescope/

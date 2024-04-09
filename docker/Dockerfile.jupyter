@@ -1,4 +1,4 @@
-FROM tradescopeorg/tradescope:develop_plot
+FROM khulnasoft/tradescope:develop_plot
 
 
 # Pin prompt-toolkit to avoid questionary version conflict

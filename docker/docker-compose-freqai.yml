@@ -2,7 +2,7 @@
 version: '3'
 services:
   tradescope:
-    image: tradescopeorg/tradescope:stable_tradeaitorch
+    image: khulnasoft/tradescope:stable_tradeaitorch
     # # Enable GPU Image and GPU Resources
     # # Make sure to uncomment the whole deploy section
     # deploy:

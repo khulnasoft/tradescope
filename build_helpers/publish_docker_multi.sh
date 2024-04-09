@@ -2,8 +2,8 @@
 
 # The below assumes a correctly setup docker buildx environment
 
-IMAGE_NAME=tradescopeorg/tradescope
-CACHE_IMAGE=tradescopeorg/tradescope_cache
+IMAGE_NAME=khulnasoft/tradescope
+CACHE_IMAGE=khulnasoft/tradescope_cache
 # Replace / with _ to create a valid tag
 TAG=$(echo "${BRANCH_NAME}" | sed -e "s/\//_/g")
 TAG_PLOT=${TAG}_plot

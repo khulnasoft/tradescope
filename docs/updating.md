@@ -9,7 +9,7 @@ To update your tradescope installation, please use one of the below methods, cor
 ## Docker
 
 !!! Note "Legacy installations using the `master` image"
-    We're switching from master to stable for the release Images - please adjust your docker-file and replace `tradescopeorg/tradescope:master` with `tradescopeorg/tradescope:stable`
+    We're switching from master to stable for the release Images - please adjust your docker-file and replace `khulnasoft/tradescope:master` with `khulnasoft/tradescope:stable`
 
 ``` bash
 docker compose pull

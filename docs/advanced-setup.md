@@ -60,10 +60,10 @@ To run multiple instances of tradescope using docker you will need to edit the d
 version: '3'
 services:
   tradescope1:
-    image: tradescopeorg/tradescope:stable
-    # image: tradescopeorg/tradescope:develop
+    image: khulnasoft/tradescope:stable
+    # image: khulnasoft/tradescope:develop
     # Use plotting image
-    # image: tradescopeorg/tradescope:develop_plot
+    # image: khulnasoft/tradescope:develop_plot
     # Build step - only needed when additional dependencies are needed
     # build:
     #   context: .
@@ -87,10 +87,10 @@ services:
       --strategy SampleStrategy
   
   tradescope2:
-    image: tradescopeorg/tradescope:stable
-    # image: tradescopeorg/tradescope:develop
+    image: khulnasoft/tradescope:stable
+    # image: khulnasoft/tradescope:develop
     # Use plotting image
-    # image: tradescopeorg/tradescope:develop_plot
+    # image: khulnasoft/tradescope:develop_plot
     # Build step - only needed when additional dependencies are needed
     # build:
     #   context: .

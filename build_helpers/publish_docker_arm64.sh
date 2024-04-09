@@ -3,8 +3,8 @@
 # Use BuildKit, otherwise building on ARM fails
 export DOCKER_BUILDKIT=1
 
-IMAGE_NAME=tradescopeorg/tradescope
-CACHE_IMAGE=tradescopeorg/tradescope_cache
+IMAGE_NAME=khulnasoft/tradescope
+CACHE_IMAGE=khulnasoft/tradescope_cache
 GHCR_IMAGE_NAME=ghcr.io/khulnasoft/tradescope
 
 # Replace / with _ to create a valid tag
