@@ -1,0 +1,7 @@
+[run]
+omit =
+    scripts/*
+    tradescope/templates/*
+    tradescope/vendor/*
+    tradescope/__main__.py
+    tests/*

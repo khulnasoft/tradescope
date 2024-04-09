@@ -1,0 +1,8 @@
+ARG sourceimage=tradescopeorg/tradescope
+ARG sourcetag=develop_tradeai
+FROM ${sourceimage}:${sourcetag}
+
+# Install dependencies
+COPY requirements-tradeai.txt requirements-tradeai-rl.txt /tradescope/
+
+RUN pip install -r requirements-tradeai-rl.txt --user --no-cache-dir

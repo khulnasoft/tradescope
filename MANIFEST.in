@@ -1,0 +1,9 @@
+include LICENSE
+include README.md
+recursive-include tradescope *.py
+recursive-include tradescope/templates/ *.j2 *.ipynb
+include tradescope/exchange/binance_leverage_tiers.json
+include tradescope/rpc/api_server/ui/fallback_file.html
+include tradescope/rpc/api_server/ui/favicon.ico
+
+prune tests

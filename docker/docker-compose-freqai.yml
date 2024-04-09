@@ -1,0 +1,36 @@
+---
+version: '3'
+services:
+  tradescope:
+    image: tradescopeorg/tradescope:stable_tradeaitorch
+    # # Enable GPU Image and GPU Resources
+    # # Make sure to uncomment the whole deploy section
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+    # Build step - only needed when additional dependencies are needed
+    # build:
+    #   context: .
+    #   dockerfile: "./docker/Dockerfile.custom"
+    restart: unless-stopped
+    container_name: tradescope
+    volumes:
+      - "./user_data:/tradescope/user_data"
+    # Expose api on port 8080 (localhost only)
+    # Please read the https://www.tradescope.io/en/stable/rest-api/ documentation
+    # for more information.
+    ports:
+      - "127.0.0.1:8080:8080"
+    # Default command used when running `docker compose up`
+    command: >
+      trade
+      --logfile /tradescope/user_data/logs/tradescope.log
+      --db-url sqlite:////tradescope/user_data/tradesv3.sqlite
+      --config /tradescope/user_data/config.json
+      --tradeaimodel XGBoostRegressor
+      --strategy TradeaiExampleStrategy
