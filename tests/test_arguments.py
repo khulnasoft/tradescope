@@ -5,9 +5,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from tests.conftest import CURRENT_TEST_STRATEGY
 from tradescope.commands import Arguments
 from tradescope.commands.cli_options import check_int_nonzero, check_int_positive
-from tests.conftest import CURRENT_TEST_STRATEGY
 
 
 # Parse common command-line-arguments. Used for all tools

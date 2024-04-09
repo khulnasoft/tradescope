@@ -19,11 +19,11 @@ from tradescope.data.converter import order_book_to_dataframe
 from tradescope.data.dataprovider import DataProvider
 from tradescope.edge import Edge
 from tradescope.enums import (ExitCheckTuple, ExitType, RPCMessageType, SignalDirection, State,
-                             TradingMode)
+                              TradingMode)
 from tradescope.exceptions import (DependencyException, ExchangeError, InsufficientFundsError,
-                                  InvalidOrderException, PricingError)
+                                   InvalidOrderException, PricingError)
 from tradescope.exchange import (ROUND_DOWN, ROUND_UP, remove_exchange_credentials,
-                                timeframe_to_minutes, timeframe_to_next_date, timeframe_to_seconds)
+                                 timeframe_to_minutes, timeframe_to_next_date, timeframe_to_seconds)
 from tradescope.misc import safe_value_fallback, safe_value_fallback2
 from tradescope.mixins import LoggingMixin
 from tradescope.persistence import Order, PairLocks, Trade, init_db
@@ -34,7 +34,7 @@ from tradescope.resolvers import ExchangeResolver, StrategyResolver
 from tradescope.rpc import RPCManager
 from tradescope.rpc.external_message_consumer import ExternalMessageConsumer
 from tradescope.rpc.rpc_types import (ProfitLossStr, RPCCancelMsg, RPCEntryMsg, RPCExitCancelMsg,
-                                     RPCExitMsg, RPCProtectionMsg)
+                                      RPCExitMsg, RPCProtectionMsg)
 from tradescope.strategy.interface import IStrategy
 from tradescope.strategy.strategy_wrapper import strategy_safe_wrapper
 from tradescope.util.migrations import migrate_binance_futures_names

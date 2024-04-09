@@ -7,7 +7,7 @@ import ccxt
 from tradescope.constants import BuySell
 from tradescope.enums import CandleType, MarginMode, PriceType, TradingMode
 from tradescope.exceptions import (DDosProtection, OperationalException, RetryableOrderError,
-                                  TemporaryError)
+                                   TemporaryError)
 from tradescope.exchange import Exchange, date_minus_candles
 from tradescope.exchange.common import retrier
 from tradescope.misc import safe_value_fallback2

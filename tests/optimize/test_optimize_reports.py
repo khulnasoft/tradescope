@@ -7,29 +7,30 @@ import joblib
 import pandas as pd
 import pytest
 
+from tests.conftest import CURRENT_TEST_STRATEGY
+from tests.data.test_history import _clean_test_file
 from tradescope.configuration import TimeRange
 from tradescope.constants import BACKTEST_BREAKDOWNS, DATETIME_PRINT_FORMAT, LAST_BT_RESULT_FN
 from tradescope.data import history
 from tradescope.data.btanalysis import (get_latest_backtest_filename, load_backtest_data,
-                                       load_backtest_stats)
+                                        load_backtest_stats)
 from tradescope.edge import PairInfo
 from tradescope.enums import ExitType
 from tradescope.optimize.optimize_reports import (generate_backtest_stats, generate_daily_stats,
-                                                 generate_edge_table, generate_pair_metrics,
-                                                 generate_periodic_breakdown_stats,
-                                                 generate_strategy_comparison,
-                                                 generate_trading_stats, show_sorted_pairlist,
-                                                 store_backtest_analysis_results,
-                                                 store_backtest_stats, text_table_bt_results,
-                                                 text_table_strategy)
+                                                  generate_edge_table, generate_pair_metrics,
+                                                  generate_periodic_breakdown_stats,
+                                                  generate_strategy_comparison,
+                                                  generate_trading_stats, show_sorted_pairlist,
+                                                  store_backtest_analysis_results,
+                                                  store_backtest_stats, text_table_bt_results,
+                                                  text_table_strategy)
 from tradescope.optimize.optimize_reports.bt_output import text_table_tags
 from tradescope.optimize.optimize_reports.optimize_reports import (_get_resample_from_period,
-                                                                  calc_streak, generate_tag_metrics)
+                                                                   calc_streak,
+                                                                   generate_tag_metrics)
 from tradescope.resolvers.strategy_resolver import StrategyResolver
 from tradescope.util import dt_ts
 from tradescope.util.datetime_helpers import dt_from_ts, dt_utc
-from tests.conftest import CURRENT_TEST_STRATEGY
-from tests.data.test_history import _clean_test_file
 
 
 def _backup_file(file: Path, copy_file: bool = False) -> None:

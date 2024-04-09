@@ -13,9 +13,9 @@ from tradescope.data.dataprovider import DataProvider
 from tradescope.data.history.history_utils import refresh_backtest_ohlcv_data
 from tradescope.exceptions import OperationalException
 from tradescope.exchange import timeframe_to_seconds
+from tradescope.plugins.pairlist.pairlist_helpers import dynamic_expand_pairlist
 from tradescope.tradeai.data_drawer import TradeaiDataDrawer
 from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
-from tradescope.plugins.pairlist.pairlist_helpers import dynamic_expand_pairlist
 
 
 logger = logging.getLogger(__name__)

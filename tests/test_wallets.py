@@ -5,11 +5,11 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy import select
 
+from tests.conftest import (EXMS, create_mock_trades, create_mock_trades_usdt,
+                            get_patched_tradescopebot, patch_wallet)
 from tradescope.constants import UNLIMITED_STAKE_AMOUNT
 from tradescope.exceptions import DependencyException
 from tradescope.persistence import Trade
-from tests.conftest import (EXMS, create_mock_trades, create_mock_trades_usdt,
-                            get_patched_tradescopebot, patch_wallet)
 
 
 def test_sync_wallet_at_boot(mocker, default_conf):

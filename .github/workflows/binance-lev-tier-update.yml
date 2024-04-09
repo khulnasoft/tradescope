@@ -34,7 +34,7 @@ jobs:
 
     - uses: peter-evans/create-pull-request@v6
       with:
-        token: ${{ secrets.REPO_SCOPED_TOKEN }}
+        token: ${{ secrets.ORG_REPO_TOKEN }}
         add-paths: tradescope/exchange/binance_leverage_tiers.json
         labels: |
           Tech maintenance

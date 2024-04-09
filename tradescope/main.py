@@ -15,7 +15,7 @@ if sys.version_info < (3, 9):  # pragma: no cover
 from tradescope import __version__
 from tradescope.commands import Arguments
 from tradescope.constants import DOCS_LINK
-from tradescope.exceptions import ConfigurationError, TradescopeException, OperationalException
+from tradescope.exceptions import ConfigurationError, OperationalException, TradescopeException
 from tradescope.loggers import setup_logging_pre
 from tradescope.util.gc_setup import gc_set_threshold
 

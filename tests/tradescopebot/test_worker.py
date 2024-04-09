@@ -5,10 +5,10 @@ from unittest.mock import MagicMock, PropertyMock
 
 import time_machine
 
+from tests.conftest import EXMS, get_patched_worker, log_has, log_has_re
 from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import State
 from tradescope.worker import Worker
-from tests.conftest import EXMS, get_patched_worker, log_has, log_has_re
 
 
 def test_worker_state(mocker, default_conf, markets) -> None:

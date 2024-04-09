@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 import pytest
 from plotly.subplots import make_subplots
 
+from tests.conftest import get_args, log_has, log_has_re, patch_exchange
 from tradescope.commands import start_plot_dataframe, start_plot_profit
 from tradescope.configuration import TimeRange
 from tradescope.data import history
@@ -13,11 +14,10 @@ from tradescope.data.btanalysis import load_backtest_data
 from tradescope.data.metrics import create_cum_profit
 from tradescope.exceptions import OperationalException
 from tradescope.plot.plotting import (add_areas, add_indicators, add_profit, create_plotconfig,
-                                     generate_candlestick_graph, generate_plot_filename,
-                                     generate_profit_graph, init_plotscript, load_and_plot_trades,
-                                     plot_profit, plot_trades, store_plot_file)
+                                      generate_candlestick_graph, generate_plot_filename,
+                                      generate_profit_graph, init_plotscript, load_and_plot_trades,
+                                      plot_profit, plot_trades, store_plot_file)
 from tradescope.resolvers import StrategyResolver
-from tests.conftest import get_args, log_has, log_has_re, patch_exchange
 
 
 def fig_generating_mock(fig, *args, **kwargs):

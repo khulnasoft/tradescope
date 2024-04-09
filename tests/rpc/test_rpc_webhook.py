@@ -6,11 +6,11 @@ from unittest.mock import MagicMock
 
 from requests import RequestException
 
+from tests.conftest import get_patched_tradescopebot, log_has
 from tradescope.enums import ExitType, RPCMessageType
 from tradescope.rpc import RPC
 from tradescope.rpc.discord import Discord
 from tradescope.rpc.webhook import Webhook
-from tests.conftest import get_patched_tradescopebot, log_has
 
 
 def get_webhook_dict() -> dict:

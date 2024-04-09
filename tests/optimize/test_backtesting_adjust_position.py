@@ -6,13 +6,13 @@ from unittest.mock import MagicMock
 import pandas as pd
 import pytest
 
+from tests.conftest import EXMS, patch_exchange
 from tradescope.configuration import TimeRange
 from tradescope.data import history
 from tradescope.data.history import get_timerange
 from tradescope.enums import ExitType
 from tradescope.optimize.backtesting import Backtesting
 from tradescope.util.datetime_helpers import dt_utc
-from tests.conftest import EXMS, patch_exchange
 
 
 def test_backtest_position_adjustment(default_conf, fee, mocker, testdatadir) -> None:

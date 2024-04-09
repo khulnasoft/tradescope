@@ -10,14 +10,14 @@ import numpy as np
 import pytest
 from pandas import DataFrame
 
+from tests.conftest import EXMS, get_patched_tradescopebot, log_has
+from tests.optimize import (BTContainer, BTrade, _build_backtest_dataframe,
+                            _get_frame_time_from_offset)
 from tradescope.data.converter import ohlcv_to_dataframe
 from tradescope.edge import Edge, PairInfo
 from tradescope.enums import ExitType
 from tradescope.exceptions import OperationalException
 from tradescope.util.datetime_helpers import dt_ts, dt_utc
-from tests.conftest import EXMS, get_patched_tradescopebot, log_has
-from tests.optimize import (BTContainer, BTrade, _build_backtest_dataframe,
-                            _get_frame_time_from_offset)
 
 
 # Cases to be tested:

@@ -6,14 +6,14 @@ from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
-from tradescope.commands import Arguments
-from tradescope.enums import State
-from tradescope.exceptions import ConfigurationError, TradescopeException, OperationalException
-from tradescope.tradescopebot import TradescopeBot
-from tradescope.main import main
-from tradescope.worker import Worker
 from tests.conftest import (log_has, log_has_re, patch_exchange,
                             patched_configuration_load_config_file)
+from tradescope.commands import Arguments
+from tradescope.enums import State
+from tradescope.exceptions import ConfigurationError, OperationalException, TradescopeException
+from tradescope.main import main
+from tradescope.tradescopebot import TradescopeBot
+from tradescope.worker import Worker
 
 
 def test_parse_args_None(caplog) -> None:

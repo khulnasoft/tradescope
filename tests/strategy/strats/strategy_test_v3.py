@@ -9,7 +9,7 @@ from pandas import DataFrame
 import tradescope.vendor.qtpylib.indicators as qtpylib
 from tradescope.persistence import Trade
 from tradescope.strategy import (BooleanParameter, DecimalParameter, IntParameter, IStrategy,
-                                RealParameter)
+                                 RealParameter)
 
 
 class StrategyTestV3(IStrategy):

@@ -8,22 +8,22 @@ from unittest.mock import MagicMock
 import pytest
 from jsonschema import ValidationError
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, log_has, log_has_re,
+                            patched_configuration_load_config_file)
 from tradescope.commands import Arguments
 from tradescope.configuration import Configuration, validate_config_consistency
 from tradescope.configuration.config_secrets import sanitize_config
 from tradescope.configuration.config_validation import validate_config_schema
 from tradescope.configuration.deprecated_settings import (check_conflicting_settings,
-                                                         process_deprecated_setting,
-                                                         process_removed_setting,
-                                                         process_temporary_deprecated_settings)
+                                                          process_deprecated_setting,
+                                                          process_removed_setting,
+                                                          process_temporary_deprecated_settings)
 from tradescope.configuration.environment_vars import _flat_vars_to_nested_dict
 from tradescope.configuration.load_config import (load_config_file, load_file, load_from_files,
-                                                 log_config_error_range)
+                                                  log_config_error_range)
 from tradescope.constants import DEFAULT_DB_DRYRUN_URL, DEFAULT_DB_PROD_URL, ENV_VAR_PREFIX
 from tradescope.enums import RunMode
 from tradescope.exceptions import OperationalException
-from tests.conftest import (CURRENT_TEST_STRATEGY, log_has, log_has_re,
-                            patched_configuration_load_config_file)
 
 
 @pytest.fixture(scope="function")

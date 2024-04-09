@@ -2,8 +2,8 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from tradescope.persistence.key_value_store import KeyValueStore, set_startup_time
 from tests.conftest import create_mock_trades_usdt
+from tradescope.persistence.key_value_store import KeyValueStore, set_startup_time
 
 
 @pytest.mark.usefixtures("init_persistence")

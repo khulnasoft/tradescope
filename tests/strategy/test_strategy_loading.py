@@ -6,11 +6,11 @@ from pathlib import Path
 import pytest
 from pandas import DataFrame
 
+from tests.conftest import CURRENT_TEST_STRATEGY, log_has, log_has_re
 from tradescope.configuration import Configuration
 from tradescope.exceptions import OperationalException
 from tradescope.resolvers import StrategyResolver
 from tradescope.strategy.interface import IStrategy
-from tests.conftest import CURRENT_TEST_STRATEGY, log_has, log_has_re
 
 
 def test_search_strategy():

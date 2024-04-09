@@ -7,13 +7,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from tests.conftest import get_patched_exchange
 from tradescope.configuration import TimeRange
 from tradescope.data.dataprovider import DataProvider
-from tradescope.tradeai.data_drawer import TradeaiDataDrawer
-from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
 from tradescope.resolvers import StrategyResolver
 from tradescope.resolvers.tradeaimodel_resolver import TradeaiModelResolver
-from tests.conftest import get_patched_exchange
+from tradescope.tradeai.data_drawer import TradeaiDataDrawer
+from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
 
 
 def is_py12() -> bool:

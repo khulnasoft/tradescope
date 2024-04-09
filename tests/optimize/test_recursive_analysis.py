@@ -5,12 +5,12 @@ from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
+from tests.conftest import get_args, log_has_re, patch_exchange
 from tradescope.commands.optimize_commands import start_recursive_analysis
 from tradescope.data.history import get_timerange
 from tradescope.exceptions import OperationalException
 from tradescope.optimize.analysis.recursive import RecursiveAnalysis
 from tradescope.optimize.analysis.recursive_helpers import RecursiveAnalysisSubFunctions
-from tests.conftest import get_args, log_has_re, patch_exchange
 
 
 @pytest.fixture

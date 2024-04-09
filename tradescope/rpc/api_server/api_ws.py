@@ -13,8 +13,8 @@ from tradescope.rpc.api_server.deps import get_message_stream, get_rpc
 from tradescope.rpc.api_server.ws.channel import WebSocketChannel, create_channel
 from tradescope.rpc.api_server.ws.message_stream import MessageStream
 from tradescope.rpc.api_server.ws_schemas import (WSAnalyzedDFMessage, WSErrorMessage,
-                                                 WSMessageSchema, WSRequestSchema,
-                                                 WSWhitelistMessage)
+                                                  WSMessageSchema, WSRequestSchema,
+                                                  WSWhitelistMessage)
 from tradescope.rpc.rpc import RPC
 
 

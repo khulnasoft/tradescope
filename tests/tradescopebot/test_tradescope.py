@@ -12,17 +12,6 @@ import pytest
 from pandas import DataFrame
 from sqlalchemy import select
 
-from tradescope.constants import CANCEL_REASON, UNLIMITED_STAKE_AMOUNT
-from tradescope.enums import (CandleType, ExitCheckTuple, ExitType, RPCMessageType, RunMode,
-                             SignalDirection, State)
-from tradescope.exceptions import (DependencyException, ExchangeError, InsufficientFundsError,
-                                  InvalidOrderException, OperationalException, PricingError,
-                                  TemporaryError)
-from tradescope.tradescopebot import TradescopeBot
-from tradescope.persistence import Order, PairLocks, Trade
-from tradescope.plugins.protections.iprotection import ProtectionReturn
-from tradescope.util.datetime_helpers import dt_now, dt_utc
-from tradescope.worker import Worker
 from tests.conftest import (EXMS, create_mock_trades, create_mock_trades_usdt,
                             get_patched_tradescopebot, get_patched_worker, log_has, log_has_re,
                             patch_edge, patch_exchange, patch_get_signal, patch_wallet,
@@ -31,6 +20,17 @@ from tests.conftest_trades import (MOCK_TRADE_COUNT, entry_side, exit_side, mock
                                    mock_order_2_sell, mock_order_3, mock_order_3_sell, mock_order_4,
                                    mock_order_5_stoploss, mock_order_6_sell)
 from tests.conftest_trades_usdt import mock_trade_usdt_4
+from tradescope.constants import CANCEL_REASON, UNLIMITED_STAKE_AMOUNT
+from tradescope.enums import (CandleType, ExitCheckTuple, ExitType, RPCMessageType, RunMode,
+                              SignalDirection, State)
+from tradescope.exceptions import (DependencyException, ExchangeError, InsufficientFundsError,
+                                   InvalidOrderException, OperationalException, PricingError,
+                                   TemporaryError)
+from tradescope.persistence import Order, PairLocks, Trade
+from tradescope.plugins.protections.iprotection import ProtectionReturn
+from tradescope.tradescopebot import TradescopeBot
+from tradescope.util.datetime_helpers import dt_now, dt_utc
+from tradescope.worker import Worker
 
 
 def patch_RPCManager(mocker) -> MagicMock:

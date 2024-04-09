@@ -8,8 +8,8 @@ from pandas import DataFrame, Series, concat, to_datetime
 
 from tradescope.constants import BACKTEST_BREAKDOWNS, DATETIME_PRINT_FORMAT
 from tradescope.data.metrics import (calculate_cagr, calculate_calmar, calculate_csum,
-                                    calculate_expectancy, calculate_market_change,
-                                    calculate_max_drawdown, calculate_sharpe, calculate_sortino)
+                                     calculate_expectancy, calculate_market_change,
+                                     calculate_max_drawdown, calculate_sharpe, calculate_sortino)
 from tradescope.types import BacktestResultType
 from tradescope.util import decimals_per_coin, fmt_coin
 

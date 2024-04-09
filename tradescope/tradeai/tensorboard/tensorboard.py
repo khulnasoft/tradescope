@@ -6,7 +6,7 @@ from torch.utils.tensorboard import SummaryWriter
 from xgboost import callback
 
 from tradescope.tradeai.tensorboard.base_tensorboard import (BaseTensorBoardCallback,
-                                                           BaseTensorboardLogger)
+                                                             BaseTensorboardLogger)
 
 
 logger = logging.getLogger(__name__)

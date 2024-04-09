@@ -3,12 +3,12 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from tests.conftest import (EXMS, create_mock_trades_usdt, generate_test_data,
+                            get_patched_tradescopebot, patch_exchange)
 from tradescope.data.history.history_utils import get_timerange
 from tradescope.optimize.backtesting import Backtesting
 from tradescope.persistence import Trade, disable_database_use, enable_database_use
 from tradescope.persistence.custom_data import CustomDataWrapper
-from tests.conftest import (EXMS, create_mock_trades_usdt, generate_test_data,
-                            get_patched_tradescopebot, patch_exchange)
 
 
 @pytest.mark.usefixtures("init_persistence")

@@ -20,9 +20,9 @@ from tradescope.misc import remove_entry_exit_signals
 from tradescope.rpc.api_server.ws.channel import WebSocketChannel, create_channel
 from tradescope.rpc.api_server.ws.message_stream import MessageStream
 from tradescope.rpc.api_server.ws_schemas import (WSAnalyzedDFMessage, WSAnalyzedDFRequest,
-                                                 WSMessageSchema, WSRequestSchema,
-                                                 WSSubscribeRequest, WSWhitelistMessage,
-                                                 WSWhitelistRequest)
+                                                  WSMessageSchema, WSRequestSchema,
+                                                  WSSubscribeRequest, WSWhitelistMessage,
+                                                  WSWhitelistRequest)
 
 
 if TYPE_CHECKING:

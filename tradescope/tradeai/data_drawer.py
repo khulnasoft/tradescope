@@ -21,8 +21,8 @@ from tradescope.constants import Config
 from tradescope.data.history import load_pair_history
 from tradescope.enums import CandleType
 from tradescope.exceptions import OperationalException
-from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
 from tradescope.strategy.interface import IStrategy
+from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
 
 
 logger = logging.getLogger(__name__)

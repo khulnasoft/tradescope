@@ -19,8 +19,8 @@ from tradescope.configuration.timerange import TimeRange
 from tradescope.constants import CANCEL_REASON, Config
 from tradescope.data.history import load_data
 from tradescope.data.metrics import calculate_expectancy, calculate_max_drawdown
-from tradescope.enums import (CandleType, ExitCheckTuple, ExitType, MarketDirection, SignalDirection,
-                             State, TradingMode)
+from tradescope.enums import (CandleType, ExitCheckTuple, ExitType, MarketDirection,
+                              SignalDirection, State, TradingMode)
 from tradescope.exceptions import ExchangeError, PricingError
 from tradescope.exchange import timeframe_to_minutes, timeframe_to_msecs
 from tradescope.exchange.types import Tickers
@@ -31,7 +31,7 @@ from tradescope.plugins.pairlist.pairlist_helpers import expand_pairlist
 from tradescope.rpc.fiat_convert import CryptoToFiatConverter
 from tradescope.rpc.rpc_types import RPCSendMsg
 from tradescope.util import (decimals_per_coin, dt_humanize, dt_now, dt_ts_def, format_date,
-                            shorten_date)
+                             shorten_date)
 from tradescope.wallets import PositionWallet, Wallet
 
 

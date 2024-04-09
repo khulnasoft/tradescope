@@ -5,17 +5,17 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from tests.conftest import EXMS, create_mock_trades, get_patched_exchange, log_has_re
+from tests.tradeai.conftest import (get_patched_tradeai_strategy, is_arm, is_mac, make_rl_config,
+                                    mock_pytorch_mlp_model_training_parameters)
 from tradescope.configuration import TimeRange
 from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import RunMode
-from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
-from tradescope.tradeai.utils import download_all_data_for_training, get_required_data_timerange
 from tradescope.optimize.backtesting import Backtesting
 from tradescope.persistence import Trade
 from tradescope.plugins.pairlistmanager import PairListManager
-from tests.conftest import EXMS, create_mock_trades, get_patched_exchange, log_has_re
-from tests.tradeai.conftest import (get_patched_tradeai_strategy, is_arm, is_mac, make_rl_config,
-                                   mock_pytorch_mlp_model_training_parameters)
+from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
+from tradescope.tradeai.utils import download_all_data_for_training, get_required_data_timerange
 
 
 def can_run_model(model: str) -> None:

@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
+from tests.conftest import get_args
 from tradescope.commands.strategy_utils_commands import start_strategy_update
 from tradescope.strategy.strategyupdater import StrategyUpdater
-from tests.conftest import get_args
 
 
 if sys.version_info < (3, 9):

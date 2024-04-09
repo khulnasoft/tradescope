@@ -8,8 +8,8 @@ from pathlib import Path
 
 from tradescope.constants import USERPATH_TRADEAIMODELS, Config
 from tradescope.exceptions import OperationalException
-from tradescope.tradeai.tradeai_interface import ITradeaiModel
 from tradescope.resolvers import IResolver
+from tradescope.tradeai.tradeai_interface import ITradeaiModel
 
 
 logger = logging.getLogger(__name__)

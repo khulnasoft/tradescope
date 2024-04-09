@@ -9,7 +9,7 @@ from tabulate import tabulate
 from tradescope.configuration import TimeRange
 from tradescope.constants import Config
 from tradescope.data.btanalysis import (get_latest_backtest_filename, load_backtest_data,
-                                       load_backtest_stats)
+                                        load_backtest_stats)
 from tradescope.exceptions import OperationalException
 
 

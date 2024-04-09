@@ -8,7 +8,7 @@ import torch
 from tradescope.tradeai.base_models.BasePyTorchRegressor import BasePyTorchRegressor
 from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
 from tradescope.tradeai.torch.PyTorchDataConvertor import (DefaultPyTorchDataConvertor,
-                                                         PyTorchDataConvertor)
+                                                           PyTorchDataConvertor)
 from tradescope.tradeai.torch.PyTorchModelTrainer import PyTorchTransformerTrainer
 from tradescope.tradeai.torch.PyTorchTransformerModel import PyTorchTransformerModel
 

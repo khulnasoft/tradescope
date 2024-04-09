@@ -10,6 +10,8 @@ import pandas as pd
 import pytest
 import time_machine
 
+from tests.conftest import (EXMS, create_mock_trades_usdt, generate_test_data, get_patched_exchange,
+                            get_patched_tradescopebot, log_has, log_has_re, num_log_has)
 from tradescope.constants import AVAILABLE_PAIRLISTS
 from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import CandleType, RunMode
@@ -19,8 +21,6 @@ from tradescope.plugins.pairlist.pairlist_helpers import dynamic_expand_pairlist
 from tradescope.plugins.pairlistmanager import PairListManager
 from tradescope.resolvers import PairListResolver
 from tradescope.util.datetime_helpers import dt_now
-from tests.conftest import (EXMS, create_mock_trades_usdt, generate_test_data, get_patched_exchange,
-                            get_patched_tradescopebot, log_has, log_has_re, num_log_has)
 
 
 # Exclude RemotePairList from tests.

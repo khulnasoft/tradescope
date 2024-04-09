@@ -12,15 +12,15 @@ from pandas import DataFrame
 from tradescope.constants import CUSTOM_TAG_MAX_LENGTH, Config, IntOrInf, ListPairsWithTimeframes
 from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import (CandleType, ExitCheckTuple, ExitType, MarketDirection, RunMode,
-                             SignalDirection, SignalTagType, SignalType, TradingMode)
+                              SignalDirection, SignalTagType, SignalType, TradingMode)
 from tradescope.exceptions import OperationalException, StrategyError
 from tradescope.exchange import timeframe_to_minutes, timeframe_to_next_date, timeframe_to_seconds
 from tradescope.misc import remove_entry_exit_signals
 from tradescope.persistence import Order, PairLocks, Trade
 from tradescope.strategy.hyper import HyperStrategyMixin
 from tradescope.strategy.informative_decorator import (InformativeData, PopulateIndicators,
-                                                      _create_and_merge_informative_pair,
-                                                      _format_pair_name)
+                                                       _create_and_merge_informative_pair,
+                                                       _format_pair_name)
 from tradescope.strategy.strategy_wrapper import strategy_safe_wrapper
 from tradescope.util import dt_now
 from tradescope.wallets import Wallets
@@ -153,8 +153,8 @@ class IStrategy(ABC, HyperStrategyMixin):
     def load_tradeAI_model(self) -> None:
         if self.config.get('tradeai', {}).get('enabled', False):
             # Import here to avoid importing this if tradeAI is disabled
-            from tradescope.tradeai.utils import download_all_data_for_training
             from tradescope.resolvers.tradeaimodel_resolver import TradeaiModelResolver
+            from tradescope.tradeai.utils import download_all_data_for_training
             self.tradeai = TradeaiModelResolver.load_tradeaimodel(self.config)
             self.tradeai_info = self.config["tradeai"]
 

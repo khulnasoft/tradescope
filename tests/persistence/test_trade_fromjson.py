@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 
 import pytest
 
-from tradescope.persistence.trade_model import LocalTrade, Trade
 from tests.conftest import create_mock_trades_usdt
+from tradescope.persistence.trade_model import LocalTrade, Trade
 
 
 @pytest.mark.usefixtures("init_persistence")

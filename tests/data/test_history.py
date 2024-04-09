@@ -12,24 +12,24 @@ import pytest
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_patched_exchange, log_has, log_has_re,
+                            patch_exchange)
 from tradescope.configuration import TimeRange
 from tradescope.constants import DATETIME_PRINT_FORMAT
 from tradescope.data.converter import ohlcv_to_dataframe
 from tradescope.data.history import get_datahandler
 from tradescope.data.history.datahandlers.jsondatahandler import JsonDataHandler, JsonGzDataHandler
 from tradescope.data.history.history_utils import (_download_pair_history, _download_trades_history,
-                                                  _load_cached_data_for_updating, get_timerange,
-                                                  load_data, load_pair_history,
-                                                  refresh_backtest_ohlcv_data,
-                                                  refresh_backtest_trades_data, refresh_data,
-                                                  validate_backtest_data)
+                                                   _load_cached_data_for_updating, get_timerange,
+                                                   load_data, load_pair_history,
+                                                   refresh_backtest_ohlcv_data,
+                                                   refresh_backtest_trades_data, refresh_data,
+                                                   validate_backtest_data)
 from tradescope.enums import CandleType, TradingMode
 from tradescope.exchange import timeframe_to_minutes
 from tradescope.misc import file_dump_json
 from tradescope.resolvers import StrategyResolver
 from tradescope.util import dt_ts, dt_utc
-from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_patched_exchange, log_has, log_has_re,
-                            patch_exchange)
 
 
 def _clean_test_file(file: Path) -> None:

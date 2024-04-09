@@ -5,7 +5,7 @@ try:
     TBCallback = TensorBoardCallback
 except ModuleNotFoundError:
     from tradescope.tradeai.tensorboard.base_tensorboard import (BaseTensorBoardCallback,
-                                                               BaseTensorboardLogger)
+                                                                 BaseTensorboardLogger)
     TBLogger = BaseTensorboardLogger  # type: ignore
     TBCallback = BaseTensorBoardCallback  # type: ignore
 

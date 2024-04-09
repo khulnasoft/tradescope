@@ -7,10 +7,10 @@ import numpy as np
 import pytest
 import rapidjson
 
+from tests.conftest import CURRENT_TEST_STRATEGY, log_has, log_has_re
 from tradescope.constants import FTHYPT_FILEVERSION
 from tradescope.exceptions import OperationalException
 from tradescope.optimize.hyperopt_tools import HyperoptTools, hyperopt_serializer
-from tests.conftest import CURRENT_TEST_STRATEGY, log_has, log_has_re
 
 
 # Functions for recurrent object patching

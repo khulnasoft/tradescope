@@ -4,11 +4,11 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy import select
 
+from tests.conftest import EXMS, get_patched_tradescopebot, log_has_re, patch_get_signal
 from tradescope.enums import ExitCheckTuple, ExitType, TradingMode
 from tradescope.persistence import Trade
 from tradescope.persistence.models import Order
 from tradescope.rpc.rpc import RPC
-from tests.conftest import EXMS, get_patched_tradescopebot, log_has_re, patch_get_signal
 
 
 def test_may_execute_exit_stoploss_on_exchange_multi(default_conf, ticker, fee, mocker) -> None:

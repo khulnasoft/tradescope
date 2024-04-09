@@ -11,14 +11,14 @@ from fastapi.exceptions import HTTPException
 from tradescope.configuration.config_validation import validate_config_consistency
 from tradescope.constants import Config
 from tradescope.data.btanalysis import (delete_backtest_result, get_backtest_result,
-                                       get_backtest_resultlist, load_and_merge_backtest_result,
-                                       update_backtest_metadata)
+                                        get_backtest_resultlist, load_and_merge_backtest_result,
+                                        update_backtest_metadata)
 from tradescope.enums import BacktestState
 from tradescope.exceptions import ConfigurationError, DependencyException, OperationalException
 from tradescope.exchange.common import remove_exchange_credentials
 from tradescope.misc import deep_merge_dicts, is_file_in_dir
 from tradescope.rpc.api_server.api_schemas import (BacktestHistoryEntry, BacktestMetadataUpdate,
-                                                  BacktestRequest, BacktestResponse)
+                                                   BacktestRequest, BacktestResponse)
 from tradescope.rpc.api_server.deps import get_config
 from tradescope.rpc.api_server.webserver_bgwork import ApiBG
 from tradescope.rpc.rpc import RPCException

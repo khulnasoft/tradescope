@@ -9,11 +9,11 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from tests.exchange_online.conftest import EXCHANGE_FIXTURE_TYPE, EXCHANGES
 from tradescope.enums import CandleType
 from tradescope.exchange import timeframe_to_minutes, timeframe_to_prev_date
 from tradescope.exchange.exchange import timeframe_to_msecs
 from tradescope.util import dt_floor_day, dt_now, dt_ts
-from tests.exchange_online.conftest import EXCHANGE_FIXTURE_TYPE, EXCHANGES
 
 
 @pytest.mark.longrun

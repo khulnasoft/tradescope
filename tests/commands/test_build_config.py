@@ -4,11 +4,11 @@ from unittest.mock import MagicMock
 import pytest
 import rapidjson
 
-from tradescope.commands.build_config_commands import (ask_user_config, ask_user_overwrite,
-                                                      start_new_config, validate_is_float,
-                                                      validate_is_int)
-from tradescope.exceptions import OperationalException
 from tests.conftest import get_args, log_has_re
+from tradescope.commands.build_config_commands import (ask_user_config, ask_user_overwrite,
+                                                       start_new_config, validate_is_float,
+                                                       validate_is_int)
+from tradescope.exceptions import OperationalException
 
 
 def test_validate_is_float():

@@ -3,12 +3,12 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from tests.conftest import get_patched_tradescopebot, log_has_re
 from tradescope import constants
 from tradescope.enums import ExitType
 from tradescope.persistence import PairLocks, Trade
 from tradescope.persistence.trade_model import Order
 from tradescope.plugins.protectionmanager import ProtectionManager
-from tests.conftest import get_patched_tradescopebot, log_has_re
 
 
 def generate_mock_trade(pair: str, fee: float, is_open: bool,

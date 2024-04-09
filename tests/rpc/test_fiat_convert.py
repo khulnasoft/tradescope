@@ -7,8 +7,8 @@ from unittest.mock import MagicMock
 import pytest
 from requests.exceptions import RequestException
 
-from tradescope.rpc.fiat_convert import CryptoToFiatConverter
 from tests.conftest import log_has, log_has_re
+from tradescope.rpc.fiat_convert import CryptoToFiatConverter
 
 
 def test_fiat_convert_is_supported(mocker):

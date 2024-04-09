@@ -5,6 +5,9 @@ from unittest.mock import PropertyMock
 
 import pytest
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, get_args, get_patched_exchange, log_has_re,
+                            patch_exchange, patched_configuration_load_config_file)
+from tests.tradeai.conftest import get_patched_tradeai_strategy
 from tradescope.commands.optimize_commands import setup_optimize_configuration
 from tradescope.configuration.timerange import TimeRange
 from tradescope.data import history
@@ -12,11 +15,8 @@ from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import RunMode
 from tradescope.enums.candletype import CandleType
 from tradescope.exceptions import OperationalException
-from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
 from tradescope.optimize.backtesting import Backtesting
-from tests.conftest import (CURRENT_TEST_STRATEGY, get_args, get_patched_exchange, log_has_re,
-                            patch_exchange, patched_configuration_load_config_file)
-from tests.tradeai.conftest import get_patched_tradeai_strategy
+from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
 
 
 def test_tradeai_backtest_start_backtest_list(tradeai_conf, mocker, testdatadir, caplog):

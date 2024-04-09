@@ -5,16 +5,16 @@ from unittest.mock import ANY, MagicMock
 import pytest
 from sqlalchemy import select
 
-from tradescope.enums import ExitCheckTuple, ExitType, RPCMessageType
-from tradescope.exceptions import ExchangeError, InsufficientFundsError, InvalidOrderException
-from tradescope.tradescopebot import TradescopeBot
-from tradescope.persistence import Order, Trade
-from tradescope.persistence.models import PairLock
-from tradescope.util.datetime_helpers import dt_now
 from tests.conftest import (EXMS, get_patched_tradescopebot, log_has, log_has_re, patch_edge,
                             patch_exchange, patch_get_signal, patch_whitelist)
 from tests.conftest_trades import entry_side, exit_side
 from tests.tradescopebot.test_tradescopebot import patch_RPCManager
+from tradescope.enums import ExitCheckTuple, ExitType, RPCMessageType
+from tradescope.exceptions import ExchangeError, InsufficientFundsError, InvalidOrderException
+from tradescope.persistence import Order, Trade
+from tradescope.persistence.models import PairLock
+from tradescope.tradescopebot import TradescopeBot
+from tradescope.util.datetime_helpers import dt_now
 
 
 @pytest.mark.parametrize("is_short", [False, True])

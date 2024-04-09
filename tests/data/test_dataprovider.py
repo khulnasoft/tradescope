@@ -4,11 +4,11 @@ from unittest.mock import MagicMock
 import pytest
 from pandas import DataFrame, Timestamp
 
+from tests.conftest import EXMS, generate_test_data, get_patched_exchange
 from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import CandleType, RunMode
 from tradescope.exceptions import ExchangeError, OperationalException
 from tradescope.plugins.pairlistmanager import PairListManager
-from tests.conftest import EXMS, generate_test_data, get_patched_exchange
 
 
 @pytest.mark.parametrize('candle_type', [

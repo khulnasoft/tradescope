@@ -2,11 +2,11 @@ from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
+from tests.conftest import EXMS, log_has, patch_exchange
 from tradescope.configuration.config_setup import setup_utils_configuration
 from tradescope.data.history.history_utils import download_data_main
 from tradescope.enums import RunMode
 from tradescope.exceptions import OperationalException
-from tests.conftest import EXMS, log_has, patch_exchange
 
 
 def test_download_data_main_no_markets(mocker, caplog):

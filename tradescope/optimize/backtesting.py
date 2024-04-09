@@ -20,21 +20,22 @@ from tradescope.data.btanalysis import find_existing_backtest_stats, trade_list_
 from tradescope.data.converter import trim_dataframe, trim_dataframes
 from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import (BacktestState, CandleType, ExitCheckTuple, ExitType, RunMode,
-                             TradingMode)
+                              TradingMode)
 from tradescope.exceptions import DependencyException, OperationalException
 from tradescope.exchange import (amount_to_contract_precision, price_to_precision,
-                                timeframe_to_seconds)
+                                 timeframe_to_seconds)
 from tradescope.exchange.exchange import Exchange
 from tradescope.mixins import LoggingMixin
 from tradescope.optimize.backtest_caching import get_strategy_run_id
 from tradescope.optimize.bt_progress import BTProgress
-from tradescope.optimize.optimize_reports import (generate_backtest_stats, generate_rejected_signals,
-                                                 generate_trade_signal_candles,
-                                                 show_backtest_results,
-                                                 store_backtest_analysis_results,
-                                                 store_backtest_stats)
+from tradescope.optimize.optimize_reports import (generate_backtest_stats,
+                                                  generate_rejected_signals,
+                                                  generate_trade_signal_candles,
+                                                  show_backtest_results,
+                                                  store_backtest_analysis_results,
+                                                  store_backtest_stats)
 from tradescope.persistence import (CustomDataWrapper, LocalTrade, Order, PairLocks, Trade,
-                                   disable_database_use, enable_database_use)
+                                    disable_database_use, enable_database_use)
 from tradescope.plugins.pairlistmanager import PairListManager
 from tradescope.plugins.protectionmanager import ProtectionManager
 from tradescope.resolvers import ExchangeResolver, StrategyResolver

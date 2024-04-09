@@ -9,6 +9,8 @@ import pytest
 from filelock import Timeout
 from skopt.space import Integer
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_args, get_markets, log_has, log_has_re,
+                            patch_exchange, patched_configuration_load_config_file)
 from tradescope.commands.optimize_commands import setup_optimize_configuration, start_hyperopt
 from tradescope.data.history import load_data
 from tradescope.enums import ExitType, RunMode
@@ -20,8 +22,6 @@ from tradescope.optimize.optimize_reports import generate_strategy_stats
 from tradescope.optimize.space import SKDecimal
 from tradescope.strategy import IntParameter
 from tradescope.util import dt_utc
-from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_args, get_markets, log_has, log_has_re,
-                            patch_exchange, patched_configuration_load_config_file)
 
 
 def generate_result_metrics():

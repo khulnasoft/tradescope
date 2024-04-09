@@ -5,10 +5,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from tradescope.configuration.directory_operations import (chown_user_directory, copy_sample_files,
-                                                          create_datadir, create_userdata_dir)
-from tradescope.exceptions import OperationalException
 from tests.conftest import log_has, log_has_re
+from tradescope.configuration.directory_operations import (chown_user_directory, copy_sample_files,
+                                                           create_datadir, create_userdata_dir)
+from tradescope.exceptions import OperationalException
 
 
 def test_create_datadir(mocker, default_conf, caplog) -> None:

@@ -4,10 +4,10 @@ import time
 from collections import deque
 from unittest.mock import MagicMock
 
+from tests.conftest import get_patched_tradescopebot, log_has
 from tradescope.enums import RPCMessageType
 from tradescope.rpc import RPCManager
 from tradescope.rpc.api_server.webserver import ApiServer
-from tests.conftest import get_patched_tradescopebot, log_has
 
 
 def test__init__(mocker, default_conf) -> None:

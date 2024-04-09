@@ -8,10 +8,10 @@ from pandas import DataFrame, concat
 
 from tradescope.configuration import TimeRange
 from tradescope.constants import (DATETIME_PRINT_FORMAT, DEFAULT_DATAFRAME_COLUMNS,
-                                 DL_DATA_TIMEFRAMES, DOCS_LINK, Config)
+                                  DL_DATA_TIMEFRAMES, DOCS_LINK, Config)
 from tradescope.data.converter import (clean_ohlcv_dataframe, convert_trades_to_ohlcv,
-                                      ohlcv_to_dataframe, trades_df_remove_duplicates,
-                                      trades_list_to_df)
+                                       ohlcv_to_dataframe, trades_df_remove_duplicates,
+                                       trades_list_to_df)
 from tradescope.data.history.datahandlers import IDataHandler, get_datahandler
 from tradescope.enums import CandleType, TradingMode
 from tradescope.exceptions import OperationalException

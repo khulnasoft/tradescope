@@ -19,23 +19,23 @@ from sqlalchemy import select
 from telegram import Chat, Message, ReplyKeyboardMarkup, Update
 from telegram.error import BadRequest, NetworkError, TelegramError
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, create_mock_trades,
+                            create_mock_trades_usdt, get_patched_tradescopebot, log_has, log_has_re,
+                            patch_exchange, patch_get_signal, patch_whitelist)
 from tradescope import __version__
 from tradescope.constants import CANCEL_REASON
 from tradescope.edge import PairInfo
 from tradescope.enums import (ExitType, MarketDirection, RPCMessageType, RunMode, SignalDirection,
-                             State)
+                              State)
 from tradescope.exceptions import OperationalException
-from tradescope.tradescopebot import TradescopeBot
 from tradescope.loggers import setup_logging
 from tradescope.persistence import PairLocks, Trade
 from tradescope.persistence.models import Order
 from tradescope.rpc import RPC
 from tradescope.rpc.rpc import RPCException
 from tradescope.rpc.telegram import Telegram, authorized_only
+from tradescope.tradescopebot import TradescopeBot
 from tradescope.util.datetime_helpers import dt_now
-from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, create_mock_trades,
-                            create_mock_trades_usdt, get_patched_tradescopebot, log_has, log_has_re,
-                            patch_exchange, patch_get_signal, patch_whitelist)
 
 
 @pytest.fixture(autouse=True)

@@ -9,8 +9,8 @@ from tradescope.enums import CandleType
 from tradescope.exceptions import OperationalException
 from tradescope.persistence import FtNoDBContext
 from tradescope.rpc.api_server.api_schemas import (BackgroundTaskStatus, BgJobStarted,
-                                                  ExchangeModePayloadMixin, PairListsPayload,
-                                                  PairListsResponse, WhitelistEvaluateResponse)
+                                                   ExchangeModePayloadMixin, PairListsPayload,
+                                                   PairListsResponse, WhitelistEvaluateResponse)
 from tradescope.rpc.api_server.deps import get_config, get_exchange
 from tradescope.rpc.api_server.webserver_bgwork import ApiBG
 

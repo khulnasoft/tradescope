@@ -4,11 +4,11 @@ from unittest.mock import MagicMock, PropertyMock
 import pandas as pd
 import pytest
 
+from tests.conftest import get_args, patch_exchange, patched_configuration_load_config_file
 from tradescope.commands.analyze_commands import start_analysis_entries_exits
 from tradescope.commands.optimize_commands import start_backtesting
 from tradescope.enums import ExitType
 from tradescope.optimize.backtesting import Backtesting
-from tests.conftest import get_args, patch_exchange, patched_configuration_load_config_file
 
 
 @pytest.fixture(autouse=True)

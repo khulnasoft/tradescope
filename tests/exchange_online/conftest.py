@@ -4,10 +4,10 @@ from typing import Tuple
 
 import pytest
 
+from tests.conftest import EXMS, get_default_conf_usdt
 from tradescope.constants import Config
 from tradescope.exchange.exchange import Exchange
 from tradescope.resolvers.exchange_resolver import ExchangeResolver
-from tests.conftest import EXMS, get_default_conf_usdt
 
 
 EXCHANGE_FIXTURE_TYPE = Tuple[Exchange, str]

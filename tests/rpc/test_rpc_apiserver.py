@@ -18,6 +18,8 @@ from fastapi.testclient import TestClient
 from requests.auth import _basic_auth_str
 from sqlalchemy import select
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, create_mock_trades, get_mock_coro,
+                            get_patched_tradescopebot, log_has, log_has_re, patch_get_signal)
 from tradescope.__init__ import __version__
 from tradescope.enums import CandleType, RunMode, State, TradingMode
 from tradescope.exceptions import DependencyException, ExchangeError, OperationalException
@@ -30,8 +32,6 @@ from tradescope.rpc.api_server.api_auth import create_token, get_user_from_token
 from tradescope.rpc.api_server.uvicorn_threaded import UvicornServer
 from tradescope.rpc.api_server.webserver_bgwork import ApiBG
 from tradescope.util.datetime_helpers import format_date
-from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, create_mock_trades, get_mock_coro,
-                            get_patched_tradescopebot, log_has, log_has_re, patch_get_signal)
 
 
 BASE_URI = "/api/v1"

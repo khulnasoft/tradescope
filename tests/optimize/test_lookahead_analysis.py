@@ -5,12 +5,12 @@ from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
+from tests.conftest import EXMS, get_args, log_has_re, patch_exchange
 from tradescope.commands.optimize_commands import start_lookahead_analysis
 from tradescope.data.history import get_timerange
 from tradescope.exceptions import OperationalException
 from tradescope.optimize.analysis.lookahead import Analysis, LookaheadAnalysis
 from tradescope.optimize.analysis.lookahead_helpers import LookaheadAnalysisSubFunctions
-from tests.conftest import EXMS, get_args, log_has_re, patch_exchange
 
 
 @pytest.fixture

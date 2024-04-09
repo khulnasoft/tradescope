@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from tradescope.tradeai.tradeai_interface import ITradeaiModel
 from tradescope.tradeai.torch.PyTorchDataConvertor import PyTorchDataConvertor
+from tradescope.tradeai.tradeai_interface import ITradeaiModel
 
 
 logger = logging.getLogger(__name__)

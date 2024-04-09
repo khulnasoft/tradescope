@@ -5,9 +5,9 @@ import pytest
 
 from tradescope.exceptions import OperationalException
 from tradescope.loggers import (FTBufferingHandler, FTStdErrStreamHandler, set_loggers,
-                               setup_logging, setup_logging_pre)
+                                setup_logging, setup_logging_pre)
 from tradescope.loggers.set_log_levels import (reduce_verbosity_for_bias_tester,
-                                              restore_verbosity_for_bias_tester)
+                                               restore_verbosity_for_bias_tester)
 
 
 def test_set_loggers() -> None:

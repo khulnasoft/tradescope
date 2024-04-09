@@ -11,7 +11,7 @@ from websockets.exceptions import ConnectionClosed
 
 from tradescope.rpc.api_server.ws.proxy import WebSocketProxy
 from tradescope.rpc.api_server.ws.serializer import (HybridJSONWebSocketSerializer,
-                                                    WebSocketSerializer)
+                                                     WebSocketSerializer)
 from tradescope.rpc.api_server.ws.types import WebSocketType
 from tradescope.rpc.api_server.ws_schemas import WSMessageSchemaType
 

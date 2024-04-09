@@ -4,11 +4,11 @@ from unittest.mock import PropertyMock
 
 import pytest
 
+from tests.conftest import EXMS, log_has, log_has_re, patch_exchange
 from tradescope.data.converter.trade_converter_kraken import import_kraken_trades_from_csv
 from tradescope.data.history import get_datahandler
 from tradescope.enums import TradingMode
 from tradescope.exceptions import OperationalException
-from tests.conftest import EXMS, log_has, log_has_re, patch_exchange
 
 
 def test_import_kraken_trades_from_csv(testdatadir, tmp_path, caplog, default_conf_usdt, mocker):

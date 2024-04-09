@@ -6,13 +6,13 @@ from unittest.mock import MagicMock
 import pandas as pd
 import pytest
 
+from tests.conftest import get_patched_exchange
+from tests.tradeai.conftest import (get_patched_data_kitchen, get_patched_tradeai_strategy, is_mac,
+                                    make_unfiltered_dataframe)
 from tradescope.configuration import TimeRange
 from tradescope.data.dataprovider import DataProvider
 from tradescope.exceptions import OperationalException
 from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
-from tests.conftest import get_patched_exchange
-from tests.tradeai.conftest import (get_patched_data_kitchen, get_patched_tradeai_strategy, is_mac,
-                                   make_unfiltered_dataframe)
 
 
 @pytest.mark.parametrize(

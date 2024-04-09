@@ -9,16 +9,16 @@ import pytest
 from pandas import DataFrame, Timestamp
 from pandas.testing import assert_frame_equal
 
+from tests.conftest import log_has, log_has_re
 from tradescope.configuration import TimeRange
 from tradescope.constants import AVAILABLE_DATAHANDLERS
 from tradescope.data.history.datahandlers.featherdatahandler import FeatherDataHandler
 from tradescope.data.history.datahandlers.hdf5datahandler import HDF5DataHandler
 from tradescope.data.history.datahandlers.idatahandler import (IDataHandler, get_datahandler,
-                                                              get_datahandlerclass)
+                                                               get_datahandlerclass)
 from tradescope.data.history.datahandlers.jsondatahandler import JsonDataHandler, JsonGzDataHandler
 from tradescope.data.history.datahandlers.parquetdatahandler import ParquetDataHandler
 from tradescope.enums import CandleType, TradingMode
-from tests.conftest import log_has, log_has_re
 
 
 def test_datahandler_ohlcv_get_pairs(testdatadir):

@@ -13,7 +13,7 @@ from pandas import DataFrame, Timedelta, Timestamp, to_timedelta
 
 from tradescope.configuration import TimeRange
 from tradescope.constants import (FULL_DATAFRAME_THRESHOLD, Config, ListPairsWithTimeframes,
-                                 PairWithTimeframe)
+                                  PairWithTimeframe)
 from tradescope.data.history import load_pair_history
 from tradescope.enums import CandleType, RPCMessageType, RunMode
 from tradescope.exceptions import ExchangeError, OperationalException

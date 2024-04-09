@@ -2,9 +2,9 @@ import re
 from unittest.mock import MagicMock
 
 import pytest
+from requests.exceptions import ConnectionError
 from tradescope_client import FtRestClient
 from tradescope_client.ts_client import add_arguments, main_exec
-from requests.exceptions import ConnectionError
 
 
 def log_has_re(line, logs):

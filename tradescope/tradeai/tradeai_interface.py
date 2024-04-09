@@ -23,10 +23,10 @@ from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import RunMode
 from tradescope.exceptions import OperationalException
 from tradescope.exchange import timeframe_to_seconds
+from tradescope.strategy.interface import IStrategy
 from tradescope.tradeai.data_drawer import TradeaiDataDrawer
 from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
 from tradescope.tradeai.utils import get_tb_logger, plot_feature_importance, record_params
-from tradescope.strategy.interface import IStrategy
 
 
 pd.options.mode.chained_assignment = None

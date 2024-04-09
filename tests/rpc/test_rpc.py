@@ -6,6 +6,8 @@ import pytest
 from numpy import isnan
 from sqlalchemy import select
 
+from tests.conftest import (EXMS, create_mock_trades, create_mock_trades_usdt,
+                            get_patched_tradescopebot, patch_get_signal)
 from tradescope.edge import PairInfo
 from tradescope.enums import SignalDirection, State, TradingMode
 from tradescope.exceptions import ExchangeError, InvalidOrderException, TemporaryError
@@ -13,8 +15,6 @@ from tradescope.persistence import Order, Trade
 from tradescope.persistence.key_value_store import set_startup_time
 from tradescope.rpc import RPC, RPCException
 from tradescope.rpc.fiat_convert import CryptoToFiatConverter
-from tests.conftest import (EXMS, create_mock_trades, create_mock_trades_usdt,
-                            get_patched_tradescopebot, patch_get_signal)
 
 
 def test_rpc_trade_status(default_conf, ticker, fee, mocker) -> None:

@@ -5,13 +5,13 @@ from types import FunctionType
 import pytest
 from sqlalchemy import select
 
+from tests.conftest import (create_mock_trades, create_mock_trades_usdt,
+                            create_mock_trades_with_leverage, log_has, log_has_re)
 from tradescope.constants import CUSTOM_TAG_MAX_LENGTH, DATETIME_PRINT_FORMAT
 from tradescope.enums import TradingMode
 from tradescope.exceptions import DependencyException
 from tradescope.persistence import LocalTrade, Order, Trade, init_db
 from tradescope.util import dt_now
-from tests.conftest import (create_mock_trades, create_mock_trades_usdt,
-                            create_mock_trades_with_leverage, log_has, log_has_re)
 
 
 spot, margin, futures = TradingMode.SPOT, TradingMode.MARGIN, TradingMode.FUTURES

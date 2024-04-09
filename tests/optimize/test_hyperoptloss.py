@@ -4,7 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from tradescope.exceptions import OperationalException
-from tradescope.optimize.hyperopt_loss.hyperopt_loss_short_trade_dur import ShortTradeDurHyperOptLoss
+from tradescope.optimize.hyperopt_loss.hyperopt_loss_short_trade_dur import \
+    ShortTradeDurHyperOptLoss
 from tradescope.resolvers.hyperopt_resolver import HyperOptLossResolver
 
 

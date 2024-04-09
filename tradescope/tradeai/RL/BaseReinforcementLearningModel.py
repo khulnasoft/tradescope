@@ -20,12 +20,12 @@ from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecMonitor
 
 from tradescope.exceptions import OperationalException
+from tradescope.persistence import Trade
 from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
-from tradescope.tradeai.tradeai_interface import ITradeaiModel
 from tradescope.tradeai.RL.Base5ActionRLEnv import Actions, Base5ActionRLEnv
 from tradescope.tradeai.RL.BaseEnvironment import BaseActions, BaseEnvironment, Positions
 from tradescope.tradeai.tensorboard.TensorboardCallback import TensorboardCallback
-from tradescope.persistence import Trade
+from tradescope.tradeai.tradeai_interface import ITradeaiModel
 
 
 logger = logging.getLogger(__name__)

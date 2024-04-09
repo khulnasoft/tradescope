@@ -3,11 +3,11 @@
 
 from unittest.mock import MagicMock
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_args, log_has, patch_exchange,
+                            patched_configuration_load_config_file)
 from tradescope.commands.optimize_commands import setup_optimize_configuration, start_edge
 from tradescope.enums import RunMode
 from tradescope.optimize.edge_cli import EdgeCli
-from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_args, log_has, patch_exchange,
-                            patched_configuration_load_config_file)
 
 
 def test_setup_optimize_configuration_without_arguments(mocker, default_conf, caplog) -> None:

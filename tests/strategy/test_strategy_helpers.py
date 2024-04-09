@@ -2,11 +2,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from tests.conftest import generate_test_data, get_patched_exchange
 from tradescope.data.dataprovider import DataProvider
 from tradescope.enums import CandleType
 from tradescope.resolvers.strategy_resolver import StrategyResolver
 from tradescope.strategy import merge_informative_pair, stoploss_from_absolute, stoploss_from_open
-from tests.conftest import generate_test_data, get_patched_exchange
 
 
 def test_merge_informative_pair():

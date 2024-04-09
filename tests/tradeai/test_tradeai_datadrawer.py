@@ -6,12 +6,12 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 
+from tests.conftest import get_patched_exchange
+from tests.tradeai.conftest import get_patched_tradeai_strategy
 from tradescope.configuration import TimeRange
 from tradescope.data.dataprovider import DataProvider
 from tradescope.exceptions import OperationalException
 from tradescope.tradeai.data_kitchen import TradeaiDataKitchen
-from tests.conftest import get_patched_exchange
-from tests.tradeai.conftest import get_patched_tradeai_strategy
 
 
 def test_update_historic_data(mocker, tradeai_conf):

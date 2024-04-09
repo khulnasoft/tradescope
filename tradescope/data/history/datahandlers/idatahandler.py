@@ -17,7 +17,7 @@ from tradescope import misc
 from tradescope.configuration import TimeRange
 from tradescope.constants import DEFAULT_TRADES_COLUMNS, ListPairsWithTimeframes
 from tradescope.data.converter import (clean_ohlcv_dataframe, trades_convert_types,
-                                      trades_df_remove_duplicates, trim_dataframe)
+                                       trades_df_remove_duplicates, trim_dataframe)
 from tradescope.enums import CandleType, TradingMode
 from tradescope.exchange import timeframe_to_seconds
 

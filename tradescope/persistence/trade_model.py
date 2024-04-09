@@ -14,12 +14,12 @@ from sqlalchemy.orm import Mapped, lazyload, mapped_column, relationship, valida
 from typing_extensions import Self
 
 from tradescope.constants import (CANCELED_EXCHANGE_STATES, CUSTOM_TAG_MAX_LENGTH,
-                                 DATETIME_PRINT_FORMAT, MATH_CLOSE_PREC, NON_OPEN_EXCHANGE_STATES,
-                                 BuySell, LongShort)
+                                  DATETIME_PRINT_FORMAT, MATH_CLOSE_PREC, NON_OPEN_EXCHANGE_STATES,
+                                  BuySell, LongShort)
 from tradescope.enums import ExitType, TradingMode
 from tradescope.exceptions import DependencyException, OperationalException
 from tradescope.exchange import (ROUND_DOWN, ROUND_UP, amount_to_contract_precision,
-                                price_to_precision)
+                                 price_to_precision)
 from tradescope.leverage import interest
 from tradescope.misc import safe_value_fallback
 from tradescope.persistence.base import ModelBase, SessionType

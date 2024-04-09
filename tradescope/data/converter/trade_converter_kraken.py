@@ -5,7 +5,7 @@ import pandas as pd
 
 from tradescope.constants import DATETIME_PRINT_FORMAT, DEFAULT_TRADES_COLUMNS, Config
 from tradescope.data.converter.trade_converter import (trades_convert_types,
-                                                      trades_df_remove_duplicates)
+                                                       trades_df_remove_duplicates)
 from tradescope.data.history import get_datahandler
 from tradescope.enums import TradingMode
 from tradescope.exceptions import OperationalException

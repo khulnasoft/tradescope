@@ -6,7 +6,7 @@ from typing import Any, Dict
 from tradescope.configuration import TimeRange, setup_utils_configuration
 from tradescope.constants import DATETIME_PRINT_FORMAT, DL_DATA_TIMEFRAMES, Config
 from tradescope.data.converter import (convert_ohlcv_format, convert_trades_format,
-                                      convert_trades_to_ohlcv)
+                                       convert_trades_to_ohlcv)
 from tradescope.data.history import download_data_main
 from tradescope.enums import CandleType, RunMode, TradingMode
 from tradescope.exceptions import ConfigurationError

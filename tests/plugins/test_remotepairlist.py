@@ -4,10 +4,10 @@ from unittest.mock import MagicMock, PropertyMock
 import pytest
 import requests
 
+from tests.conftest import EXMS, get_patched_exchange, get_patched_tradescopebot, log_has
 from tradescope.exceptions import OperationalException
 from tradescope.plugins.pairlist.RemotePairList import RemotePairList
 from tradescope.plugins.pairlistmanager import PairListManager
-from tests.conftest import EXMS, get_patched_exchange, get_patched_tradescopebot, log_has
 
 
 @pytest.fixture(scope="function")

@@ -7,6 +7,8 @@ from unittest.mock import MagicMock
 import pytest
 from pandas import DataFrame
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, TRADE_SIDES, create_mock_trades, log_has,
+                            log_has_re)
 from tradescope.configuration import TimeRange
 from tradescope.constants import CUSTOM_TAG_MAX_LENGTH
 from tradescope.data.dataprovider import DataProvider
@@ -19,11 +21,9 @@ from tradescope.persistence import PairLocks, Trade
 from tradescope.resolvers import StrategyResolver
 from tradescope.strategy.hyper import detect_parameters
 from tradescope.strategy.parameters import (BaseParameter, BooleanParameter, CategoricalParameter,
-                                           DecimalParameter, IntParameter, RealParameter)
+                                            DecimalParameter, IntParameter, RealParameter)
 from tradescope.strategy.strategy_wrapper import strategy_safe_wrapper
 from tradescope.util import dt_now
-from tests.conftest import (CURRENT_TEST_STRATEGY, TRADE_SIDES, create_mock_trades, log_has,
-                            log_has_re)
 
 from .strats.strategy_test_v3 import StrategyTestV3
 

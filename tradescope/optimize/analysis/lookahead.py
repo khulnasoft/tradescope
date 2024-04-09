@@ -10,7 +10,7 @@ from pandas import DataFrame
 from tradescope.data.history import get_timerange
 from tradescope.exchange import timeframe_to_minutes
 from tradescope.loggers.set_log_levels import (reduce_verbosity_for_bias_tester,
-                                              restore_verbosity_for_bias_tester)
+                                               restore_verbosity_for_bias_tester)
 from tradescope.optimize.backtesting import Backtesting
 from tradescope.optimize.base_analysis import BaseAnalysis, VarHolder
 

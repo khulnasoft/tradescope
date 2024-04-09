@@ -4,7 +4,7 @@ import pytest
 import time_machine
 
 from tradescope.util import (dt_floor_day, dt_from_ts, dt_humanize, dt_now, dt_ts, dt_ts_def,
-                            dt_ts_none, dt_utc, format_date, format_ms_time, shorten_date)
+                             dt_ts_none, dt_utc, format_date, format_ms_time, shorten_date)
 
 
 def test_dt_now():

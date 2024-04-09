@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Optional
 
 from tradescope.configuration.detect_environment import running_in_docker
-from tradescope.constants import (USER_DATA_FILES, USERPATH_TRADEAIMODELS, USERPATH_HYPEROPTS,
-                                 USERPATH_NOTEBOOKS, USERPATH_STRATEGIES, Config)
+from tradescope.constants import (USER_DATA_FILES, USERPATH_HYPEROPTS, USERPATH_NOTEBOOKS,
+                                  USERPATH_STRATEGIES, USERPATH_TRADEAIMODELS, Config)
 from tradescope.exceptions import OperationalException
 
 

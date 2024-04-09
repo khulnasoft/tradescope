@@ -10,8 +10,9 @@ from ccxt import (DECIMAL_PLACES, ROUND, ROUND_DOWN, ROUND_UP, SIGNIFICANT_DIGIT
                   TRUNCATE, decimal_to_precision)
 
 from tradescope.exchange.common import (BAD_EXCHANGES, EXCHANGE_HAS_OPTIONAL, EXCHANGE_HAS_REQUIRED,
-                                       SUPPORTED_EXCHANGES)
-from tradescope.exchange.exchange_utils_timeframe import timeframe_to_minutes, timeframe_to_prev_date
+                                        SUPPORTED_EXCHANGES)
+from tradescope.exchange.exchange_utils_timeframe import (timeframe_to_minutes,
+                                                          timeframe_to_prev_date)
 from tradescope.types import ValidExchangesType
 from tradescope.util import FtPrecise
 

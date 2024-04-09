@@ -13,22 +13,22 @@ import pandas as pd
 import pytest
 from xdist.scheduler.loadscope import LoadScopeScheduling
 
+from tests.conftest_trades import (leverage_trade, mock_trade_1, mock_trade_2, mock_trade_3,
+                                   mock_trade_4, mock_trade_5, mock_trade_6, short_trade)
+from tests.conftest_trades_usdt import (mock_trade_usdt_1, mock_trade_usdt_2, mock_trade_usdt_3,
+                                        mock_trade_usdt_4, mock_trade_usdt_5, mock_trade_usdt_6,
+                                        mock_trade_usdt_7)
 from tradescope import constants
 from tradescope.commands import Arguments
 from tradescope.data.converter import ohlcv_to_dataframe, trades_list_to_df
 from tradescope.edge import PairInfo
 from tradescope.enums import CandleType, MarginMode, RunMode, SignalDirection, TradingMode
 from tradescope.exchange import Exchange, timeframe_to_minutes, timeframe_to_seconds
-from tradescope.tradescopebot import TradescopeBot
 from tradescope.persistence import LocalTrade, Order, Trade, init_db
 from tradescope.resolvers import ExchangeResolver
+from tradescope.tradescopebot import TradescopeBot
 from tradescope.util import dt_now, dt_ts
 from tradescope.worker import Worker
-from tests.conftest_trades import (leverage_trade, mock_trade_1, mock_trade_2, mock_trade_3,
-                                   mock_trade_4, mock_trade_5, mock_trade_6, short_trade)
-from tests.conftest_trades_usdt import (mock_trade_usdt_1, mock_trade_usdt_2, mock_trade_usdt_3,
-                                        mock_trade_usdt_4, mock_trade_usdt_5, mock_trade_usdt_6,
-                                        mock_trade_usdt_7)
 
 
 logging.getLogger('').setLevel(logging.INFO)

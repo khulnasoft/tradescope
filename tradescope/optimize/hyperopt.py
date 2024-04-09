@@ -21,7 +21,8 @@ from pandas import DataFrame
 from rich.progress import (BarColumn, MofNCompleteColumn, Progress, TaskProgressColumn, TextColumn,
                            TimeElapsedColumn, TimeRemainingColumn)
 
-from tradescope.constants import DATETIME_PRINT_FORMAT, FTHYPT_FILEVERSION, LAST_BT_RESULT_FN, Config
+from tradescope.constants import (DATETIME_PRINT_FORMAT, FTHYPT_FILEVERSION, LAST_BT_RESULT_FN,
+                                  Config)
 from tradescope.data.converter import trim_dataframes
 from tradescope.data.history import get_timerange
 from tradescope.data.metrics import calculate_market_change
@@ -33,7 +34,7 @@ from tradescope.optimize.backtesting import Backtesting
 from tradescope.optimize.hyperopt_auto import HyperOptAuto
 from tradescope.optimize.hyperopt_loss_interface import IHyperOptLoss
 from tradescope.optimize.hyperopt_tools import (HyperoptStateContainer, HyperoptTools,
-                                               hyperopt_serializer)
+                                                hyperopt_serializer)
 from tradescope.optimize.optimize_reports import generate_strategy_stats
 from tradescope.resolvers.hyperopt_resolver import HyperOptLossResolver
 

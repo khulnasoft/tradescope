@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_args, log_has, log_has_re,
+                            patch_exchange, patched_configuration_load_config_file)
 from tradescope import constants
 from tradescope.commands.optimize_commands import setup_optimize_configuration, start_backtesting
 from tradescope.configuration import TimeRange
@@ -26,8 +28,6 @@ from tradescope.optimize.backtesting import Backtesting
 from tradescope.persistence import LocalTrade, Trade
 from tradescope.resolvers import StrategyResolver
 from tradescope.util.datetime_helpers import dt_utc
-from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_args, log_has, log_has_re,
-                            patch_exchange, patched_configuration_load_config_file)
 
 
 ORDER_TYPES = [

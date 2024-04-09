@@ -8,6 +8,7 @@ import pytest
 from sqlalchemy import create_engine, select, text
 from sqlalchemy.schema import CreateTable
 
+from tests.conftest import log_has
 from tradescope.constants import DEFAULT_DB_PROD_URL
 from tradescope.enums import TradingMode
 from tradescope.exceptions import OperationalException
@@ -16,7 +17,6 @@ from tradescope.persistence.base import ModelBase
 from tradescope.persistence.migrations import get_last_sequence_ids, set_sequence_ids
 from tradescope.persistence.models import PairLock
 from tradescope.persistence.trade_model import Order
-from tests.conftest import log_has
 
 
 spot, margin, futures = TradingMode.SPOT, TradingMode.MARGIN, TradingMode.FUTURES

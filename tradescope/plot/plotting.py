@@ -8,12 +8,12 @@ import pandas as pd
 from tradescope.configuration import TimeRange
 from tradescope.constants import Config
 from tradescope.data.btanalysis import (analyze_trade_parallelism, extract_trades_of_period,
-                                       load_trades)
+                                        load_trades)
 from tradescope.data.converter import trim_dataframe
 from tradescope.data.dataprovider import DataProvider
 from tradescope.data.history import get_timerange, load_data
 from tradescope.data.metrics import (calculate_max_drawdown, calculate_underwater,
-                                    combine_dataframes_with_mean, create_cum_profit)
+                                     combine_dataframes_with_mean, create_cum_profit)
 from tradescope.enums import CandleType
 from tradescope.exceptions import OperationalException
 from tradescope.exchange import timeframe_to_prev_date, timeframe_to_seconds
