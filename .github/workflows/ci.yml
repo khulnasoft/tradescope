@@ -60,7 +60,7 @@ jobs:
         export TA_LIBRARY_PATH=${HOME}/dependencies/lib
         export TA_INCLUDE_PATH=${HOME}/dependencies/include
         pip install -r requirements-dev.txt
-        pip install -e ft_client/
+        pip install -e ts_client/
         pip install -e .
 
     - name: Check for version alignment
@@ -193,7 +193,7 @@ jobs:
         export TA_LIBRARY_PATH=${HOME}/dependencies/lib
         export TA_INCLUDE_PATH=${HOME}/dependencies/include
         pip install -r requirements-dev.txt
-        pip install -e ft_client/
+        pip install -e ts_client/
         pip install -e .
 
     - name: Tests
@@ -404,7 +404,7 @@ jobs:
         export TA_LIBRARY_PATH=${HOME}/dependencies/lib
         export TA_INCLUDE_PATH=${HOME}/dependencies/include
         pip install -r requirements-dev.txt
-        pip install -e ft_client/
+        pip install -e ts_client/
         pip install -e .
 
     - name: Tests incl. ccxt compatibility tests
@@ -477,14 +477,14 @@ jobs:
     - name: Build Client distribution
       run: |
         pip install -U build
-        python -m build --sdist --wheel ft_client
+        python -m build --sdist --wheel ts_client
 
     - name: Upload artifacts 📦
       uses: actions/upload-artifact@v4
       with:
         name: tradescope-client-build
         path: |
-          ft_client/dist
+          ts_client/dist
         retention-days: 10
 
   deploy-pypi:

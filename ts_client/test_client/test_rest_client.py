@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from tradescope_client import FtRestClient
-from tradescope_client.ft_client import add_arguments, main_exec
+from tradescope_client.ts_client import add_arguments, main_exec
 from requests.exceptions import ConnectionError
 
 
@@ -115,7 +115,7 @@ def test_FtRestClient_call_explicit_methods(method, args):
     assert mock.call_count == 1
 
 
-def test_ft_client(mocker, capsys, caplog):
+def test_ts_client(mocker, capsys, caplog):
     with pytest.raises(SystemExit):
         args = add_arguments(['-V'])
 
@@ -127,7 +127,7 @@ def test_ft_client(mocker, capsys, caplog):
     captured = capsys.readouterr()
     assert 'Possible commands' in captured.out
 
-    mock = mocker.patch('tradescope_client.ft_client.FtRestClient._call')
+    mock = mocker.patch('tradescope_client.ts_client.FtRestClient._call')
     args = add_arguments([
         '--config',
         'tests/testdata/testconfigs/main_test_config.json',

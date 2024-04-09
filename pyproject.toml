@@ -89,7 +89,7 @@ namespace_packages = false
 warn_unused_ignores = true
 exclude = [
     '^build_helpers\.py$',
-    '^ft_client/build/.*$',
+    '^ts_client/build/.*$',
 ]
 plugins = [
   "sqlalchemy.ext.mypy.plugin"

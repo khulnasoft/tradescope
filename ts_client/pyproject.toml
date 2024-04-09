@@ -42,7 +42,7 @@ Documentation = "https://tradescope.io"
 
 
 [project.scripts]
-tradescope-client = "tradescope_client.ft_client:main"
+tradescope-client = "tradescope_client.ts_client:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
