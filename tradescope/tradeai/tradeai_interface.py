@@ -49,7 +49,7 @@ class ITradeaiModel(ABC):
     Elin Törnquist @th0rntwig
 
     Code review, software architecture brainstorming:
-    @xmatthias
+    @khulnasoft-bot
 
     Beta testing and bug reporting:
     @bloodhunter4rc, Salah Lamkadem @ikonx, @ken11o2, @longyu, @paranoidandy, @smidelis, @smarm
