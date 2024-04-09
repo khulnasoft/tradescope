@@ -1,5 +1,5 @@
 site_name: Tradescope
-site_url: https://www.tradescope.io/en/latest/
+site_url: https://www.freqtrade.io/en/latest/
 repo_url: https://github.com/khulnasoft/tradescope
 edit_uri: edit/develop/docs/
 use_directory_urls: True

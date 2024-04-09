@@ -3,7 +3,7 @@
 [![Tradescope CI](https://github.com/khulnasoft/tradescope/workflows/Tradescope%20CI/badge.svg)](https://github.com/khulnasoft/tradescope/actions/)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.04864/status.svg)](https://doi.org/10.21105/joss.04864)
 [![Coverage Status](https://coveralls.io/repos/github/khulnasoft/tradescope/badge.svg?branch=develop&service=github)](https://coveralls.io/github/khulnasoft/tradescope?branch=develop)
-[![Documentation](https://readthedocs.org/projects/tradescope/badge/)](https://www.tradescope.io)
+[![Documentation](https://readthedocs.org/projects/tradescope/badge/)](https://www.freqtrade.io)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5737e6d668200b7518ff/maintainability)](https://codeclimate.com/github/khulnasoft/tradescope/maintainability)
 
 Tradescope is a free and open source crypto trading bot written in Python. It is designed to support all major exchanges and be controlled via Telegram or webUI. It contains backtesting, plotting and money management tools as well as strategy optimization by machine learning.
@@ -55,7 +55,7 @@ Exchanges confirmed working by the community:
 
 We invite you to read the bot documentation to ensure you understand how the bot is working.
 
-Please find the complete documentation on the [tradescope website](https://www.tradescope.io).
+Please find the complete documentation on the [tradescope website](https://www.freqtrade.io).
 
 ## Features
 
@@ -64,8 +64,8 @@ Please find the complete documentation on the [tradescope website](https://www.t
 - [x] **Dry-run**: Run the bot without paying money.
 - [x] **Backtesting**: Run a simulation of your buy/sell strategy.
 - [x] **Strategy Optimization by machine learning**: Use machine learning to optimize your buy/sell strategy parameters with real exchange data.
-- [X] **Adaptive prediction modeling**: Build a smart strategy with TradeAI that self-trains to the market via adaptive machine learning methods. [Learn more](https://www.tradescope.io/en/stable/tradeai/)
-- [x] **Edge position sizing** Calculate your win rate, risk reward ratio, the best stoploss and adjust your position size before taking a position for each specific market. [Learn more](https://www.tradescope.io/en/stable/edge/).
+- [X] **Adaptive prediction modeling**: Build a smart strategy with TradeAI that self-trains to the market via adaptive machine learning methods. [Learn more](https://www.freqtrade.io/en/stable/tradeai/)
+- [x] **Edge position sizing** Calculate your win rate, risk reward ratio, the best stoploss and adjust your position size before taking a position for each specific market. [Learn more](https://www.freqtrade.io/en/stable/edge/).
 - [x] **Whitelist crypto-currencies**: Select which crypto-currency you want to trade or use dynamic whitelists.
 - [x] **Blacklist crypto-currencies**: Select which crypto-currency you want to avoid.
 - [x] **Builtin WebUI**: Builtin web UI to manage your bot.
@@ -75,9 +75,9 @@ Please find the complete documentation on the [tradescope website](https://www.t
 
 ## Quick start
 
-Please refer to the [Docker Quickstart documentation](https://www.tradescope.io/en/stable/docker_quickstart/) on how to get started quickly.
+Please refer to the [Docker Quickstart documentation](https://www.freqtrade.io/en/stable/docker_quickstart/) on how to get started quickly.
 
-For further (native) installation methods, please refer to the [Installation documentation page](https://www.tradescope.io/en/stable/installation/).
+For further (native) installation methods, please refer to the [Installation documentation page](https://www.freqtrade.io/en/stable/installation/).
 
 ## Basic Usage
 
@@ -127,7 +127,7 @@ optional arguments:
 
 ### Telegram RPC commands
 
-Telegram is not mandatory. However, this is a great way to control your bot. More details and the full command list on the [documentation](https://www.tradescope.io/en/latest/telegram-usage/)
+Telegram is not mandatory. However, this is a great way to control your bot. More details and the full command list on the [documentation](https://www.freqtrade.io/en/latest/telegram-usage/)
 
 - `/start`: Starts the trader.
 - `/stop`: Stops the trader.

@@ -37,7 +37,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/khulnasoft/tradescope"
-Documentation = "https://tradescope.io"
+Documentation = "https://freqtrade.io"
 "Bug Tracker" = "https://github.com/khulnasoft/tradescope/issues"
 
 

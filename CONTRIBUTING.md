@@ -16,7 +16,7 @@ If you are unsure, discuss the feature on our [discord server](https://discord.g
 
 ## Getting started
 
-Best start by reading the [documentation](https://www.tradescope.io/) to get a feel for what is possible with the bot, or head straight to the [Developer-documentation](https://www.tradescope.io/en/latest/developer/) (WIP) which should help you getting started.
+Best start by reading the [documentation](https://www.freqtrade.io/) to get a feel for what is possible with the bot, or head straight to the [Developer-documentation](https://www.freqtrade.io/en/latest/developer/) (WIP) which should help you getting started.
 
 ## Before sending the PR
 
