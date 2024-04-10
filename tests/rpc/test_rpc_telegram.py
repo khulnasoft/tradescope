@@ -99,7 +99,7 @@ class DummyCls(Telegram):
         raise Exception('test')
 
 
-def get_telegram_testobject(mocker, default_conf, mock=True, ftbot=None):
+def get_telegram_testobject(mocker, default_conf, mock=True, tsbot=None):
     msg_mock = AsyncMock()
     if mock:
         mocker.patch.multiple(
@@ -108,14 +108,14 @@ def get_telegram_testobject(mocker, default_conf, mock=True, ftbot=None):
             _send_msg=msg_mock,
             _start_thread=MagicMock(),
         )
-    if not ftbot:
-        ftbot = get_patched_tradescopebot(mocker, default_conf)
-    rpc = RPC(ftbot)
+    if not tsbot:
+        tsbot = get_patched_tradescopebot(mocker, default_conf)
+    rpc = RPC(tsbot)
     telegram = Telegram(rpc, default_conf)
     telegram._loop = MagicMock()
     patch_eventloop_threading(telegram)
 
-    return telegram, ftbot, msg_mock
+    return telegram, tsbot, msg_mock
 
 
 def test_telegram__init__(default_conf, mocker) -> None:

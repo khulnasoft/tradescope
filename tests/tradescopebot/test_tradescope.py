@@ -1658,16 +1658,16 @@ def test_close_trade(
 
 
 def test_bot_loop_start_called_once(mocker, default_conf_usdt, caplog):
-    ftbot = get_patched_tradescopebot(mocker, default_conf_usdt)
+    tsbot = get_patched_tradescopebot(mocker, default_conf_usdt)
     mocker.patch('tradescope.tradescopebot.TradescopeBot.create_trade')
-    patch_get_signal(ftbot)
-    ftbot.strategy.bot_loop_start = MagicMock(side_effect=ValueError)
-    ftbot.strategy.analyze = MagicMock()
+    patch_get_signal(tsbot)
+    tsbot.strategy.bot_loop_start = MagicMock(side_effect=ValueError)
+    tsbot.strategy.analyze = MagicMock()
 
-    ftbot.process()
+    tsbot.process()
     assert log_has_re(r'Strategy caused the following exception.*', caplog)
-    assert ftbot.strategy.bot_loop_start.call_count == 1
-    assert ftbot.strategy.analyze.call_count == 1
+    assert tsbot.strategy.bot_loop_start.call_count == 1
+    assert tsbot.strategy.analyze.call_count == 1
 
 
 @pytest.mark.parametrize("is_short", [False, True])
@@ -4154,14 +4154,14 @@ def test_startup_trade_reinit(default_conf_usdt, edge_conf, mocker):
     reinit_mock = MagicMock()
     mocker.patch('tradescope.persistence.Trade.stoploss_reinitialization', reinit_mock)
 
-    ftbot = get_patched_tradescopebot(mocker, default_conf_usdt)
-    ftbot.startup()
+    tsbot = get_patched_tradescopebot(mocker, default_conf_usdt)
+    tsbot.startup()
     assert reinit_mock.call_count == 1
 
     reinit_mock.reset_mock()
 
-    ftbot = get_patched_tradescopebot(mocker, edge_conf)
-    ftbot.startup()
+    tsbot = get_patched_tradescopebot(mocker, edge_conf)
+    tsbot.startup()
     assert reinit_mock.call_count == 0
 
 

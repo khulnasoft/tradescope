@@ -54,8 +54,8 @@ def botclient(default_conf, mocker):
                                         "ws_token": _TEST_WS_TOKEN
                                         }})
 
-    ftbot = get_patched_tradescopebot(mocker, default_conf)
-    rpc = RPC(ftbot)
+    tsbot = get_patched_tradescopebot(mocker, default_conf)
+    rpc = RPC(tsbot)
     mocker.patch('tradescope.rpc.api_server.ApiServer.start_api', MagicMock())
     apiserver = None
     try:
@@ -64,7 +64,7 @@ def botclient(default_conf, mocker):
         # We need to use the TestClient as a context manager to
         # handle lifespan events correctly
         with TestClient(apiserver.app) as client:
-            yield ftbot, client
+            yield tsbot, client
         # Cleanup ... ?
     finally:
         if apiserver:
@@ -113,7 +113,7 @@ def assert_response(response, expected_code=200, needs_cors=True):
 
 
 def test_api_not_found(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/invalid_url")
     assert_response(rc, 404)
@@ -121,7 +121,7 @@ def test_api_not_found(botclient):
 
 
 def test_api_ui_fallback(botclient, mocker):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, "/favicon.ico")
     assert rc.status_code == 200
@@ -151,7 +151,7 @@ def test_api_ui_fallback(botclient, mocker):
 
 
 def test_api_ui_version(botclient, mocker):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     mocker.patch('tradescope.commands.deploy_commands.read_ui_version', return_value='0.1.2')
     rc = client_get(client, "/ui_version")
@@ -180,7 +180,7 @@ def test_api_auth():
 
 
 def test_api_ws_auth(botclient):
-    ftbot, client = botclient
+    tsbot, client = botclient
 
     def url(token):
         return f"/api/v1/message/ws?token={token}"
@@ -194,14 +194,14 @@ def test_api_ws_auth(botclient):
     with client.websocket_connect(url(good_token)) as websocket:
         pass
 
-    jwt_secret = ftbot.config['api_server'].get('jwt_secret_key', 'super-secret')
+    jwt_secret = tsbot.config['api_server'].get('jwt_secret_key', 'super-secret')
     jwt_token = create_token({'identity': {'u': 'Tradescope'}}, jwt_secret)
     with client.websocket_connect(url(jwt_token)) as websocket:
         pass
 
 
 def test_api_unauthorized(botclient):
-    ftbot, client = botclient
+    tsbot, client = botclient
     rc = client.get(f"{BASE_URI}/ping")
     assert_response(rc, needs_cors=False)
     assert rc.json() == {'status': 'pong'}
@@ -212,20 +212,20 @@ def test_api_unauthorized(botclient):
     assert rc.json() == {'detail': 'Unauthorized'}
 
     # Change only username
-    ftbot.config['api_server']['username'] = 'Ftrader'
+    tsbot.config['api_server']['username'] = 'Ftrader'
     rc = client_get(client, f"{BASE_URI}/version")
     assert_response(rc, 401)
     assert rc.json() == {'detail': 'Unauthorized'}
 
     # Change only password
-    ftbot.config['api_server']['username'] = _TEST_USER
-    ftbot.config['api_server']['password'] = 'WrongPassword'
+    tsbot.config['api_server']['username'] = _TEST_USER
+    tsbot.config['api_server']['password'] = 'WrongPassword'
     rc = client_get(client, f"{BASE_URI}/version")
     assert_response(rc, 401)
     assert rc.json() == {'detail': 'Unauthorized'}
 
-    ftbot.config['api_server']['username'] = 'Ftrader'
-    ftbot.config['api_server']['password'] = 'WrongPassword'
+    tsbot.config['api_server']['username'] = 'Ftrader'
+    tsbot.config['api_server']['password'] = 'WrongPassword'
 
     rc = client_get(client, f"{BASE_URI}/version")
     assert_response(rc, 401)
@@ -233,7 +233,7 @@ def test_api_unauthorized(botclient):
 
 
 def test_api_token_login(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
     rc = client.post(f"{BASE_URI}/token/login",
                      data=None,
                      headers={'Authorization': _basic_auth_str('WRONG_USER', 'WRONG_PASS'),
@@ -252,7 +252,7 @@ def test_api_token_login(botclient):
 
 
 def test_api_token_refresh(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
     rc = client_post(client, f"{BASE_URI}/token/login")
     assert_response(rc)
     rc = client.post(f"{BASE_URI}/token/refresh",
@@ -265,12 +265,12 @@ def test_api_token_refresh(botclient):
 
 
 def test_api_stop_workflow(botclient):
-    ftbot, client = botclient
-    assert ftbot.state == State.RUNNING
+    tsbot, client = botclient
+    assert tsbot.state == State.RUNNING
     rc = client_post(client, f"{BASE_URI}/stop")
     assert_response(rc)
     assert rc.json() == {'status': 'stopping trader ...'}
-    assert ftbot.state == State.STOPPED
+    assert tsbot.state == State.STOPPED
 
     # Stop bot again
     rc = client_post(client, f"{BASE_URI}/stop")
@@ -281,7 +281,7 @@ def test_api_stop_workflow(botclient):
     rc = client_post(client, f"{BASE_URI}/start")
     assert_response(rc)
     assert rc.json() == {'status': 'starting trader ...'}
-    assert ftbot.state == State.RUNNING
+    assert tsbot.state == State.RUNNING
 
     # Call start again
     rc = client_post(client, f"{BASE_URI}/start")
@@ -451,40 +451,40 @@ def test_api_cleanup(default_conf, mocker, caplog):
 
 
 def test_api_reloadconf(botclient):
-    ftbot, client = botclient
+    tsbot, client = botclient
 
     rc = client_post(client, f"{BASE_URI}/reload_config")
     assert_response(rc)
     assert rc.json() == {'status': 'Reloading config ...'}
-    assert ftbot.state == State.RELOAD_CONFIG
+    assert tsbot.state == State.RELOAD_CONFIG
 
 
 def test_api_stopentry(botclient):
-    ftbot, client = botclient
-    assert ftbot.config['max_open_trades'] != 0
+    tsbot, client = botclient
+    assert tsbot.config['max_open_trades'] != 0
 
     rc = client_post(client, f"{BASE_URI}/stopbuy")
     assert_response(rc)
     assert rc.json() == {
         'status': 'No more entries will occur from now. Run /reload_config to reset.'}
-    assert ftbot.config['max_open_trades'] == 0
+    assert tsbot.config['max_open_trades'] == 0
 
     rc = client_post(client, f"{BASE_URI}/stopentry")
     assert_response(rc)
     assert rc.json() == {
         'status': 'No more entries will occur from now. Run /reload_config to reset.'}
-    assert ftbot.config['max_open_trades'] == 0
+    assert tsbot.config['max_open_trades'] == 0
 
 
 def test_api_balance(botclient, mocker, rpc_balance, tickers):
-    ftbot, client = botclient
+    tsbot, client = botclient
 
-    ftbot.config['dry_run'] = False
+    tsbot.config['dry_run'] = False
     mocker.patch(f'{EXMS}.get_balances', return_value=rpc_balance)
     mocker.patch(f'{EXMS}.get_tickers', tickers)
     mocker.patch(f'{EXMS}.get_valid_pair_combination',
                  side_effect=lambda a, b: f"{a}/{b}")
-    ftbot.wallets.update()
+    tsbot.wallets.update()
 
     rc = client_get(client, f"{BASE_URI}/balance")
     assert_response(rc)
@@ -516,8 +516,8 @@ def test_api_balance(botclient, mocker, rpc_balance, tickers):
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_api_count(botclient, mocker, ticker, fee, markets, is_short):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -538,13 +538,13 @@ def test_api_count(botclient, mocker, ticker, fee, markets, is_short):
     assert rc.json()["current"] == 4
     assert rc.json()["max"] == 1
 
-    ftbot.config['max_open_trades'] = float('inf')
+    tsbot.config['max_open_trades'] = float('inf')
     rc = client_get(client, f"{BASE_URI}/count")
     assert rc.json()["max"] == -1
 
 
 def test_api_locks(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/locks")
     assert_response(rc)
@@ -589,8 +589,8 @@ def test_api_locks(botclient):
 
 
 def test_api_show_config(botclient):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
 
     rc = client_get(client, f"{BASE_URI}/show_config")
     assert_response(rc)
@@ -614,8 +614,8 @@ def test_api_show_config(botclient):
 
 
 def test_api_daily(botclient, mocker, ticker, fee, markets):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -632,8 +632,8 @@ def test_api_daily(botclient, mocker, ticker, fee, markets):
 
 
 def test_api_weekly(botclient, mocker, ticker, fee, markets, time_machine):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -653,8 +653,8 @@ def test_api_weekly(botclient, mocker, ticker, fee, markets, time_machine):
 
 
 def test_api_monthly(botclient, mocker, ticker, fee, markets, time_machine):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -674,8 +674,8 @@ def test_api_monthly(botclient, mocker, ticker, fee, markets, time_machine):
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_api_trades(botclient, mocker, fee, markets, is_short):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     mocker.patch.multiple(
         EXMS,
         markets=PropertyMock(return_value=markets)
@@ -705,8 +705,8 @@ def test_api_trades(botclient, mocker, fee, markets, is_short):
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_api_trade_single(botclient, mocker, fee, ticker, markets, is_short):
-    ftbot, client = botclient
-    patch_get_signal(ftbot, enter_long=not is_short, enter_short=is_short)
+    tsbot, client = botclient
+    patch_get_signal(tsbot, enter_long=not is_short, enter_short=is_short)
     mocker.patch.multiple(
         EXMS,
         markets=PropertyMock(return_value=markets),
@@ -727,8 +727,8 @@ def test_api_trade_single(botclient, mocker, fee, ticker, markets, is_short):
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_api_delete_trade(botclient, mocker, fee, markets, is_short):
-    ftbot, client = botclient
-    patch_get_signal(ftbot, enter_long=not is_short, enter_short=is_short)
+    tsbot, client = botclient
+    patch_get_signal(tsbot, enter_long=not is_short, enter_short=is_short)
     stoploss_mock = MagicMock()
     cancel_mock = MagicMock()
     mocker.patch.multiple(
@@ -740,7 +740,7 @@ def test_api_delete_trade(botclient, mocker, fee, markets, is_short):
 
     create_mock_trades(fee, is_short=is_short)
 
-    ftbot.strategy.order_types['stoploss_on_exchange'] = True
+    tsbot.strategy.order_types['stoploss_on_exchange'] = True
     trades = Trade.session.scalars(select(Trade)).all()
     Trade.commit()
     assert len(trades) > 2
@@ -771,8 +771,8 @@ def test_api_delete_trade(botclient, mocker, fee, markets, is_short):
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_api_delete_open_order(botclient, mocker, fee, markets, ticker, is_short):
-    ftbot, client = botclient
-    patch_get_signal(ftbot, enter_long=not is_short, enter_short=is_short)
+    tsbot, client = botclient
+    patch_get_signal(tsbot, enter_long=not is_short, enter_short=is_short)
     stoploss_mock = MagicMock()
     cancel_mock = MagicMock()
     mocker.patch.multiple(
@@ -809,11 +809,11 @@ def test_api_delete_open_order(botclient, mocker, fee, markets, ticker, is_short
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_api_trade_reload_trade(botclient, mocker, fee, markets, ticker, is_short):
-    ftbot, client = botclient
-    patch_get_signal(ftbot, enter_long=not is_short, enter_short=is_short)
+    tsbot, client = botclient
+    patch_get_signal(tsbot, enter_long=not is_short, enter_short=is_short)
     stoploss_mock = MagicMock()
     cancel_mock = MagicMock()
-    ftbot.handle_onexchange_order = MagicMock()
+    tsbot.handle_onexchange_order = MagicMock()
     mocker.patch.multiple(
         EXMS,
         markets=PropertyMock(return_value=markets),
@@ -825,17 +825,17 @@ def test_api_trade_reload_trade(botclient, mocker, fee, markets, ticker, is_shor
     rc = client_post(client, f"{BASE_URI}/trades/10/reload")
     assert_response(rc, 502)
     assert 'Could not find trade with id 10.' in rc.json()['error']
-    assert ftbot.handle_onexchange_order.call_count == 0
+    assert tsbot.handle_onexchange_order.call_count == 0
 
     create_mock_trades(fee, is_short=is_short)
     Trade.commit()
 
     rc = client_post(client, f"{BASE_URI}/trades/5/reload")
-    assert ftbot.handle_onexchange_order.call_count == 1
+    assert tsbot.handle_onexchange_order.call_count == 1
 
 
 def test_api_logs(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
     rc = client_get(client, f"{BASE_URI}/logs")
     assert_response(rc)
     assert len(rc.json()) == 2
@@ -867,8 +867,8 @@ def test_api_logs(botclient):
 
 
 def test_api_edge_disabled(botclient, mocker, ticker, fee, markets):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -933,8 +933,8 @@ def test_api_edge_disabled(botclient, mocker, ticker, fee, markets):
     )
 ])
 def test_api_profit(botclient, mocker, ticker, fee, markets, is_short, expected):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -1002,8 +1002,8 @@ def test_api_profit(botclient, mocker, ticker, fee, markets, is_short, expected)
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_api_stats(botclient, mocker, ticker, fee, markets, is_short):
-    ftbot, client = botclient
-    patch_get_signal(ftbot, enter_long=not is_short, enter_short=is_short)
+    tsbot, client = botclient
+    patch_get_signal(tsbot, enter_long=not is_short, enter_short=is_short)
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -1030,8 +1030,8 @@ def test_api_stats(botclient, mocker, ticker, fee, markets, is_short):
 
 
 def test_api_performance(botclient, fee):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
 
     trade = Trade(
         pair='LTC/ETH',
@@ -1077,8 +1077,8 @@ def test_api_performance(botclient, fee):
 
 
 def test_api_entries(botclient, fee):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     # Empty
     rc = client_get(client, f"{BASE_URI}/entries")
     assert_response(rc)
@@ -1096,8 +1096,8 @@ def test_api_entries(botclient, fee):
 
 
 def test_api_exits(botclient, fee):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     # Empty
     rc = client_get(client, f"{BASE_URI}/exits")
     assert_response(rc)
@@ -1115,8 +1115,8 @@ def test_api_exits(botclient, fee):
 
 
 def test_api_mix_tag(botclient, fee):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     # Empty
     rc = client_get(client, f"{BASE_URI}/mix_tags")
     assert_response(rc)
@@ -1139,8 +1139,8 @@ def test_api_mix_tag(botclient, fee):
      (False, 1.099e-05, 15.1668225)])
 def test_api_status(botclient, mocker, ticker, fee, markets, is_short,
                     current_rate, open_trade_value):
-    ftbot, client = botclient
-    patch_get_signal(ftbot)
+    tsbot, client = botclient
+    patch_get_signal(tsbot)
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -1243,7 +1243,7 @@ def test_api_status(botclient, mocker, ticker, fee, markets, is_short,
 
 
 def test_api_version(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/version")
     assert_response(rc)
@@ -1251,7 +1251,7 @@ def test_api_version(botclient):
 
 
 def test_api_blacklist(botclient, mocker):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/blacklist")
     assert_response(rc)
@@ -1318,7 +1318,7 @@ def test_api_blacklist(botclient, mocker):
 
 
 def test_api_whitelist(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/whitelist")
     assert_response(rc)
@@ -1334,7 +1334,7 @@ def test_api_whitelist(botclient):
     'forceenter',
 ])
 def test_api_force_entry(botclient, mocker, fee, endpoint):
-    ftbot, client = botclient
+    tsbot, client = botclient
 
     rc = client_post(client, f"{BASE_URI}/{endpoint}",
                      data={"pair": "ETH/BTC"})
@@ -1342,7 +1342,7 @@ def test_api_force_entry(botclient, mocker, fee, endpoint):
     assert rc.json() == {"error": f"Error querying /api/v1/{endpoint}: Force_entry not enabled."}
 
     # enable forcebuy
-    ftbot.config['force_entry_enable'] = True
+    tsbot.config['force_entry_enable'] = True
 
     fbuy_mock = MagicMock(return_value=None)
     mocker.patch("tradescope.rpc.rpc.RPC._rpc_force_entry", fbuy_mock)
@@ -1442,7 +1442,7 @@ def test_api_force_entry(botclient, mocker, fee, endpoint):
 
 
 def test_api_forceexit(botclient, mocker, ticker, fee, markets):
-    ftbot, client = botclient
+    tsbot, client = botclient
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -1451,7 +1451,7 @@ def test_api_forceexit(botclient, mocker, ticker, fee, markets):
         markets=PropertyMock(return_value=markets),
         _dry_is_price_crossed=MagicMock(return_value=True),
     )
-    patch_get_signal(ftbot)
+    patch_get_signal(tsbot)
 
     rc = client_post(client, f"{BASE_URI}/forceexit",
                      data={"tradeid": "1"})
@@ -1483,7 +1483,7 @@ def test_api_forceexit(botclient, mocker, ticker, fee, markets):
 
 
 def test_api_pair_candles(botclient, ohlcv_history):
-    ftbot, client = botclient
+    tsbot, client = botclient
     timeframe = '5m'
     amount = 3
 
@@ -1513,7 +1513,7 @@ def test_api_pair_candles(botclient, ohlcv_history):
     ohlcv_history['enter_short'] = 0
     ohlcv_history['exit_short'] = 0
 
-    ftbot.dataprovider._set_cached_df("XRP/BTC", timeframe, ohlcv_history, CandleType.SPOT)
+    tsbot.dataprovider._set_cached_df("XRP/BTC", timeframe, ohlcv_history, CandleType.SPOT)
 
     rc = client_get(client,
                     f"{BASE_URI}/pair_candles?limit={amount}&pair=XRP%2FBTC&timeframe={timeframe}")
@@ -1557,7 +1557,7 @@ def test_api_pair_candles(botclient, ohlcv_history):
     ohlcv_history['date1'] = ohlcv_history['date']
     ohlcv_history.at[0, 'date1'] = pd.NaT
 
-    ftbot.dataprovider._set_cached_df("XRP/BTC", timeframe, ohlcv_history, CandleType.SPOT)
+    tsbot.dataprovider._set_cached_df("XRP/BTC", timeframe, ohlcv_history, CandleType.SPOT)
     rc = client_get(client,
                     f"{BASE_URI}/pair_candles?limit={amount}&pair=XRP%2FBTC&timeframe={timeframe}")
     assert_response(rc)
@@ -1574,7 +1574,7 @@ def test_api_pair_candles(botclient, ohlcv_history):
 
 
 def test_api_pair_history(botclient, mocker):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
     timeframe = '5m'
     lfm = mocker.patch('tradescope.strategy.interface.IStrategy.load_tradeAI_model')
     # No pair
@@ -1645,23 +1645,23 @@ def test_api_pair_history(botclient, mocker):
 
 
 def test_api_plot_config(botclient, mocker):
-    ftbot, client = botclient
+    tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/plot_config")
     assert_response(rc)
     assert rc.json() == {}
 
-    ftbot.strategy.plot_config = {
+    tsbot.strategy.plot_config = {
         'main_plot': {'sma': {}},
         'subplots': {'RSI': {'rsi': {'color': 'red'}}}
     }
     rc = client_get(client, f"{BASE_URI}/plot_config")
     assert_response(rc)
-    assert rc.json() == ftbot.strategy.plot_config
+    assert rc.json() == tsbot.strategy.plot_config
     assert isinstance(rc.json()['main_plot'], dict)
     assert isinstance(rc.json()['subplots'], dict)
 
-    ftbot.strategy.plot_config = {'main_plot': {'sma': {}}}
+    tsbot.strategy.plot_config = {'main_plot': {'sma': {}}}
     rc = client_get(client, f"{BASE_URI}/plot_config")
     assert_response(rc)
 
@@ -1689,8 +1689,8 @@ def test_api_plot_config(botclient, mocker):
 
 
 def test_api_strategies(botclient, tmp_path):
-    ftbot, client = botclient
-    ftbot.config['user_data_dir'] = tmp_path
+    tsbot, client = botclient
+    tsbot.config['user_data_dir'] = tmp_path
 
     rc = client_get(client, f"{BASE_URI}/strategies")
 
@@ -1714,7 +1714,7 @@ def test_api_strategies(botclient, tmp_path):
 
 
 def test_api_strategy(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/strategy/{CURRENT_TEST_STRATEGY}")
 
@@ -1733,7 +1733,7 @@ def test_api_strategy(botclient):
 
 
 def test_api_exchanges(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/exchanges")
     assert_response(rc)
@@ -1774,8 +1774,8 @@ def test_api_exchanges(botclient):
 
 
 def test_api_tradeaimodels(botclient, tmp_path, mocker):
-    ftbot, client = botclient
-    ftbot.config['user_data_dir'] = tmp_path
+    tsbot, client = botclient
+    tsbot.config['user_data_dir'] = tmp_path
     mocker.patch(
         "tradescope.resolvers.tradeaimodel_resolver.TradeaiModelResolver.search_all_objects",
         return_value=[
@@ -1814,15 +1814,15 @@ def test_api_tradeaimodels(botclient, tmp_path, mocker):
 
 
 def test_api_pairlists_available(botclient, tmp_path):
-    ftbot, client = botclient
-    ftbot.config['user_data_dir'] = tmp_path
+    tsbot, client = botclient
+    tsbot.config['user_data_dir'] = tmp_path
 
     rc = client_get(client, f"{BASE_URI}/pairlists/available")
 
     assert_response(rc, 503)
     assert rc.json()['detail'] == 'Bot is not in the correct state.'
 
-    ftbot.config['runmode'] = RunMode.WEBSERVER
+    tsbot.config['runmode'] = RunMode.WEBSERVER
 
     rc = client_get(client, f"{BASE_URI}/pairlists/available")
     assert_response(rc)
@@ -1843,15 +1843,15 @@ def test_api_pairlists_available(botclient, tmp_path):
 
 
 def test_api_pairlists_evaluate(botclient, tmp_path, mocker):
-    ftbot, client = botclient
-    ftbot.config['user_data_dir'] = tmp_path
+    tsbot, client = botclient
+    tsbot.config['user_data_dir'] = tmp_path
 
     rc = client_get(client, f"{BASE_URI}/pairlists/evaluate/randomJob")
 
     assert_response(rc, 503)
     assert rc.json()['detail'] == 'Bot is not in the correct state.'
 
-    ftbot.config['runmode'] = RunMode.WEBSERVER
+    tsbot.config['runmode'] = RunMode.WEBSERVER
 
     rc = client_get(client, f"{BASE_URI}/pairlists/evaluate/randomJob")
     assert_response(rc, 404)
@@ -1930,7 +1930,7 @@ def test_api_pairlists_evaluate(botclient, tmp_path, mocker):
 
 
 def test_list_available_pairs(botclient):
-    ftbot, client = botclient
+    tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/available_pairs")
 
@@ -1954,7 +1954,7 @@ def test_list_available_pairs(botclient):
     assert rc.json()['pairs'] == ['XRP/ETH']
     assert len(rc.json()['pair_interval']) == 1
 
-    ftbot.config['trading_mode'] = 'futures'
+    tsbot.config['trading_mode'] = 'futures'
     rc = client_get(
         client, f"{BASE_URI}/available_pairs?timeframe=1h")
     assert_response(rc)
@@ -1970,7 +1970,7 @@ def test_list_available_pairs(botclient):
 
 
 def test_sysinfo(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/sysinfo")
     assert_response(rc)
@@ -1981,7 +1981,7 @@ def test_sysinfo(botclient):
 
 def test_api_backtesting(botclient, mocker, fee, caplog, tmp_path):
     try:
-        ftbot, client = botclient
+        tsbot, client = botclient
         mocker.patch(f'{EXMS}.get_fee', fee)
 
         rc = client_get(client, f"{BASE_URI}/backtest")
@@ -1989,7 +1989,7 @@ def test_api_backtesting(botclient, mocker, fee, caplog, tmp_path):
         assert_response(rc, 503)
         assert rc.json()['detail'] == 'Bot is not in the correct state.'
 
-        ftbot.config['runmode'] = RunMode.WEBSERVER
+        tsbot.config['runmode'] = RunMode.WEBSERVER
         # Backtesting not started yet
         rc = client_get(client, f"{BASE_URI}/backtest")
         assert_response(rc)
@@ -2007,11 +2007,11 @@ def test_api_backtesting(botclient, mocker, fee, caplog, tmp_path):
         assert result['status'] == 'reset'
         assert not result['running']
         assert result['status_msg'] == 'Backtest reset'
-        ftbot.config['export'] = 'trades'
-        ftbot.config['backtest_cache'] = 'day'
-        ftbot.config['user_data_dir'] = tmp_path
-        ftbot.config['exportfilename'] = tmp_path / "backtest_results"
-        ftbot.config['exportfilename'].mkdir()
+        tsbot.config['export'] = 'trades'
+        tsbot.config['backtest_cache'] = 'day'
+        tsbot.config['user_data_dir'] = tmp_path
+        tsbot.config['exportfilename'] = tmp_path / "backtest_results"
+        tsbot.config['exportfilename'].mkdir()
 
         # start backtesting
         data = {
@@ -2118,7 +2118,7 @@ def test_api_backtesting(botclient, mocker, fee, caplog, tmp_path):
 
 
 def test_api_backtest_history(botclient, mocker, testdatadir):
-    ftbot, client = botclient
+    tsbot, client = botclient
     mocker.patch('tradescope.data.btanalysis._get_backtest_files',
                  return_value=[
                      testdatadir / 'backtest_results/backtest-result_multistrat.json',
@@ -2129,8 +2129,8 @@ def test_api_backtest_history(botclient, mocker, testdatadir):
     assert_response(rc, 503)
     assert rc.json()['detail'] == 'Bot is not in the correct state.'
 
-    ftbot.config['user_data_dir'] = testdatadir
-    ftbot.config['runmode'] = RunMode.WEBSERVER
+    tsbot.config['user_data_dir'] = testdatadir
+    tsbot.config['runmode'] = RunMode.WEBSERVER
 
     rc = client_get(client, f"{BASE_URI}/backtest/history")
     assert_response(rc)
@@ -2153,7 +2153,7 @@ def test_api_backtest_history(botclient, mocker, testdatadir):
 
 
 def test_api_delete_backtest_history_entry(botclient, tmp_path: Path):
-    ftbot, client = botclient
+    tsbot, client = botclient
 
     # Create a temporary directory and file
     bt_results_base = tmp_path / "backtest_results"
@@ -2167,8 +2167,8 @@ def test_api_delete_backtest_history_entry(botclient, tmp_path: Path):
     assert_response(rc, 503)
     assert rc.json()['detail'] == 'Bot is not in the correct state.'
 
-    ftbot.config['user_data_dir'] = tmp_path
-    ftbot.config['runmode'] = RunMode.WEBSERVER
+    tsbot.config['user_data_dir'] = tmp_path
+    tsbot.config['runmode'] = RunMode.WEBSERVER
     rc = client_delete(client, f"{BASE_URI}/backtest/history/randomFile.json")
     assert rc.status_code == 404
     assert rc.json()['detail'] == 'File not found.'
@@ -2181,7 +2181,7 @@ def test_api_delete_backtest_history_entry(botclient, tmp_path: Path):
 
 
 def test_api_patch_backtest_history_entry(botclient, tmp_path: Path):
-    ftbot, client = botclient
+    tsbot, client = botclient
 
     # Create a temporary directory and file
     bt_results_base = tmp_path / "backtest_results"
@@ -2203,8 +2203,8 @@ def test_api_patch_backtest_history_entry(botclient, tmp_path: Path):
     rc = client_patch(client, f"{BASE_URI}/backtest/history/randomFile.json")
     assert_response(rc, 503)
 
-    ftbot.config['user_data_dir'] = tmp_path
-    ftbot.config['runmode'] = RunMode.WEBSERVER
+    tsbot.config['user_data_dir'] = tmp_path
+    tsbot.config['runmode'] = RunMode.WEBSERVER
 
     rc = client_patch(client, f"{BASE_URI}/backtest/history/randomFile.json", {
         "strategy": CURRENT_TEST_STRATEGY,
@@ -2250,7 +2250,7 @@ def test_api_patch_backtest_history_entry(botclient, tmp_path: Path):
 
 
 def test_health(botclient):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
 
     rc = client_get(client, f"{BASE_URI}/health")
 
@@ -2261,7 +2261,7 @@ def test_health(botclient):
 
 
 def test_api_ws_subscribe(botclient, mocker):
-    _ftbot, client = botclient
+    _tsbot, client = botclient
     ws_url = f"/api/v1/message/ws?token={_TEST_WS_TOKEN}"
 
     sub_mock = mocker.patch('tradescope.rpc.api_server.ws.WebSocketChannel.set_subscriptions')
@@ -2284,7 +2284,7 @@ def test_api_ws_subscribe(botclient, mocker):
 def test_api_ws_requests(botclient, caplog):
     caplog.set_level(logging.DEBUG)
 
-    _ftbot, client = botclient
+    _tsbot, client = botclient
     ws_url = f"/api/v1/message/ws?token={_TEST_WS_TOKEN}"
 
     # Test whitelist request
