@@ -222,7 +222,7 @@ class Backtesting:
         # Update can_short flag
         self._can_short = self.trading_mode != TradingMode.SPOT and strategy.can_short
 
-        self.strategy.ft_bot_start()
+        self.strategy.ts_bot_start()
 
     def _load_protections(self, strategy: IStrategy):
         if self.config.get('enable_protections', False):
@@ -380,7 +380,7 @@ class Backtesting:
             if not pair_data.empty:
                 # Cleanup from prior runs
                 pair_data.drop(HEADERS[5:] + ['buy', 'sell'], axis=1, errors='ignore')
-            df_analyzed = self.strategy.ft_advise_signals(pair_data, {'pair': pair})
+            df_analyzed = self.strategy.ts_advise_signals(pair_data, {'pair': pair})
             # Update dataprovider cache
             self.dataprovider._set_cached_df(
                 pair, self.timeframe, df_analyzed, self.config['candle_type_def'])
@@ -591,7 +591,7 @@ class Backtesting:
 
     def _call_adjust_stop(self, current_date: datetime, trade: LocalTrade, current_rate: float):
         profit = trade.calc_profit_ratio(current_rate)
-        self.strategy.ft_stoploss_adjust(current_rate, trade,  # type: ignore
+        self.strategy.ts_stoploss_adjust(current_rate, trade,  # type: ignore
                                          current_date, profit, 0, after_fill=True)
 
     def _try_close_open_order(
@@ -601,7 +601,7 @@ class Backtesting:
         Check if an order is open and if it should've filled.
         :return:  True if the order filled.
         """
-        if order and self._get_order_filled(order.ft_price, row):
+        if order and self._get_order_filled(order.ts_price, row):
             order.close_bt_order(current_date, trade)
             self._run_funding_fees(trade, current_date, force=True)
             strategy_safe_wrapper(
@@ -610,7 +610,7 @@ class Backtesting:
                 pair=trade.pair, trade=trade,  # type: ignore[arg-type]
                 order=order, current_time=current_date)
 
-            if not (order.ft_order_side == trade.exit_side and order.safe_amount == trade.amount):
+            if not (order.ts_order_side == trade.exit_side and order.safe_amount == trade.amount):
                 # trade is still open
                 trade.set_liquidation_price(self.exchange.get_liquidation_price(
                     pair=trade.pair,
@@ -621,7 +621,7 @@ class Backtesting:
                     leverage=trade.leverage,
                     wallet_balance=trade.stake_amount,
                 ))
-                self._call_adjust_stop(current_date, trade, order.ft_price)
+                self._call_adjust_stop(current_date, trade, order.ts_price)
                 # pass
             return True
         return False
@@ -704,25 +704,25 @@ class Backtesting:
                                               self.precision_mode, trade.contract_size)
         order = Order(
             id=self.order_id_counter,
-            ft_trade_id=trade.id,
+            ts_trade_id=trade.id,
             order_date=exit_candle_time,
             order_update_date=exit_candle_time,
-            ft_is_open=True,
-            ft_pair=trade.pair,
+            ts_is_open=True,
+            ts_pair=trade.pair,
             order_id=str(self.order_id_counter),
             symbol=trade.pair,
-            ft_order_side=trade.exit_side,
+            ts_order_side=trade.exit_side,
             side=trade.exit_side,
             order_type=order_type,
             status="open",
-            ft_price=close_rate,
+            ts_price=close_rate,
             price=close_rate,
             average=close_rate,
             amount=amount,
             filled=0,
             remaining=amount,
             cost=amount * close_rate,
-            ft_order_tag=exit_reason,
+            ts_order_tag=exit_reason,
         )
         order._trade_bt = trade
         trade.orders.append(order)
@@ -941,26 +941,26 @@ class Backtesting:
 
             order = Order(
                 id=self.order_id_counter,
-                ft_trade_id=trade.id,
-                ft_is_open=True,
-                ft_pair=trade.pair,
+                ts_trade_id=trade.id,
+                ts_is_open=True,
+                ts_pair=trade.pair,
                 order_id=str(self.order_id_counter),
                 symbol=trade.pair,
-                ft_order_side=trade.entry_side,
+                ts_order_side=trade.entry_side,
                 side=trade.entry_side,
                 order_type=order_type,
                 status="open",
                 order_date=current_time,
                 order_filled_date=current_time,
                 order_update_date=current_time,
-                ft_price=propose_rate,
+                ts_price=propose_rate,
                 price=propose_rate,
                 average=propose_rate,
                 amount=amount,
                 filled=0,
                 remaining=amount,
                 cost=amount * propose_rate + trade.fee_open,
-                ft_order_tag=entry_tag,
+                ts_order_tag=entry_tag,
             )
             order._trade_bt = trade
             trade.orders.append(order)
@@ -969,7 +969,7 @@ class Backtesting:
 
         return trade
 
-    def handle_left_open(self, open_trades: Dict[str, List[LocalTrade]],
+    def handle_lets_open(self, open_trades: Dict[str, List[LocalTrade]],
                          data: Dict[str, List[Tuple]]) -> None:
         """
         Handling of left open trades at the end of backtesting
@@ -1022,7 +1022,7 @@ class Backtesting:
         Check if any open order needs to be cancelled or replaced.
         Returns True if the trade should be deleted.
         """
-        for order in [o for o in trade.orders if o.ft_is_open]:
+        for order in [o for o in trade.orders if o.ts_is_open]:
             oc = self.check_order_cancel(trade, order, current_time)
             if oc:
                 # delete trade due to order timeout
@@ -1042,7 +1042,7 @@ class Backtesting:
                 False if it's Canceled
                 None if the order is still active.
         """
-        timedout = self.strategy.ft_check_timed_out(
+        timedout = self.strategy.ts_check_timed_out(
             trade,  # type: ignore[arg-type]
             order, current_time)
         if timedout:
@@ -1073,15 +1073,15 @@ class Backtesting:
         # only check on new candles for open entry orders
         if order.side == trade.entry_side and current_time > order.order_date_utc:
             requested_rate = strategy_safe_wrapper(self.strategy.adjust_entry_price,
-                                                   default_retval=order.ft_price)(
+                                                   default_retval=order.ts_price)(
                 trade=trade,  # type: ignore[arg-type]
                 order=order, pair=trade.pair, current_time=current_time,
-                proposed_rate=row[OPEN_IDX], current_order_rate=order.ft_price,
+                proposed_rate=row[OPEN_IDX], current_order_rate=order.ts_price,
                 entry_tag=trade.enter_tag, side=trade.trade_direction
             )  # default value is current order price
 
             # cancel existing order whenever a new rate is requested (or None)
-            if requested_rate == order.ft_price:
+            if requested_rate == order.ts_price:
                 # assumption: there can't be multiple open entry orders at any given time
                 return False
             else:
@@ -1093,7 +1093,7 @@ class Backtesting:
                 self._enter_trade(pair=trade.pair, row=row, trade=trade,
                                   requested_rate=requested_rate,
                                   requested_stake=(
-                                    order.safe_remaining * order.ft_price / trade.leverage),
+                                    order.safe_remaining * order.ts_price / trade.leverage),
                                   direction='short' if trade.is_short else 'long')
                 # Delete trade if no successful entries happened (if placing the new order failed)
                 if not trade.has_open_orders and trade.nr_of_successful_entries == 0:
@@ -1192,7 +1192,7 @@ class Backtesting:
                     trade.recalc_trade_from_orders()
                 else:
                     trade.close_date = current_time
-                    trade.close(order.ft_price, show_msg=False)
+                    trade.close(order.ts_price, show_msg=False)
 
                     # logger.debug(f"{pair} - Backtesting exit {trade}")
                     LocalTrade.close_bt_trade(trade)
@@ -1292,7 +1292,7 @@ class Backtesting:
             self.progress.increment()
             current_time += self.timeframe_td
 
-        self.handle_left_open(LocalTrade.bt_trades_open_pp, data=data)
+        self.handle_lets_open(LocalTrade.bt_trades_open_pp, data=data)
         self.wallets.update()
 
         results = trade_list_to_dataframe(LocalTrade.trades)

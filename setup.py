@@ -6,7 +6,7 @@ plot = ['plotly>=4.0']
 hyperopt = [
     'scipy',
     'scikit-learn',
-    'ft-scikit-optimize>=0.9.2',
+    'ts-scikit-optimize>=0.9.2',
     'filelock',
 ]
 

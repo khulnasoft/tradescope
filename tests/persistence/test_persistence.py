@@ -620,10 +620,10 @@ def test_trade_close(fee, time_machine):
         leverage=1.0,
     )
     trade.orders.append(Order(
-        ft_order_side=trade.entry_side,
+        ts_order_side=trade.entry_side,
         order_id=f'{trade.pair}-{trade.entry_side}-{trade.open_date}',
-        ft_is_open=False,
-        ft_pair=trade.pair,
+        ts_is_open=False,
+        ts_pair=trade.pair,
         amount=trade.amount,
         filled=trade.amount,
         remaining=0,
@@ -635,10 +635,10 @@ def test_trade_close(fee, time_machine):
         order_filled_date=trade.open_date,
     ))
     trade.orders.append(Order(
-        ft_order_side=trade.exit_side,
+        ts_order_side=trade.exit_side,
         order_id=f'{trade.pair}-{trade.exit_side}-{trade.open_date}',
-        ft_is_open=False,
-        ft_pair=trade.pair,
+        ts_is_open=False,
+        ts_pair=trade.pair,
         amount=trade.amount,
         filled=trade.amount,
         remaining=0,
@@ -1955,12 +1955,12 @@ def test_update_order_from_ccxt(caplog, time_machine):
     # Most basic order return (only has orderid)
     o = Order.parse_from_ccxt_object({'id': '1234'}, 'ADA/USDT', 'buy', 20.01, 1234.6)
     assert isinstance(o, Order)
-    assert o.ft_pair == 'ADA/USDT'
-    assert o.ft_order_side == 'buy'
+    assert o.ts_pair == 'ADA/USDT'
+    assert o.ts_order_side == 'buy'
     assert o.order_id == '1234'
-    assert o.ft_price == 1234.6
-    assert o.ft_amount == 20.01
-    assert o.ft_is_open
+    assert o.ts_price == 1234.6
+    assert o.ts_amount == 20.01
+    assert o.ts_is_open
     ccxt_order = {
         'id': '1234',
         'side': 'buy',
@@ -1975,17 +1975,17 @@ def test_update_order_from_ccxt(caplog, time_machine):
     }
     o = Order.parse_from_ccxt_object(ccxt_order, 'ADA/USDT', 'buy', 20.01, 1234.6)
     assert isinstance(o, Order)
-    assert o.ft_pair == 'ADA/USDT'
-    assert o.ft_order_side == 'buy'
+    assert o.ts_pair == 'ADA/USDT'
+    assert o.ts_order_side == 'buy'
     assert o.order_id == '1234'
     assert o.order_type == 'limit'
     assert o.price == 1234.5
-    assert o.ft_price == 1234.6
-    assert o.ft_amount == 20.01
+    assert o.ts_price == 1234.6
+    assert o.ts_amount == 20.01
     assert o.filled == 9
     assert o.remaining == 11
     assert o.order_date is not None
-    assert o.ft_is_open
+    assert o.ts_is_open
     assert o.order_filled_date is None
 
     # Order is unfilled, "filled" not set
@@ -1999,7 +1999,7 @@ def test_update_order_from_ccxt(caplog, time_machine):
 
     assert o.filled == 20.0
     assert o.remaining == 0.0
-    assert not o.ft_is_open
+    assert not o.ts_is_open
     assert o.order_filled_date == start
     # Move time
     time_machine.move_to(start + timedelta(hours=1), tick=False)
@@ -2062,14 +2062,14 @@ def test_select_order(fee, is_short):
     order = trades[4].select_order(trades[4].entry_side, False)
     assert order is not None
 
-    trades[4].orders[1].ft_order_side = trades[4].exit_side
+    trades[4].orders[1].ts_order_side = trades[4].exit_side
     order = trades[4].select_order(trades[4].exit_side, True)
     assert order is not None
 
-    trades[4].orders[1].ft_order_side = 'stoploss'
+    trades[4].orders[1].ts_order_side = 'stoploss'
     order = trades[4].select_order('stoploss', None)
     assert order is not None
-    assert order.ft_order_side == 'stoploss'
+    assert order.ts_order_side == 'stoploss'
 
 
 def test_Trade_object_idem():
@@ -2184,9 +2184,9 @@ def test_recalc_trade_from_orders(fee):
 
     # Check with 1 order
     order1 = Order(
-        ft_order_side='buy',
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side='buy',
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2217,9 +2217,9 @@ def test_recalc_trade_from_orders(fee):
     o2_trade_val = o2_cost + o2_fee_cost
 
     order2 = Order(
-        ft_order_side='buy',
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side='buy',
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2251,9 +2251,9 @@ def test_recalc_trade_from_orders(fee):
     o3_trade_val = o3_cost + o3_fee_cost
 
     order3 = Order(
-        ft_order_side='buy',
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side='buy',
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2280,9 +2280,9 @@ def test_recalc_trade_from_orders(fee):
     # Just to make sure full sell orders are ignored, let's calculate one more time.
 
     sell1 = Order(
-        ft_order_side='sell',
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side='sell',
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2335,9 +2335,9 @@ def test_recalc_trade_from_orders_kucoin():
     )
     # Check with 1 order
     order1 = Order(
-        ft_order_side='buy',
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side='buy',
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2352,9 +2352,9 @@ def test_recalc_trade_from_orders_kucoin():
     )
     trade.orders.append(order1)
     order2 = Order(
-        ft_order_side='buy',
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side='buy',
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2375,9 +2375,9 @@ def test_recalc_trade_from_orders_kucoin():
     assert profit.profit_ratio == pytest.approx(0.00566035)
 
     order3 = Order(
-        ft_order_side='sell',
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side='sell',
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2427,9 +2427,9 @@ def test_recalc_trade_from_orders_ignores_bad_orders(fee, is_short):
     trade.update_fee(o1_fee_cost, 'BNB', fee.return_value, entry_side)
     # Check with 1 order
     order1 = Order(
-        ft_order_side=entry_side,
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side=entry_side,
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2454,9 +2454,9 @@ def test_recalc_trade_from_orders_ignores_bad_orders(fee, is_short):
     assert trade.nr_of_successful_entries == 1
 
     order2 = Order(
-        ft_order_side=entry_side,
-        ft_pair=trade.pair,
-        ft_is_open=True,
+        ts_order_side=entry_side,
+        ts_pair=trade.pair,
+        ts_is_open=True,
         status="open",
         symbol=trade.pair,
         order_type="market",
@@ -2482,9 +2482,9 @@ def test_recalc_trade_from_orders_ignores_bad_orders(fee, is_short):
 
     # Let's try with some other orders
     order3 = Order(
-        ft_order_side=entry_side,
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side=entry_side,
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="cancelled",
         symbol=trade.pair,
         order_type="market",
@@ -2509,9 +2509,9 @@ def test_recalc_trade_from_orders_ignores_bad_orders(fee, is_short):
     assert trade.nr_of_successful_entries == 1
 
     order4 = Order(
-        ft_order_side=entry_side,
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side=entry_side,
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2537,9 +2537,9 @@ def test_recalc_trade_from_orders_ignores_bad_orders(fee, is_short):
 
     # Reduce position - this will reduce amount again.
     sell1 = Order(
-        ft_order_side=exit_side,
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side=exit_side,
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2564,9 +2564,9 @@ def test_recalc_trade_from_orders_ignores_bad_orders(fee, is_short):
 
     # Check with 1 order
     order_noavg = Order(
-        ft_order_side=entry_side,
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_order_side=entry_side,
+        ts_pair=trade.pair,
+        ts_is_open=False,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -2614,7 +2614,7 @@ def test_select_filled_orders(fee):
     assert order.amount > 0
     assert order.filled > 0
     assert order.side == 'buy'
-    assert order.ft_order_side == 'buy'
+    assert order.ts_order_side == 'buy'
     assert order.status == 'closed'
 
     orders = trades[1].select_filled_orders('sell')
@@ -2642,7 +2642,7 @@ def test_select_filled_orders(fee):
 def test_order_to_ccxt(limit_buy_order_open, limit_sell_order_usdt_open):
 
     order = Order.parse_from_ccxt_object(limit_buy_order_open, 'mocked', 'buy')
-    order.ft_trade_id = 1
+    order.ts_trade_id = 1
     order.session.add(order)
     Order.session.commit()
 
@@ -2659,9 +2659,9 @@ def test_order_to_ccxt(limit_buy_order_open, limit_sell_order_usdt_open):
     assert raw_order == limit_buy_order_open
 
     order1 = Order.parse_from_ccxt_object(limit_sell_order_usdt_open, 'mocked', 'sell')
-    order1.ft_order_side = 'stoploss'
+    order1.ts_order_side = 'stoploss'
     order1.stop_price = order1.price * 0.9
-    order1.ft_trade_id = 1
+    order1.ts_trade_id = 1
     order1.session.add(order1)
     Order.session.commit()
 
@@ -2765,12 +2765,12 @@ def test_recalc_trade_from_orders_dca(data) -> None:
         price = order[2]
 
         order_obj = Order(
-            ft_order_side=order[0],
-            ft_pair=trade.pair,
+            ts_order_side=order[0],
+            ts_pair=trade.pair,
             order_id=f"order_{order[0]}_{idx}",
-            ft_is_open=False,
-            ft_amount=amount,
-            ft_price=price,
+            ts_is_open=False,
+            ts_amount=amount,
+            ts_price=price,
             status="closed",
             symbol=trade.pair,
             order_type="market",

@@ -320,11 +320,11 @@ async def test_telegram_status_multi_entry(default_conf, update, mocker, fee) ->
     trade.orders[0].average = 0
     trade.orders.append(Order(
         order_id='5412vbb',
-        ft_order_side='buy',
-        ft_pair=trade.pair,
-        ft_is_open=False,
-        ft_amount=trade.amount,
-        ft_price=trade.open_rate,
+        ts_order_side='buy',
+        ts_pair=trade.pair,
+        ts_is_open=False,
+        ts_amount=trade.amount,
+        ts_price=trade.open_rate,
         status="closed",
         symbol=trade.pair,
         order_type="market",
@@ -443,11 +443,11 @@ async def test_telegram_order_multi_entry(default_conf, update, mocker, fee) -> 
     trade.orders[0].average = 0
     trade.orders.append(Order(
         order_id='5412vbb',
-        ft_order_side='buy',
-        ft_pair=trade.pair,
-        ft_is_open=False,
-        ft_amount=trade.amount,
-        ft_price=trade.open_rate,
+        ts_order_side='buy',
+        ts_pair=trade.pair,
+        ts_is_open=False,
+        ts_amount=trade.amount,
+        ts_price=trade.open_rate,
         status="closed",
         symbol=trade.pair,
         order_type="market",

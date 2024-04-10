@@ -1135,11 +1135,11 @@ def test_exit_positions(mocker, default_conf_usdt, limit_order, is_short, caplog
             leverage=1,
             )
     trade.orders.append(Order(
-        ft_order_side=entry_side(is_short),
+        ts_order_side=entry_side(is_short),
         price=0.01,
-        ft_pair=trade.pair,
-        ft_amount=trade.amount,
-        ft_price=trade.open_rate,
+        ts_pair=trade.pair,
+        ts_amount=trade.amount,
+        ts_price=trade.open_rate,
         order_id=order_id,
 
     ))
@@ -1180,13 +1180,13 @@ def test_exit_positions_exception(mocker, default_conf_usdt, limit_order, caplog
         leverage=1,
     )
     trade.orders.append(Order(
-        ft_order_side=entry_side(is_short),
+        ts_order_side=entry_side(is_short),
         price=0.01,
-        ft_pair=trade.pair,
-        ft_amount=trade.amount,
-        ft_price=trade.open_rate,
+        ts_pair=trade.pair,
+        ts_amount=trade.amount,
+        ts_price=trade.open_rate,
         order_id=order_id,
-        ft_is_open=False,
+        ts_is_open=False,
 
     ))
     Trade.session.add(trade)
@@ -1228,7 +1228,7 @@ def test_update_trade_state(mocker, default_conf_usdt, limit_order, is_short, ca
         leverage=1,
     )
     trade.orders.append(Order(
-        ft_order_side=entry_side(is_short),
+        ts_order_side=entry_side(is_short),
         price=0.01,
         order_id=order_id,
 
@@ -1306,9 +1306,9 @@ def test_update_trade_state_withorderdict(
     )
     trade.orders.append(
         Order(
-            ft_order_side=entry_side(is_short),
-            ft_pair=trade.pair,
-            ft_is_open=True,
+            ts_order_side=entry_side(is_short),
+            ts_pair=trade.pair,
+            ts_is_open=True,
             order_id=order_id,
         )
     )
@@ -1449,7 +1449,7 @@ def test_handle_trade(
     assert trade.open_orders_ids[-1] == exit_order['id']
 
     # Simulate fulfilled LIMIT_SELL order for trade
-    trade.orders[-1].ft_is_open = False
+    trade.orders[-1].ts_is_open = False
     trade.orders[-1].status = 'closed'
     trade.orders[-1].filled = trade.orders[-1].remaining
     trade.orders[-1].remaining = 0.0
@@ -1699,7 +1699,7 @@ def test_manage_open_orders_entry_usercustom(
     tradescope = TradescopeBot(default_conf_usdt)
     open_trade.is_short = is_short
     open_trade.orders[0].side = 'sell' if is_short else 'buy'
-    open_trade.orders[0].ft_order_side = 'sell' if is_short else 'buy'
+    open_trade.orders[0].ts_order_side = 'sell' if is_short else 'buy'
     Trade.session.add(open_trade)
     Trade.commit()
 
@@ -1713,9 +1713,9 @@ def test_manage_open_orders_entry_usercustom(
     assert cancel_order_mock.call_count == 0
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_order_side != "stoploss")
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_order_side != "stoploss")
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     nb_trades = len(trades)
     assert nb_trades == 1
@@ -1726,9 +1726,9 @@ def test_manage_open_orders_entry_usercustom(
     assert cancel_order_mock.call_count == 0
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_order_side != "stoploss")
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_order_side != "stoploss")
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     nb_trades = len(trades)
     assert nb_trades == 1
@@ -1741,9 +1741,9 @@ def test_manage_open_orders_entry_usercustom(
     assert rpc_mock.call_count == 2
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_order_side != "stoploss")
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_order_side != "stoploss")
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     nb_trades = len(trades)
     assert nb_trades == 0
@@ -1785,9 +1785,9 @@ def test_manage_open_orders_entry(
     assert rpc_mock.call_count == 2
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_order_side != "stoploss")
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_order_side != "stoploss")
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     nb_trades = len(trades)
     assert nb_trades == 0
@@ -1821,14 +1821,14 @@ def test_adjust_entry_cancel(
     Trade.commit()
 
     # Timeout to not interfere
-    tradescope.strategy.ft_check_timed_out = MagicMock(return_value=False)
+    tradescope.strategy.ts_check_timed_out = MagicMock(return_value=False)
 
     # check that order is cancelled
     tradescope.strategy.adjust_entry_price = MagicMock(return_value=None)
     tradescope.manage_open_orders()
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
 
     assert len(trades) == 0
@@ -1868,14 +1868,14 @@ def test_adjust_entry_replace_fail(
     Trade.commit()
 
     # Timeout to not interfere
-    tradescope.strategy.ft_check_timed_out = MagicMock(return_value=False)
+    tradescope.strategy.ts_check_timed_out = MagicMock(return_value=False)
 
     # Attempt replace order - which fails
     tradescope.strategy.adjust_entry_price = MagicMock(return_value=12234)
     tradescope.manage_open_orders()
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
 
     assert len(trades) == 0
@@ -1916,7 +1916,7 @@ def test_adjust_entry_replace_fail_create_order(
     Trade.commit()
 
     # Timeout to not interfere
-    tradescope.strategy.ft_check_timed_out = MagicMock(return_value=False)
+    tradescope.strategy.ts_check_timed_out = MagicMock(return_value=False)
 
     # Attempt replace order - which fails
     tradescope.strategy.adjust_entry_price = MagicMock(return_value=12234)
@@ -1958,15 +1958,15 @@ def test_adjust_entry_maintain_replace(
     Trade.commit()
 
     # Timeout to not interfere
-    tradescope.strategy.ft_check_timed_out = MagicMock(return_value=False)
+    tradescope.strategy.ts_check_timed_out = MagicMock(return_value=False)
 
     # Check that order is maintained
     tradescope.strategy.adjust_entry_price = MagicMock(return_value=old_order['price'])
     tradescope.manage_open_orders()
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     assert len(trades) == 1
     assert len(Order.get_open_orders()) == 1
@@ -1983,8 +1983,8 @@ def test_adjust_entry_maintain_replace(
 
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     assert len(trades) == 1
     nb_all_orders = len(Order.session.scalars(select(Order)).all())
@@ -2029,8 +2029,8 @@ def test_check_handle_cancelled_buy(
     assert rpc_mock.call_count == 2
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     assert len(trades) == 0
     exit_name = 'Buy' if is_short else 'Sell'
@@ -2238,7 +2238,7 @@ def test_manage_open_orders_partial(
     rpc_mock = patch_RPCManager(mocker)
     open_trade.is_short = is_short
     open_trade.leverage = leverage
-    open_trade.orders[0].ft_order_side = 'sell' if is_short else 'buy'
+    open_trade.orders[0].ts_order_side = 'sell' if is_short else 'buy'
 
     limit_buy_order_old_partial['id'] = open_trade.orders[0].order_id
     limit_buy_order_old_partial['side'] = 'sell' if is_short else 'buy'
@@ -2280,7 +2280,7 @@ def test_manage_open_orders_partial_fee(
     limit_buy_order_old_partial_canceled, mocker
 ) -> None:
     open_trade.is_short = is_short
-    open_trade.orders[0].ft_order_side = 'sell' if is_short else 'buy'
+    open_trade.orders[0].ts_order_side = 'sell' if is_short else 'buy'
     rpc_mock = patch_RPCManager(mocker)
     limit_buy_order_old_partial['id'] = open_trade.orders[0].order_id
     limit_buy_order_old_partial_canceled['id'] = open_trade.open_orders_ids[0]
@@ -2315,7 +2315,7 @@ def test_manage_open_orders_partial_fee(
     assert rpc_mock.call_count == 3
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     assert len(trades) == 1
     # Verify that trade has been updated
@@ -2333,7 +2333,7 @@ def test_manage_open_orders_partial_except(
     limit_buy_order_old_partial_canceled, mocker
 ) -> None:
     open_trade.is_short = is_short
-    open_trade.orders[0].ft_order_side = 'sell' if is_short else 'buy'
+    open_trade.orders[0].ts_order_side = 'sell' if is_short else 'buy'
     rpc_mock = patch_RPCManager(mocker)
     limit_buy_order_old_partial_canceled['id'] = open_trade.open_orders_ids[0]
     limit_buy_order_old_partial['id'] = open_trade.open_orders_ids[0]
@@ -2582,9 +2582,9 @@ def test_handle_cancel_exit_limit(mocker, default_conf_usdt, fee, is_short,
     )
     trade.orders = [
         Order(
-            ft_order_side=entry_side(is_short),
-            ft_pair=trade.pair,
-            ft_is_open=False,
+            ts_order_side=entry_side(is_short),
+            ts_pair=trade.pair,
+            ts_is_open=False,
             order_id='buy_123456',
             status="closed",
             symbol=trade.pair,
@@ -2599,9 +2599,9 @@ def test_handle_cancel_exit_limit(mocker, default_conf_usdt, fee, is_short,
             order_filled_date=trade.open_date,
              ),
         Order(
-            ft_order_side=exit_side(is_short),
-            ft_pair=trade.pair,
-            ft_is_open=True,
+            ts_order_side=exit_side(is_short),
+            ts_pair=trade.pair,
+            ts_is_open=True,
             order_id='sell_123456',
             status="open",
             symbol=trade.pair,
@@ -3109,7 +3109,7 @@ def test_exit_profit_only(
     if exit_type == ExitType.EXIT_SIGNAL.value:
         tradescope.strategy.min_roi_reached = MagicMock(return_value=False)
     else:
-        tradescope.strategy.ft_stoploss_reached = MagicMock(return_value=ExitCheckTuple(
+        tradescope.strategy.ts_stoploss_reached = MagicMock(return_value=ExitCheckTuple(
             exit_type=ExitType.NONE))
     tradescope.enter_positions()
 
@@ -3912,10 +3912,10 @@ def test_apply_fee_conditional(default_conf_usdt, fee, mocker, caplog,
         fee_close=fee.return_value,
     )
     order = Order(
-        ft_order_side='buy',
+        ts_order_side='buy',
         order_id='100',
-        ft_pair=trade.pair,
-        ft_is_open=True,
+        ts_pair=trade.pair,
+        ts_is_open=True,
     )
     tradescope = get_patched_tradescopebot(mocker, default_conf_usdt)
 
@@ -3951,20 +3951,20 @@ def test_apply_fee_conditional_multibuy(default_conf_usdt, fee, mocker, caplog,
     )
     # One closed order
     order = Order(
-        ft_order_side='buy',
+        ts_order_side='buy',
         order_id='10',
-        ft_pair=trade.pair,
-        ft_is_open=False,
+        ts_pair=trade.pair,
+        ts_is_open=False,
         filled=amount,
         status="closed"
     )
     trade.orders.append(order)
     # Add additional order - this should NOT eat into dust unless the wallet was bigger already.
     order1 = Order(
-        ft_order_side='buy',
+        ts_order_side='buy',
         order_id='100',
-        ft_pair=trade.pair,
-        ft_is_open=True,
+        ts_pair=trade.pair,
+        ts_is_open=True,
     )
     trade.orders.append(order1)
 
@@ -4904,8 +4904,8 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
     # Initial buy
     closed_successful_buy_order = {
         'pair': pair,
-        'ft_pair': pair,
-        'ft_order_side': 'buy',
+        'ts_pair': pair,
+        'ts_order_side': 'buy',
         'side': 'buy',
         'type': 'limit',
         'status': 'closed',
@@ -4914,7 +4914,7 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
         'cost': bid * stake_amount,
         'amount': stake_amount,
         'filled': stake_amount,
-        'ft_is_open': False,
+        'ts_is_open': False,
         'id': '650',
         'order_id': '650'
     }
@@ -4957,15 +4957,15 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
 
     # First position adjustment buy.
     open_dca_order_1 = {
-        'ft_pair': pair,
-        'ft_order_side': 'buy',
+        'ts_pair': pair,
+        'ts_order_side': 'buy',
         'side': 'buy',
         'type': 'limit',
         'status': None,
         'price': 9,
         'amount': 12,
         'cost': 108,
-        'ft_is_open': True,
+        'ts_is_open': True,
         'id': '651',
         'order_id': '651'
     }
@@ -5027,8 +5027,8 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
 
     # Now close the order so it should update.
     closed_dca_order_1 = {
-        'ft_pair': pair,
-        'ft_order_side': 'buy',
+        'ts_pair': pair,
+        'ts_order_side': 'buy',
         'side': 'buy',
         'type': 'limit',
         'status': 'closed',
@@ -5037,7 +5037,7 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
         'amount': 12,
         'filled': 12,
         'cost': 108,
-        'ft_is_open': False,
+        'ts_is_open': False,
         'id': '651',
         'order_id': '651',
         'datetime': dt_now().isoformat(),
@@ -5071,9 +5071,9 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
 
     # Add a second DCA
     closed_dca_order_2 = {
-        'ft_pair': pair,
+        'ts_pair': pair,
         'status': 'closed',
-        'ft_order_side': 'buy',
+        'ts_order_side': 'buy',
         'side': 'buy',
         'type': 'limit',
         'price': 7,
@@ -5081,7 +5081,7 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
         'amount': 15,
         'filled': 15,
         'cost': 105,
-        'ft_is_open': False,
+        'ts_is_open': False,
         'id': '652',
         'order_id': '652'
     }
@@ -5107,9 +5107,9 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
     order = trade.select_order('buy', False)
     assert order.order_id == '652'
     closed_sell_dca_order_1 = {
-        'ft_pair': pair,
+        'ts_pair': pair,
         'status': 'closed',
-        'ft_order_side': 'sell',
+        'ts_order_side': 'sell',
         'side': 'sell',
         'type': 'limit',
         'price': 8,
@@ -5117,7 +5117,7 @@ def test_position_adjust(mocker, default_conf_usdt, fee) -> None:
         'amount': 15,
         'filled': 15,
         'cost': 120,
-        'ft_is_open': False,
+        'ts_is_open': False,
         'id': '653',
         'order_id': '653'
     }
@@ -5183,8 +5183,8 @@ def test_position_adjust2(mocker, default_conf_usdt, fee) -> None:
     # Initial buy
     closed_successful_buy_order = {
         'pair': pair,
-        'ft_pair': pair,
-        'ft_order_side': 'buy',
+        'ts_pair': pair,
+        'ts_order_side': 'buy',
         'side': 'buy',
         'type': 'limit',
         'status': 'closed',
@@ -5193,7 +5193,7 @@ def test_position_adjust2(mocker, default_conf_usdt, fee) -> None:
         'cost': bid * amount,
         'amount': amount,
         'filled': amount,
-        'ft_is_open': False,
+        'ts_is_open': False,
         'id': '600',
         'order_id': '600'
     }
@@ -5237,9 +5237,9 @@ def test_position_adjust2(mocker, default_conf_usdt, fee) -> None:
     amount = 50
     ask = 8
     closed_sell_dca_order_1 = {
-        'ft_pair': pair,
+        'ts_pair': pair,
         'status': 'closed',
-        'ft_order_side': 'sell',
+        'ts_order_side': 'sell',
         'side': 'sell',
         'type': 'limit',
         'price': ask,
@@ -5247,7 +5247,7 @@ def test_position_adjust2(mocker, default_conf_usdt, fee) -> None:
         'amount': amount,
         'filled': amount,
         'cost': amount * ask,
-        'ft_is_open': False,
+        'ts_is_open': False,
         'id': '601',
         'order_id': '601'
     }
@@ -5281,9 +5281,9 @@ def test_position_adjust2(mocker, default_conf_usdt, fee) -> None:
     amount = 50
     ask = 16
     closed_sell_dca_order_2 = {
-        'ft_pair': pair,
+        'ts_pair': pair,
         'status': 'closed',
-        'ft_order_side': 'sell',
+        'ts_order_side': 'sell',
         'side': 'sell',
         'type': 'limit',
         'price': ask,
@@ -5291,7 +5291,7 @@ def test_position_adjust2(mocker, default_conf_usdt, fee) -> None:
         'amount': amount,
         'filled': amount,
         'cost': amount * ask,
-        'ft_is_open': False,
+        'ts_is_open': False,
         'id': '602',
         'order_id': '602'
     }
@@ -5373,8 +5373,8 @@ def test_position_adjust3(mocker, default_conf_usdt, fee, data) -> None:
         pair = 'ETH/USDT'
         closed_successful_order = {
             'pair': pair,
-            'ft_pair': pair,
-            'ft_order_side': order[0],
+            'ts_pair': pair,
+            'ts_order_side': order[0],
             'side': order[0],
             'type': 'limit',
             'status': 'closed',
@@ -5383,7 +5383,7 @@ def test_position_adjust3(mocker, default_conf_usdt, fee, data) -> None:
             'cost': price * amount,
             'amount': amount,
             'filled': amount,
-            'ft_is_open': False,
+            'ts_is_open': False,
             'id': f'60{idx}',
             'order_id': f'60{idx}'
         }
@@ -5469,5 +5469,5 @@ def test_check_and_call_adjust_trade_position(mocker, default_conf_usdt, fee, ca
     assert log_has_re(r"LIMIT_SELL has been fulfilled.*", caplog)
     assert tradescope.strategy.adjust_trade_position.call_count == 1
     trade = Trade.get_trades(trade_filter=[Trade.id == 5]).first()
-    assert trade.orders[-1].ft_order_tag == 'partial_exit_c'
+    assert trade.orders[-1].ts_order_tag == 'partial_exit_c'
     assert trade.is_open

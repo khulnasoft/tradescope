@@ -23,14 +23,14 @@ class Okx(Exchange):
     Contains adjustments needed for Tradescope to work with this exchange.
     """
 
-    _ft_has: Dict = {
+    _ts_has: Dict = {
         "ohlcv_candle_limit": 100,  # Warning, special case with data prior to X months
         "mark_ohlcv_timeframe": "4h",
         "funding_fee_timeframe": "8h",
         "stoploss_order_types": {"limit": "limit"},
         "stoploss_on_exchange": True,
     }
-    _ft_has_futures: Dict = {
+    _ts_has_futures: Dict = {
         "tickers_have_quoteVolume": False,
         "stop_price_type_field": "slTriggerPxType",
         "stop_price_type_value_mapping": {

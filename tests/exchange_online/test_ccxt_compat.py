@@ -139,8 +139,8 @@ class TestCCXTExchange:
         assert 'bids' in l2
         assert len(l2['asks']) >= 1
         assert len(l2['bids']) >= 1
-        l2_limit_range = exch._ft_has['l2_limit_range']
-        l2_limit_range_required = exch._ft_has['l2_limit_range_required']
+        l2_limit_range = exch._ts_has['l2_limit_range']
+        l2_limit_range_required = exch._ts_has['l2_limit_range_required']
         if exchangename == 'gate':
             # TODO: Gate is unstable here at the moment, ignoring the limit partially.
             return
@@ -239,7 +239,7 @@ class TestCCXTExchange:
     def test_ccxt__async_get_candle_history(self, exchange: EXCHANGE_FIXTURE_TYPE):
         exc, exchangename = exchange
 
-        if not exc._ft_has['ohlcv_has_history']:
+        if not exc._ts_has['ohlcv_has_history']:
             pytest.skip("Exchange does not support candle history")
         pair = EXCHANGES[exchangename]['pair']
         timeframe = EXCHANGES[exchangename]['timeframe']
@@ -257,8 +257,8 @@ class TestCCXTExchange:
         pair = EXCHANGES[exchangename].get('futures_pair', EXCHANGES[exchangename]['pair'])
         timeframe = EXCHANGES[exchangename]['timeframe']
         if candle_type == CandleType.FUNDING_RATE:
-            timeframe = exchange._ft_has.get('funding_fee_timeframe',
-                                             exchange._ft_has['mark_ohlcv_timeframe'])
+            timeframe = exchange._ts_has.get('funding_fee_timeframe',
+                                             exchange._ts_has['mark_ohlcv_timeframe'])
         self.ccxt__async_get_candle_history(
             exchange,
             exchangename,
@@ -272,8 +272,8 @@ class TestCCXTExchange:
 
         pair = EXCHANGES[exchangename].get('futures_pair', EXCHANGES[exchangename]['pair'])
         since = int((datetime.now(timezone.utc) - timedelta(days=5)).timestamp() * 1000)
-        timeframe_ff = exchange._ft_has.get('funding_fee_timeframe',
-                                            exchange._ft_has['mark_ohlcv_timeframe'])
+        timeframe_ff = exchange._ts_has.get('funding_fee_timeframe',
+                                            exchange._ts_has['mark_ohlcv_timeframe'])
         pair_tf = (pair, timeframe_ff, CandleType.FUNDING_RATE)
 
         funding_ohlcv = exchange.refresh_latest_ohlcv(

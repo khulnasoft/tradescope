@@ -28,12 +28,12 @@ class Bybit(Exchange):
     """
     unified_account = False
 
-    _ft_has: Dict = {
+    _ts_has: Dict = {
         "ohlcv_candle_limit": 1000,
         "ohlcv_has_history": True,
         "order_time_in_force": ["GTC", "FOK", "IOC", "PO"],
     }
-    _ft_has_futures: Dict = {
+    _ts_has_futures: Dict = {
         "ohlcv_has_history": True,
         "mark_ohlcv_timeframe": "4h",
         "funding_fee_timeframe": "8h",

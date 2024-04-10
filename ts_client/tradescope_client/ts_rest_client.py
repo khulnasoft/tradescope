@@ -20,7 +20,7 @@ ParamsT = Optional[Dict[str, Any]]
 PostDataT = Optional[Union[Dict[str, Any], List[Dict[str, Any]]]]
 
 
-class FtRestClient:
+class TsRestClient:
 
     def __init__(self, serverurl, username=None, password=None, *,
                  pool_connections=10, pool_maxsize=10):

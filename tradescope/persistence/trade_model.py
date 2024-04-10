@@ -55,21 +55,21 @@ class Order(ModelBase):
 
     # Uniqueness should be ensured over pair, order_id
     # its likely that order_id is unique per Pair on some exchanges.
-    __table_args__ = (UniqueConstraint('ft_pair', 'order_id', name="_order_pair_order_id"),)
+    __table_args__ = (UniqueConstraint('ts_pair', 'order_id', name="_order_pair_order_id"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    ft_trade_id: Mapped[int] = mapped_column(Integer, ForeignKey('trades.id'), index=True)
+    ts_trade_id: Mapped[int] = mapped_column(Integer, ForeignKey('trades.id'), index=True)
 
     _trade_live: Mapped["Trade"] = relationship("Trade", back_populates="orders", lazy="immediate")
     _trade_bt: "LocalTrade" = None  # type: ignore
 
     # order_side can only be 'buy', 'sell' or 'stoploss'
-    ft_order_side: Mapped[str] = mapped_column(String(25), nullable=False)
-    ft_pair: Mapped[str] = mapped_column(String(25), nullable=False)
-    ft_is_open: Mapped[bool] = mapped_column(nullable=False, default=True, index=True)
-    ft_amount: Mapped[float] = mapped_column(Float(), nullable=False)
-    ft_price: Mapped[float] = mapped_column(Float(), nullable=False)
-    ft_cancel_reason: Mapped[str] = mapped_column(String(CUSTOM_TAG_MAX_LENGTH), nullable=True)
+    ts_order_side: Mapped[str] = mapped_column(String(25), nullable=False)
+    ts_pair: Mapped[str] = mapped_column(String(25), nullable=False)
+    ts_is_open: Mapped[bool] = mapped_column(nullable=False, default=True, index=True)
+    ts_amount: Mapped[float] = mapped_column(Float(), nullable=False)
+    ts_price: Mapped[float] = mapped_column(Float(), nullable=False)
+    ts_cancel_reason: Mapped[str] = mapped_column(String(CUSTOM_TAG_MAX_LENGTH), nullable=True)
 
     order_id: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     status: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
@@ -88,8 +88,8 @@ class Order(ModelBase):
     order_update_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)
     funding_fee: Mapped[Optional[float]] = mapped_column(Float(), nullable=True)
 
-    ft_fee_base: Mapped[Optional[float]] = mapped_column(Float(), nullable=True)
-    ft_order_tag: Mapped[Optional[str]] = mapped_column(String(CUSTOM_TAG_MAX_LENGTH),
+    ts_fee_base: Mapped[Optional[float]] = mapped_column(Float(), nullable=True)
+    ts_order_tag: Mapped[Optional[str]] = mapped_column(String(CUSTOM_TAG_MAX_LENGTH),
                                                         nullable=True)
 
     @property
@@ -106,16 +106,16 @@ class Order(ModelBase):
 
     @property
     def safe_amount(self) -> float:
-        return self.amount or self.ft_amount
+        return self.amount or self.ts_amount
 
     @property
     def safe_placement_price(self) -> float:
         """Price at which the order was placed"""
-        return self.price or self.stop_price or self.ft_price
+        return self.price or self.stop_price or self.ts_price
 
     @property
     def safe_price(self) -> float:
-        return self.average or self.price or self.stop_price or self.ft_price
+        return self.average or self.price or self.stop_price or self.ts_price
 
     @property
     def safe_filled(self) -> float:
@@ -134,7 +134,7 @@ class Order(ModelBase):
 
     @property
     def safe_fee_base(self) -> float:
-        return self.ft_fee_base or 0.0
+        return self.ts_fee_base or 0.0
 
     @property
     def safe_amount_after_fee(self) -> float:
@@ -151,7 +151,7 @@ class Order(ModelBase):
 
     def __repr__(self):
 
-        return (f"Order(id={self.id}, trade={self.ft_trade_id}, order_id={self.order_id}, "
+        return (f"Order(id={self.id}, trade={self.ts_trade_id}, order_id={self.order_id}, "
                 f"side={self.side}, filled={self.safe_filled}, price={self.safe_price}, "
                 f"status={self.status}, date={self.order_date_utc:{DATETIME_PRINT_FORMAT}})")
 
@@ -180,9 +180,9 @@ class Order(ModelBase):
         elif not self.order_date:
             self.order_date = dt_now()
 
-        self.ft_is_open = True
+        self.ts_is_open = True
         if self.status in NON_OPEN_EXCHANGE_STATES:
-            self.ft_is_open = False
+            self.ts_is_open = False
             if (order.get('filled', 0.0) or 0.0) > 0 and not self.order_filled_date:
                 self.order_filled_date = dt_from_ts(
                     safe_value_fallback(order, 'lastTradeTimestamp', default_value=dt_ts())
@@ -192,13 +192,13 @@ class Order(ModelBase):
     def to_ccxt_object(self, stopPriceName: str = 'stopPrice') -> Dict[str, Any]:
         order: Dict[str, Any] = {
             'id': self.order_id,
-            'symbol': self.ft_pair,
+            'symbol': self.ts_pair,
             'price': self.price,
             'average': self.average,
             'amount': self.amount,
             'cost': self.cost,
             'type': self.order_type,
-            'side': self.ft_order_side,
+            'side': self.ts_order_side,
             'filled': self.filled,
             'remaining': self.remaining,
             'datetime': self.order_date_utc.strftime('%Y-%m-%dT%H:%M:%S.%f'),
@@ -207,10 +207,10 @@ class Order(ModelBase):
             'fee': None,
             'info': {},
         }
-        if self.ft_order_side == 'stoploss':
+        if self.ts_order_side == 'stoploss':
             order.update({
                 stopPriceName: self.stop_price,
-                'ft_order_type': 'stoploss',
+                'ts_order_type': 'stoploss',
             })
 
         return order
@@ -223,20 +223,20 @@ class Order(ModelBase):
         resp = {
             'amount': self.safe_amount,
             'safe_price': self.safe_price,
-            'ft_order_side': self.ft_order_side,
+            'ts_order_side': self.ts_order_side,
             'order_filled_timestamp': dt_ts_none(self.order_filled_utc),
-            'ft_is_entry': self.ft_order_side == entry_side,
-            'ft_order_tag': self.ft_order_tag,
+            'ts_is_entry': self.ts_order_side == entry_side,
+            'ts_order_tag': self.ts_order_tag,
         }
         if not minified:
             resp.update({
-                'pair': self.ft_pair,
+                'pair': self.ts_pair,
                 'order_id': self.order_id,
                 'status': self.status,
                 'average': round(self.average, 8) if self.average else 0,
                 'cost': self.cost if self.cost else 0,
                 'filled': self.filled,
-                'is_open': self.ft_is_open,
+                'is_open': self.ts_is_open,
                 'order_date': self.order_date.strftime(DATETIME_PRINT_FORMAT)
                 if self.order_date else None,
                 'order_timestamp': int(self.order_date.replace(
@@ -246,7 +246,7 @@ class Order(ModelBase):
                 'order_type': self.order_type,
                 'price': self.price,
                 'remaining': self.remaining,
-                'ft_fee_base': self.ft_fee_base,
+                'ts_fee_base': self.ts_fee_base,
                 'funding_fee': self.funding_fee,
             })
         return resp
@@ -256,13 +256,13 @@ class Order(ModelBase):
         self.filled = self.amount
         self.remaining = 0
         self.status = 'closed'
-        self.ft_is_open = False
+        self.ts_is_open = False
         # Assign funding fees to Order.
         # Assumes backtesting will use date_last_filled_utc to calculate future funding fees.
         self.funding_fee = trade.funding_fee_running
         trade.funding_fee_running = 0.0
 
-        if (self.ft_order_side == trade.entry_side and self.price):
+        if (self.ts_order_side == trade.entry_side and self.price):
             trade.open_rate = self.price
             trade.recalc_trade_from_orders()
             if trade.nr_of_successful_entries == 1:
@@ -297,10 +297,10 @@ class Order(ModelBase):
         """
         o = cls(
             order_id=str(order['id']),
-            ft_order_side=side,
-            ft_pair=pair,
-            ft_amount=amount if amount else order['amount'],
-            ft_price=price if price else order['price'],
+            ts_order_side=side,
+            ts_pair=pair,
+            ts_amount=amount if amount else order['amount'],
+            ts_price=price if price else order['price'],
             )
 
         o.update_from_ccxt_object(order)
@@ -312,7 +312,7 @@ class Order(ModelBase):
         Retrieve open orders from the database
         :return: List of open orders
         """
-        return Order.session.scalars(select(Order).filter(Order.ft_is_open.is_(True))).all()
+        return Order.session.scalars(select(Order).filter(Order.ts_is_open.is_(True))).all()
 
     @staticmethod
     def order_by_id(order_id: str) -> Optional['Order']:
@@ -531,7 +531,7 @@ class LocalTrade:
         """
         All open orders for this trade excluding stoploss orders
         """
-        return [o for o in self.orders if o.ft_is_open and o.ft_order_side != 'stoploss']
+        return [o for o in self.orders if o.ts_is_open and o.ts_order_side != 'stoploss']
 
     @property
     def has_open_orders(self) -> bool:
@@ -540,7 +540,7 @@ class LocalTrade:
         """
         open_orders_wo_sl = [
             o for o in self.orders
-            if o.ft_order_side not in ['stoploss'] and o.ft_is_open
+            if o.ts_order_side not in ['stoploss'] and o.ts_is_open
         ]
         return len(open_orders_wo_sl) > 0
 
@@ -551,7 +551,7 @@ class LocalTrade:
         """
         return [
             o for o in self.orders
-            if o.ft_order_side in ['stoploss'] and o.ft_is_open
+            if o.ts_order_side in ['stoploss'] and o.ts_is_open
         ]
 
     @property
@@ -561,7 +561,7 @@ class LocalTrade:
         """
         open_sl_orders = [
             o for o in self.orders
-            if o.ft_order_side in ['stoploss'] and o.ft_is_open
+            if o.ts_order_side in ['stoploss'] and o.ts_is_open
         ]
         return len(open_sl_orders) > 0
 
@@ -572,14 +572,14 @@ class LocalTrade:
         """
         return [
             o for o in self.orders
-            if o.ft_order_side in ['stoploss']
+            if o.ts_order_side in ['stoploss']
         ]
 
     @property
     def open_orders_ids(self) -> List[str]:
         open_orders_ids_wo_sl = [
             oo.order_id for oo in self.open_orders
-            if oo.ft_order_side not in ['stoploss']
+            if oo.ts_order_side not in ['stoploss']
         ]
         return open_orders_ids_wo_sl
 
@@ -811,13 +811,13 @@ class LocalTrade:
             return
 
         logger.info(f'Updating trade (id={self.id}) ...')
-        if order.ft_order_side != 'stoploss':
+        if order.ts_order_side != 'stoploss':
             order.funding_fee = self.funding_fee_running
             # Reset running funding fees
             self.funding_fee_running = 0.0
         order_type = order.order_type.upper() if order.order_type else None
 
-        if order.ft_order_side == self.entry_side:
+        if order.ts_order_side == self.entry_side:
             # Update open rate and actual amount
             self.open_rate = order.safe_price
             self.amount = order.safe_amount_after_fee
@@ -826,13 +826,13 @@ class LocalTrade:
                 logger.info(f'{order_type}_{payment} has been fulfilled for {self}.')
 
             self.recalc_trade_from_orders()
-        elif order.ft_order_side == self.exit_side:
+        elif order.ts_order_side == self.exit_side:
             if self.is_open:
                 payment = "BUY" if self.is_short else "SELL"
                 # * On margin shorts, you buy a little bit more than the amount (amount + interest)
                 logger.info(f'{order_type}_{payment} has been fulfilled for {self}.')
 
-        elif order.ft_order_side == 'stoploss' and order.status not in ('open', ):
+        elif order.ts_order_side == 'stoploss' and order.status not in ('open', ):
             self.close_rate_requested = self.stop_loss
             self.exit_reason = ExitType.STOPLOSS_ON_EXCHANGE.value
             if self.is_open and order.safe_filled > 0:
@@ -840,7 +840,7 @@ class LocalTrade:
         else:
             raise ValueError(f'Unknown order type: {order.order_type}')
 
-        if order.ft_order_side != self.entry_side:
+        if order.ts_order_side != self.entry_side:
             amount_tr = amount_to_contract_precision(self.amount, self.amount_precision,
                                                      self.precision_mode, self.contract_size)
             if (
@@ -905,7 +905,7 @@ class LocalTrade:
         Get amount of failed exiting orders
         assumes full exits.
         """
-        return len([o for o in self.orders if o.ft_order_side == self.exit_side
+        return len([o for o in self.orders if o.ts_order_side == self.exit_side
                     and o.status in CANCELED_EXCHANGE_STATES])
 
     def _calc_open_trade_value(self, amount: float, open_rate: float) -> float:
@@ -1098,13 +1098,13 @@ class LocalTrade:
         funding_fees = 0.0
         ordercount = len(self.orders) - 1
         for i, o in enumerate(self.orders):
-            if o.ft_is_open or not o.filled:
+            if o.ts_is_open or not o.filled:
                 continue
             funding_fees += (o.funding_fee or 0.0)
             tmp_amount = TsPrecise(o.safe_amount_after_fee)
             tmp_price = TsPrecise(o.safe_price)
 
-            is_exit = o.ft_order_side != self.entry_side
+            is_exit = o.ts_order_side != self.entry_side
             side = TsPrecise(-1 if is_exit else 1)
             if tmp_amount > ZERO and tmp_price is not None:
                 current_amount += tmp_amount * side
@@ -1171,16 +1171,16 @@ class LocalTrade:
                      is_open: Optional[bool] = None, only_filled: bool = False) -> Optional[Order]:
         """
         Finds latest order for this orderside and status
-        :param order_side: ft_order_side of the order (either 'buy', 'sell' or 'stoploss')
+        :param order_side: ts_order_side of the order (either 'buy', 'sell' or 'stoploss')
         :param is_open: Only search for open orders?
         :param only_filled: Only search for Filled orders (only valid with is_open=False).
         :return: latest Order object if it exists, else None
         """
         orders = self.orders
         if order_side:
-            orders = [o for o in orders if o.ft_order_side == order_side]
+            orders = [o for o in orders if o.ts_order_side == order_side]
         if is_open is not None:
-            orders = [o for o in orders if o.ft_is_open == is_open]
+            orders = [o for o in orders if o.ts_is_open == is_open]
         if is_open is False and only_filled:
             orders = [o for o in orders if o.filled and o.status in NON_OPEN_EXCHANGE_STATES]
         if len(orders) > 0:
@@ -1195,8 +1195,8 @@ class LocalTrade:
         :param order_side: Side of the order (either 'buy', 'sell', or None)
         :return: array of Order objects
         """
-        return [o for o in self.orders if ((o.ft_order_side == order_side) or (order_side is None))
-                and o.ft_is_open is False
+        return [o for o in self.orders if ((o.ts_order_side == order_side) or (order_side is None))
+                and o.ts_is_open is False
                 and o.filled
                 and o.status in NON_OPEN_EXCHANGE_STATES]
 
@@ -1208,11 +1208,11 @@ class LocalTrade:
         """
         return [o for o in self.orders if
                 (
-                    o.ft_is_open is False
+                    o.ts_is_open is False
                     and (o.filled or 0) > 0
                     and o.status in NON_OPEN_EXCHANGE_STATES
                     )
-                or (o.ft_is_open is True and o.status is not None)
+                or (o.ts_is_open is True and o.status is not None)
                 ]
 
     def set_custom_data(self, key: str, value: Any) -> None:
@@ -1462,10 +1462,10 @@ class LocalTrade:
 
             order_obj = Order(
                 amount=order["amount"],
-                ft_amount=order["amount"],
-                ft_order_side=order["ft_order_side"],
-                ft_pair=order["pair"],
-                ft_is_open=order["is_open"],
+                ts_amount=order["amount"],
+                ts_order_side=order["ts_order_side"],
+                ts_pair=order["pair"],
+                ts_is_open=order["is_open"],
                 order_id=order["order_id"],
                 status=order["status"],
                 average=order["average"],
@@ -1477,10 +1477,10 @@ class LocalTrade:
                     if order["order_filled_timestamp"] else None),
                 order_type=order["order_type"],
                 price=order["price"],
-                ft_price=order["price"],
+                ts_price=order["price"],
                 remaining=order["remaining"],
                 funding_fee=order.get("funding_fee", None),
-                ft_order_tag=order.get("ft_order_tag", None),
+                ts_order_tag=order.get("ts_order_tag", None),
             )
             trade.orders.append(order_obj)
 

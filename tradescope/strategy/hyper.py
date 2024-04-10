@@ -27,14 +27,14 @@ class HyperStrategyMixin:
         Initialize hyperoptable strategy mixin.
         """
         self.config = config
-        self.ft_buy_params: List[BaseParameter] = []
-        self.ft_sell_params: List[BaseParameter] = []
-        self.ft_protection_params: List[BaseParameter] = []
+        self.ts_buy_params: List[BaseParameter] = []
+        self.ts_sell_params: List[BaseParameter] = []
+        self.ts_protection_params: List[BaseParameter] = []
 
         params = self.load_params_from_file()
         params = params.get('params', {})
-        self._ft_params_from_file = params
-        # Init/loading of parameters is done as part of ft_bot_start().
+        self._ts_params_from_file = params
+        # Init/loading of parameters is done as part of ts_bot_start().
 
     def enumerate_parameters(
             self, category: Optional[str] = None) -> Iterator[Tuple[str, BaseParameter]]:
@@ -48,9 +48,9 @@ class HyperStrategyMixin:
                 'Category must be one of: "buy", "sell", "protection", None.')
 
         if category is None:
-            params = self.ft_buy_params + self.ft_sell_params + self.ft_protection_params
+            params = self.ts_buy_params + self.ts_sell_params + self.ts_protection_params
         else:
-            params = getattr(self, f"ft_{category}_params")
+            params = getattr(self, f"ts_{category}_params")
 
         for par in params:
             yield par.name, par
@@ -69,14 +69,14 @@ class HyperStrategyMixin:
 
         return params
 
-    def ft_load_params_from_file(self) -> None:
+    def ts_load_params_from_file(self) -> None:
         """
         Load Parameters from parameter file
         Should/must run before config values are loaded in strategy_resolver.
         """
-        if self._ft_params_from_file:
+        if self._ts_params_from_file:
             # Set parameters from Hyperopt results file
-            params = self._ft_params_from_file
+            params = self._ts_params_from_file
             self.minimal_roi = params.get('roi', getattr(self, 'minimal_roi', {}))
 
             self.stoploss = params.get('stoploss', {}).get(
@@ -95,7 +95,7 @@ class HyperStrategyMixin:
                 'trailing_only_offset_is_reached',
                 getattr(self, 'trailing_only_offset_is_reached', 0.0))
 
-    def ft_load_hyper_params(self, hyperopt: bool = False) -> None:
+    def ts_load_hyper_params(self, hyperopt: bool = False) -> None:
         """
         Load Hyperoptable parameters
         Prevalence:
@@ -104,16 +104,16 @@ class HyperStrategyMixin:
         * Parameter defaults
         """
 
-        buy_params = deep_merge_dicts(self._ft_params_from_file.get('buy', {}),
+        buy_params = deep_merge_dicts(self._ts_params_from_file.get('buy', {}),
                                       getattr(self, 'buy_params', {}))
-        sell_params = deep_merge_dicts(self._ft_params_from_file.get('sell', {}),
+        sell_params = deep_merge_dicts(self._ts_params_from_file.get('sell', {}),
                                        getattr(self, 'sell_params', {}))
-        protection_params = deep_merge_dicts(self._ft_params_from_file.get('protection', {}),
+        protection_params = deep_merge_dicts(self._ts_params_from_file.get('protection', {}),
                                              getattr(self, 'protection_params', {}))
 
-        self._ft_load_params(buy_params, 'buy', hyperopt)
-        self._ft_load_params(sell_params, 'sell', hyperopt)
-        self._ft_load_params(protection_params, 'protection', hyperopt)
+        self._ts_load_params(buy_params, 'buy', hyperopt)
+        self._ts_load_params(sell_params, 'sell', hyperopt)
+        self._ts_load_params(protection_params, 'protection', hyperopt)
 
     def load_params_from_file(self) -> Dict:
         filename_str = getattr(self, '__file__', '')
@@ -135,14 +135,14 @@ class HyperStrategyMixin:
 
         return {}
 
-    def _ft_load_params(self, params: Dict, space: str, hyperopt: bool = False) -> None:
+    def _ts_load_params(self, params: Dict, space: str, hyperopt: bool = False) -> None:
         """
         Set optimizable parameter values.
         :param params: Dictionary with new parameter values.
         """
         if not params:
             logger.info(f"No params for {space} found, using default values.")
-        param_container: List[BaseParameter] = getattr(self, f"ft_{space}_params")
+        param_container: List[BaseParameter] = getattr(self, f"ts_{space}_params")
 
         for attr_name, attr in detect_parameters(self, space):
             attr.name = attr_name

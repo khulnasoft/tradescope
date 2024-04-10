@@ -9,7 +9,7 @@ from typing import Any, Dict
 
 import rapidjson
 from tradescope_client import __version__
-from tradescope_client.ts_rest_client import FtRestClient
+from tradescope_client.ts_rest_client import TsRestClient
 
 
 logging.basicConfig(
@@ -65,7 +65,7 @@ def load_config(configfile):
 
 def print_commands():
     # Print dynamic help for the different commands using the commands doc-strings
-    client = FtRestClient(None)
+    client = TsRestClient(None)
     print("Possible commands:\n")
     for x, y in inspect.getmembers(client):
         if not x.startswith('_'):
@@ -86,7 +86,7 @@ def main_exec(args: Dict[str, Any]):
     password = config.get('api_server', {}).get('password')
 
     server_url = f"http://{url}:{port}"
-    client = FtRestClient(server_url, username, password)
+    client = TsRestClient(server_url, username, password)
 
     m = [x for x, y in inspect.getmembers(client) if not x.startswith('_')]
     command = args["command"]

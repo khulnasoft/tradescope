@@ -213,29 +213,29 @@ def drop_orders_table(engine, table_back_name: str):
 
 def migrate_orders_table(engine, table_back_name: str, cols_order: List):
 
-    ft_fee_base = get_column_def(cols_order, 'ft_fee_base', 'null')
+    ts_fee_base = get_column_def(cols_order, 'ts_fee_base', 'null')
     average = get_column_def(cols_order, 'average', 'null')
     stop_price = get_column_def(cols_order, 'stop_price', 'null')
     funding_fee = get_column_def(cols_order, 'funding_fee', '0.0')
-    ft_amount = get_column_def(cols_order, 'ft_amount', 'coalesce(amount, 0.0)')
-    ft_price = get_column_def(cols_order, 'ft_price', 'coalesce(price, 0.0)')
-    ft_cancel_reason = get_column_def(cols_order, 'ft_cancel_reason', 'null')
-    ft_order_tag = get_column_def(cols_order, 'ft_order_tag', 'null')
+    ts_amount = get_column_def(cols_order, 'ts_amount', 'coalesce(amount, 0.0)')
+    ts_price = get_column_def(cols_order, 'ts_price', 'coalesce(price, 0.0)')
+    ts_cancel_reason = get_column_def(cols_order, 'ts_cancel_reason', 'null')
+    ts_order_tag = get_column_def(cols_order, 'ts_order_tag', 'null')
 
     # sqlite does not support literals for booleans
     with engine.begin() as connection:
         connection.execute(text(f"""
-            insert into orders (id, ft_trade_id, ft_order_side, ft_pair, ft_is_open, order_id,
+            insert into orders (id, ts_trade_id, ts_order_side, ts_pair, ts_is_open, order_id,
             status, symbol, order_type, side, price, amount, filled, average, remaining, cost,
-            stop_price, order_date, order_filled_date, order_update_date, ft_fee_base, funding_fee,
-            ft_amount, ft_price, ft_cancel_reason, ft_order_tag
+            stop_price, order_date, order_filled_date, order_update_date, ts_fee_base, funding_fee,
+            ts_amount, ts_price, ts_cancel_reason, ts_order_tag
             )
-            select id, ft_trade_id, ft_order_side, ft_pair, ft_is_open, order_id,
+            select id, ts_trade_id, ts_order_side, ts_pair, ts_is_open, order_id,
             status, symbol, order_type, side, price, amount, filled, {average} average, remaining,
             cost, {stop_price} stop_price, order_date, order_filled_date,
-            order_update_date, {ft_fee_base} ft_fee_base, {funding_fee} funding_fee,
-            {ft_amount} ft_amount, {ft_price} ft_price, {ft_cancel_reason} ft_cancel_reason,
-            {ft_order_tag} ft_order_tag
+            order_update_date, {ts_fee_base} ts_fee_base, {funding_fee} funding_fee,
+            {ts_amount} ts_amount, {ts_price} ts_price, {ts_cancel_reason} ts_cancel_reason,
+            {ts_order_tag} ts_order_tag
             from {table_back_name}
             """))
 
@@ -284,25 +284,25 @@ def fix_old_dry_orders(engine):
         # - current Order not stoploss
 
         stmt = update(Order).where(
-            Order.ft_is_open.is_(True),
-            Order.ft_order_side == 'stoploss',
+            Order.ts_is_open.is_(True),
+            Order.ts_order_side == 'stoploss',
             Order.order_id.like('dry%'),
 
-        ).values(ft_is_open=False)
+        ).values(ts_is_open=False)
         connection.execute(stmt)
 
         # Close dry-run orders for closed trades.
         stmt = update(Order).where(
-            Order.ft_is_open.is_(True),
-            Order.ft_trade_id.not_in(
+            Order.ts_is_open.is_(True),
+            Order.ts_trade_id.not_in(
                 select(
                     Trade.id
                 ).where(Trade.is_open.is_(True))
                   ),
-            Order.ft_order_side != 'stoploss',
+            Order.ts_order_side != 'stoploss',
             Order.order_id.like('dry%')
 
-        ).values(ft_is_open=False)
+        ).values(ts_is_open=False)
         connection.execute(stmt)
 
 
@@ -328,7 +328,7 @@ def check_migrate(engine, decl_base, previous_tables) -> None:
     # or not has_column(cols_orders, 'funding_fee')):
     migrating = False
     # if not has_column(cols_trades, 'funding_fee_running'):
-    if not has_column(cols_orders, 'ft_order_tag'):
+    if not has_column(cols_orders, 'ts_order_tag'):
         migrating = True
         logger.info(f"Running database migration for trades - "
                     f"backup: {table_back_name}, {order_table_bak_name}")

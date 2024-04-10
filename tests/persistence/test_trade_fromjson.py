@@ -76,9 +76,9 @@ def test_trade_fromjson():
             {
                 "amount": 102.0,
                 "safe_price": 0.2526,
-                "ft_order_side": "buy",
+                "ts_order_side": "buy",
                 "order_filled_timestamp": 1666084370887,
-                "ft_is_entry": true,
+                "ts_is_entry": true,
                 "pair": "ETH/USDT",
                 "order_id": "78404228",
                 "status": "closed",
@@ -96,9 +96,9 @@ def test_trade_fromjson():
             {
                 "amount": 102.0,
                 "safe_price": 0.2517,
-                "ft_order_side": "buy",
+                "ts_order_side": "buy",
                 "order_filled_timestamp": 1666084379056,
-                "ft_is_entry": true,
+                "ts_is_entry": true,
                 "pair": "ETH/USDT",
                 "order_id": "78405139",
                 "status": "closed",
@@ -116,9 +116,9 @@ def test_trade_fromjson():
             {
                 "amount": 102.0,
                 "safe_price": 0.2517,
-                "ft_order_side": "buy",
+                "ts_order_side": "buy",
                 "order_filled_timestamp": 1666084389644,
-                "ft_is_entry": true,
+                "ts_is_entry": true,
                 "pair": "ETH/USDT",
                 "order_id": "78405265",
                 "status": "closed",
@@ -136,9 +136,9 @@ def test_trade_fromjson():
             {
                 "amount": 102.0,
                 "safe_price": 0.2516,
-                "ft_order_side": "buy",
+                "ts_order_side": "buy",
                 "order_filled_timestamp": 1666084723521,
-                "ft_is_entry": true,
+                "ts_is_entry": true,
                 "pair": "ETH/USDT",
                 "order_id": "78405395",
                 "status": "closed",
@@ -156,9 +156,9 @@ def test_trade_fromjson():
             {
                 "amount": 407.0,
                 "safe_price": 0.2592,
-                "ft_order_side": "sell",
+                "ts_order_side": "sell",
                 "order_filled_timestamp": 1666086322198,
-                "ft_is_entry": false,
+                "ts_is_entry": false,
                 "pair": "ETH/USDT",
                 "order_id": "78432649",
                 "status": "closed",
@@ -243,7 +243,7 @@ def test_trade_serialize_load_back(fee):
     assert tjson.get('initial_stop_loss_abs') == trade.initial_stop_loss
 
     excluded_o = [
-        'order_filled_timestamp', 'ft_is_entry', 'pair', 'is_open', 'order_timestamp',
+        'order_filled_timestamp', 'ts_is_entry', 'pair', 'is_open', 'order_timestamp',
     ]
     order_obj = trade.orders[0]
     for obj, value in tjson['orders'][0].items():
@@ -255,7 +255,7 @@ def test_trade_serialize_load_back(fee):
         if tattr != value:
             failed.append((obj, tattr, value))
 
-    assert tjson['orders'][0]['pair'] == order_obj.ft_pair
+    assert tjson['orders'][0]['pair'] == order_obj.ts_pair
     assert not failed
 
     trade2 = LocalTrade.from_json(trade_string)

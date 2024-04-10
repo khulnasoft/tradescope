@@ -8,4 +8,4 @@ FROM khulnasoft/tradescope:develop
 RUN pip install --user pyti
 
 # Switch back to user (only if you required root above)
-# USER ftuser
+# USER tsuser

@@ -35,7 +35,7 @@ def chown_user_directory(directory: Path) -> None:
         try:
             import subprocess
             subprocess.check_output(
-                ['sudo', 'chown', '-R', 'ftuser:', str(directory.resolve())])
+                ['sudo', 'chown', '-R', 'tsuser:', str(directory.resolve())])
         except Exception:
             logger.warning(f"Could not chown {directory}")
 

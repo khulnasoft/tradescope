@@ -63,7 +63,7 @@ TRADING_MODES = ['spot', 'margin', 'futures']
 MARGIN_MODES = ['cross', 'isolated', '']
 
 LAST_BT_RESULT_FN = '.last_result.json'
-FTHYPT_FILEVERSION = 'fthypt_fileversion'
+TSHYPT_FILEVERSION = 'tshypt_fileversion'
 
 USERPATH_HYPEROPTS = 'hyperopts'
 USERPATH_STRATEGIES = 'strategies'

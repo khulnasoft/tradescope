@@ -147,7 +147,7 @@ def get_patched_data_drawer(mocker, tradeaiconf):
 
 def get_patched_tradeai_strategy(mocker, tradeaiconf):
     strategy = StrategyResolver.load_strategy(tradeaiconf)
-    strategy.ft_bot_start()
+    strategy.ts_bot_start()
 
     return strategy
 

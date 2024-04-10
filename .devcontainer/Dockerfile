@@ -8,13 +8,13 @@ RUN apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog \
     && apt-get -y install --no-install-recommends git sudo vim build-essential \
     && apt-get clean \
-    && mkdir -p /home/ftuser/.vscode-server /home/ftuser/.vscode-server-insiders /home/ftuser/commandhistory \
-    && echo "export PROMPT_COMMAND='history -a'" >> /home/ftuser/.bashrc \
-    && echo "export HISTFILE=~/commandhistory/.bash_history" >> /home/ftuser/.bashrc \
-    && chown ftuser:ftuser -R /home/ftuser/.local/ \
-    && chown ftuser: -R /home/ftuser/
+    && mkdir -p /home/tsuser/.vscode-server /home/tsuser/.vscode-server-insiders /home/tsuser/commandhistory \
+    && echo "export PROMPT_COMMAND='history -a'" >> /home/tsuser/.bashrc \
+    && echo "export HISTFILE=~/commandhistory/.bash_history" >> /home/tsuser/.bashrc \
+    && chown tsuser:tsuser -R /home/tsuser/.local/ \
+    && chown tsuser: -R /home/tsuser/
 
-USER ftuser
+USER tsuser
 
 RUN pip install --user autopep8 -r docs/requirements-docs.txt -r requirements-dev.txt --no-cache-dir
 

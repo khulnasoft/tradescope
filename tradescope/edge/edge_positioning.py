@@ -172,7 +172,7 @@ class Edge:
             pair_data = pair_data.sort_values(by=['date'])
             pair_data = pair_data.reset_index(drop=True)
 
-            df_analyzed = self.strategy.ft_advise_signals(pair_data, {'pair': pair})[headers].copy()
+            df_analyzed = self.strategy.ts_advise_signals(pair_data, {'pair': pair})[headers].copy()
 
             trades += self._find_trades_for_stoploss_range(df_analyzed, pair, self._stoploss_range)
 

@@ -62,9 +62,9 @@ def informative(timeframe: str, asset: str = '',
     _candle_type = CandleType.from_string(candle_type) if candle_type else None
 
     def decorator(fn: PopulateIndicators):
-        informative_pairs = getattr(fn, '_ft_informative', [])
+        informative_pairs = getattr(fn, '_ts_informative', [])
         informative_pairs.append(InformativeData(_asset, _timeframe, _fmt, _ffill, _candle_type))
-        setattr(fn, '_ft_informative', informative_pairs)
+        setattr(fn, '_ts_informative', informative_pairs)
         return fn
     return decorator
 

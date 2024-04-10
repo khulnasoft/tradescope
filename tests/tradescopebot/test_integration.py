@@ -100,7 +100,7 @@ def test_may_execute_exit_stoploss_on_exchange_multi(default_conf, ticker, fee, 
         stop_order = stop_orders[idx]
         stop_order['id'] = f"stop{idx}"
         oobj = Order.parse_from_ccxt_object(stop_order, trade.pair, 'stoploss')
-        oobj.ft_is_open = True
+        oobj.ts_is_open = True
 
         trade.orders.append(oobj)
         assert len(trade.open_sl_orders) == 1
@@ -524,16 +524,16 @@ def test_dca_order_adjust_entry_replace_fails(
 
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_order_side != "stoploss")
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_order_side != "stoploss")
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     assert len(trades) == 1
 
     mocker.patch(f'{EXMS}._dry_is_price_crossed', return_value=False)
 
     # Timeout to not interfere
-    tradescope.strategy.ft_check_timed_out = MagicMock(return_value=False)
+    tradescope.strategy.ts_check_timed_out = MagicMock(return_value=False)
 
     # Create DCA order for 2nd trade (so we have 2 open orders on 2 trades)
     # this 2nd order won't fill.
@@ -545,9 +545,9 @@ def test_dca_order_adjust_entry_replace_fails(
     assert tradescope.strategy.adjust_trade_position.call_count == 1
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_order_side != "stoploss")
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_order_side != "stoploss")
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     assert len(trades) == 2
 
@@ -556,9 +556,9 @@ def test_dca_order_adjust_entry_replace_fails(
     tradescope.manage_open_orders()
     trades = Trade.session.scalars(
         select(Trade)
-        .where(Order.ft_is_open.is_(True))
-        .where(Order.ft_order_side != "stoploss")
-        .where(Order.ft_trade_id == Trade.id)
+        .where(Order.ts_is_open.is_(True))
+        .where(Order.ts_order_side != "stoploss")
+        .where(Order.ts_trade_id == Trade.id)
         ).all()
     assert len(trades) == 2
     assert len(Order.get_open_orders()) == 2
@@ -634,8 +634,8 @@ def test_dca_exiting(default_conf_usdt, ticker_usdt, fee, mocker, caplog, levera
     tradescope.process()
     trade = Trade.get_trades().first()
     assert len(trade.orders) == 2
-    assert trade.orders[-1].ft_order_side == 'sell'
-    assert trade.orders[-1].ft_order_tag == 'PES'
+    assert trade.orders[-1].ts_order_side == 'sell'
+    assert trade.orders[-1].ts_order_tag == 'PES'
     assert pytest.approx(trade.stake_amount) == 40
     assert pytest.approx(trade.amount) == 20 * leverage
     assert trade.open_rate == 2.0
@@ -673,7 +673,7 @@ def test_dca_exiting(default_conf_usdt, ticker_usdt, fee, mocker, caplog, levera
     trade = Trade.get_trades().first()
     assert len(trade.orders) == 3
 
-    assert trade.orders[-1].ft_order_side == 'sell'
+    assert trade.orders[-1].ts_order_side == 'sell'
     assert pytest.approx(trade.stake_amount) == 40
     assert trade.is_open is False
 
@@ -683,7 +683,7 @@ def test_dca_exiting(default_conf_usdt, ticker_usdt, fee, mocker, caplog, levera
     tradescope.process()
     trade = Trade.get_trades().first()
     assert len(trade.orders) == 3
-    assert trade.orders[-1].ft_order_side == 'sell'
+    assert trade.orders[-1].ts_order_side == 'sell'
     assert pytest.approx(trade.stake_amount) == 40
     assert trade.is_open is False
     assert log_has_re('Amount to exit is 0.0 due to exchange limits - not exiting.', caplog)

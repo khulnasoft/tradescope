@@ -19,7 +19,7 @@ class Kucoin(Exchange):
     may still not work as expected.
     """
 
-    _ft_has: Dict = {
+    _ts_has: Dict = {
         "stoploss_on_exchange": True,
         "stop_price_param": "stopPrice",
         "stop_price_prop": "stopPrice",

@@ -354,7 +354,7 @@ def test_informative_decorator(mocker, default_conf_usdt, trading_mode):
         'XRP/USDT', 'LTC/USDT', 'NEO/USDT'
     ])
 
-    assert len(strategy._ft_informative) == 7   # Equal to number of decorators used
+    assert len(strategy._ts_informative) == 7   # Equal to number of decorators used
     informative_pairs = [
         ('XRP/USDT', '1h', candle_def),
         ('XRP/BTC', '1h', candle_def),

@@ -46,7 +46,7 @@ class IStrategy(ABC, HyperStrategyMixin):
     # Version 3 - First version with short and leverage support
     INTERFACE_VERSION: int = 3
 
-    _ft_params_from_file: Dict
+    _ts_params_from_file: Dict
     # associated minimal roi
     minimal_roi: Dict = {}
 
@@ -131,12 +131,12 @@ class IStrategy(ABC, HyperStrategyMixin):
         super().__init__(config)
 
         # Gather informative pairs from @informative-decorated methods.
-        self._ft_informative: List[Tuple[InformativeData, PopulateIndicators]] = []
+        self._ts_informative: List[Tuple[InformativeData, PopulateIndicators]] = []
         for attr_name in dir(self.__class__):
             cls_method = getattr(self.__class__, attr_name)
             if not callable(cls_method):
                 continue
-            informative_data_list = getattr(cls_method, '_ft_informative', None)
+            informative_data_list = getattr(cls_method, '_ts_informative', None)
             if not isinstance(informative_data_list, list):
                 # Type check is required because mocker would return a mock object that evaluates to
                 # True, confusing this code.
@@ -148,7 +148,7 @@ class IStrategy(ABC, HyperStrategyMixin):
                                                'strategy timeframe!')
                 if not informative_data.candle_type:
                     informative_data.candle_type = config['candle_type_def']
-                self._ft_informative.append((informative_data, cls_method))
+                self._ts_informative.append((informative_data, cls_method))
 
     def load_tradeAI_model(self) -> None:
         if self.config.get('tradeai', {}).get('enabled', False):
@@ -179,7 +179,7 @@ class IStrategy(ABC, HyperStrategyMixin):
 
             self.tradeai = DummyClass()  # type: ignore
 
-    def ft_bot_start(self, **kwargs) -> None:
+    def ts_bot_start(self, **kwargs) -> None:
         """
         Strategy init - runs after dataprovider has been added.
         Must call bot_start()
@@ -188,9 +188,9 @@ class IStrategy(ABC, HyperStrategyMixin):
 
         strategy_safe_wrapper(self.bot_start)()
 
-        self.ft_load_hyper_params(self.config.get('runmode') == RunMode.HYPEROPT)
+        self.ts_load_hyper_params(self.config.get('runmode') == RunMode.HYPEROPT)
 
-    def ft_bot_cleanup(self) -> None:
+    def ts_bot_cleanup(self) -> None:
         """
         Clean up TradeAI and child threads
         """
@@ -738,7 +738,7 @@ class IStrategy(ABC, HyperStrategyMixin):
 # END - Intended to be overridden by strategy
 ###
 
-    _ft_stop_uses_after_fill = False
+    _ts_stop_uses_after_fill = False
 
     def _adjust_trade_position_internal(
             self, trade: Trade, current_time: datetime,
@@ -796,7 +796,7 @@ class IStrategy(ABC, HyperStrategyMixin):
             (p[0], p[1], CandleType.from_string(p[2]) if len(
                 p) > 2 and p[2] != '' else self.config.get('candle_type_def', CandleType.SPOT))
             for p in informative_pairs]
-        for inf_data, _ in self._ft_informative:
+        for inf_data, _ in self._ts_informative:
             # Get default candle type if not provided explicitly.
             candle_type = (inf_data.candle_type if inf_data.candle_type
                            else self.config.get('candle_type_def', CandleType.SPOT))
@@ -1156,7 +1156,7 @@ class IStrategy(ABC, HyperStrategyMixin):
 
         trade.adjust_min_max_rates(high or current_rate, low or current_rate)
 
-        stoplossflag = self.ft_stoploss_reached(current_rate=current_rate, trade=trade,
+        stoplossflag = self.ts_stoploss_reached(current_rate=current_rate, trade=trade,
                                                 current_time=current_time,
                                                 current_profit=current_profit,
                                                 force_stoploss=force_stoploss, low=low, high=high)
@@ -1219,7 +1219,7 @@ class IStrategy(ABC, HyperStrategyMixin):
 
         return exits
 
-    def ft_stoploss_adjust(self, current_rate: float, trade: Trade,
+    def ts_stoploss_adjust(self, current_rate: float, trade: Trade,
                            current_time: datetime, current_profit: float,
                            force_stoploss: float, low: Optional[float] = None,
                            high: Optional[float] = None, after_fill: bool = False) -> None:
@@ -1229,7 +1229,7 @@ class IStrategy(ABC, HyperStrategyMixin):
         :param low: Low value of this candle, only set in backtesting
         :param high: High value of this candle, only set in backtesting
         """
-        if after_fill and not self._ft_stop_uses_after_fill:
+        if after_fill and not self._ts_stop_uses_after_fill:
             # Skip if the strategy doesn't support after fill.
             return
 
@@ -1277,7 +1277,7 @@ class IStrategy(ABC, HyperStrategyMixin):
 
                 trade.adjust_stop_loss(bound or current_rate, stop_loss_value)
 
-    def ft_stoploss_reached(self, current_rate: float, trade: Trade,
+    def ts_stoploss_reached(self, current_rate: float, trade: Trade,
                             current_time: datetime, current_profit: float,
                             force_stoploss: float, low: Optional[float] = None,
                             high: Optional[float] = None) -> ExitCheckTuple:
@@ -1288,7 +1288,7 @@ class IStrategy(ABC, HyperStrategyMixin):
         :param low: Low value of this candle, only set in backtesting
         :param high: High value of this candle, only set in backtesting
         """
-        self.ft_stoploss_adjust(current_rate, trade, current_time, current_profit,
+        self.ts_stoploss_adjust(current_rate, trade, current_time, current_profit,
                                 force_stoploss, low, high)
 
         sl_higher_long = (trade.stop_loss >= (low or current_rate) and not trade.is_short)
@@ -1354,13 +1354,13 @@ class IStrategy(ABC, HyperStrategyMixin):
         else:
             return current_profit > roi
 
-    def ft_check_timed_out(self, trade: Trade, order: Order,
+    def ts_check_timed_out(self, trade: Trade, order: Order,
                            current_time: datetime) -> bool:
         """
-        FT Internal method.
+        TS Internal method.
         Check if timeout is active, and if the order is still open and timed out
         """
-        side = 'entry' if order.ft_order_side == trade.entry_side else 'exit'
+        side = 'entry' if order.ts_order_side == trade.entry_side else 'exit'
 
         timeout = self.config.get('unfilledtimeout', {}).get(side)
         if timeout is not None:
@@ -1370,7 +1370,7 @@ class IStrategy(ABC, HyperStrategyMixin):
             timedout = (order.status == 'open' and order.order_date_utc < timeout_threshold)
             if timedout:
                 return True
-        time_method = (self.check_exit_timeout if order.ft_order_side == trade.exit_side
+        time_method = (self.check_exit_timeout if order.ts_order_side == trade.exit_side
                        else self.check_entry_timeout)
 
         return strategy_safe_wrapper(time_method,
@@ -1391,7 +1391,7 @@ class IStrategy(ABC, HyperStrategyMixin):
         return {pair: self.advise_indicators(pair_data.copy(), {'pair': pair}).copy()
                 for pair, pair_data in data.items()}
 
-    def ft_advise_signals(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def ts_advise_signals(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Call advise_entry and advise_exit and return the resulting dataframe.
         :param dataframe: Dataframe containing data from exchange, as well as pre-calculated
@@ -1416,7 +1416,7 @@ class IStrategy(ABC, HyperStrategyMixin):
         logger.debug(f"Populating indicators for pair {metadata.get('pair')}.")
 
         # call populate_indicators_Nm() which were tagged with @informative decorator.
-        for inf_data, populate_fn in self._ft_informative:
+        for inf_data, populate_fn in self._ts_informative:
             dataframe = _create_and_merge_informative_pair(
                 self, dataframe, metadata, inf_data, populate_fn)
 

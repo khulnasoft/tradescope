@@ -14,6 +14,6 @@ class Bingx(Exchange):
     with this exchange.
     """
 
-    _ft_has: Dict = {
+    _ts_has: Dict = {
         "ohlcv_candle_limit": 1000,
     }

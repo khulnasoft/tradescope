@@ -22,7 +22,7 @@ class Gate(Exchange):
     may still not work as expected.
     """
 
-    _ft_has: Dict = {
+    _ts_has: Dict = {
         "ohlcv_candle_limit": 1000,
         "order_time_in_force": ['GTC', 'IOC'],
         "stoploss_on_exchange": True,
@@ -32,7 +32,7 @@ class Gate(Exchange):
         "marketOrderRequiresPrice": True,
     }
 
-    _ft_has_futures: Dict = {
+    _ts_has_futures: Dict = {
         "needs_trading_fees": True,
         "marketOrderRequiresPrice": False,
         "stop_price_type_field": "price_type",

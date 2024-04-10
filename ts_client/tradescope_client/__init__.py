@@ -1,4 +1,4 @@
-from tradescope_client.ts_rest_client import FtRestClient
+from tradescope_client.ts_rest_client import TsRestClient
 
 
 __version__ = '2024.4-dev'
@@ -23,4 +23,4 @@ if 'dev' in __version__:
         except Exception:
             pass
 
-__all__ = ['FtRestClient']
+__all__ = ['TsRestClient']

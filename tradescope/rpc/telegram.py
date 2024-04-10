@@ -133,7 +133,7 @@ class Telegram(RPCHandler):
         """
         Creates and starts the polling thread
         """
-        self._thread = Thread(target=self._init, name='FTTelegram')
+        self._thread = Thread(target=self._init, name='TSTelegram')
         self._thread.start()
 
     def _init_keyboard(self) -> None:
@@ -557,7 +557,7 @@ class Telegram(RPCHandler):
             if order['is_open'] is True:
                 continue
             order_nr += 1
-            wording = 'Entry' if order['ft_is_entry'] else 'Exit'
+            wording = 'Entry' if order['ts_is_entry'] else 'Exit'
 
             cur_entry_amount = order["filled"] or order["amount"]
             cur_entry_average = order["safe_price"]
@@ -658,9 +658,9 @@ class Telegram(RPCHandler):
         max_entries = self._config.get('max_entry_position_adjustment', -1)
         for r in results:
             r['open_date_hum'] = dt_humanize(r['open_date'])
-            r['num_entries'] = len([o for o in r['orders'] if o['ft_is_entry']])
-            r['num_exits'] = len([o for o in r['orders'] if not o['ft_is_entry']
-                                 and not o['ft_order_side'] == 'stoploss'])
+            r['num_entries'] = len([o for o in r['orders'] if o['ts_is_entry']])
+            r['num_exits'] = len([o for o in r['orders'] if not o['ts_is_entry']
+                                 and not o['ts_order_side'] == 'stoploss'])
             r['exit_reason'] = r.get('exit_reason', "")
             r['stake_amount_r'] = fmt_coin(r['stake_amount'], r['quote_currency'])
             r['max_stake_amount_r'] = fmt_coin(
@@ -1798,7 +1798,7 @@ class Telegram(RPCHandler):
                     lines = [
                         f"*Key:* `{result['cd_key']}`",
                         f"*ID:* `{result['id']}`",
-                        f"*Trade ID:* `{result['ft_trade_id']}`",
+                        f"*Trade ID:* `{result['ts_trade_id']}`",
                         f"*Type:* `{result['cd_type']}`",
                         f"*Value:* `{result['cd_value']}`",
                         f"*Create Date:* `{format_date(result['created_at'])}`",

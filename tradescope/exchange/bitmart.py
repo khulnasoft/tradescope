@@ -14,7 +14,7 @@ class Bitmart(Exchange):
     with this exchange.
     """
 
-    _ft_has: Dict = {
+    _ts_has: Dict = {
         "stoploss_on_exchange": False,  # Bitmart API does not support stoploss orders
         "ohlcv_candle_limit": 200,
     }
