@@ -547,7 +547,7 @@ def test_dp_get_required_startup(default_conf_usdt):
     assert dp.get_required_startup('1h') == 530
     assert dp.get_required_startup('1d') == 70
 
-    # scenario from issue https://github.com/freqtrade/freqtrade/issues/9432
+    # scenario from issue https://github.com/khulnasoft/tradescope/issues/9432
     dp._config['freqai'] = {
         'enabled': True,
         'train_period_days': 180,

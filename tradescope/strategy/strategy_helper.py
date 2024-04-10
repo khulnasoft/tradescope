@@ -44,7 +44,7 @@ def merge_informative_pair(dataframe: pd.DataFrame, informative: pd.DataFrame,
         informative['date_merge'] = informative[date_column]
     elif minutes < minutes_inf:
         # Subtract "small" timeframe so merging is not delayed by 1 small candle
-        # Detailed explanation in https://github.com/freqtrade/freqtrade/issues/4073
+        # Detailed explanation in https://github.com/khulnasoft/tradescope/issues/4073
         if not informative.empty:
             if timeframe_inf == '1M':
                 informative['date_merge'] = (

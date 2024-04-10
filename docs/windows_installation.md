@@ -17,7 +17,7 @@ Otherwise, please follow the instructions below.
 ### 1. Clone the git repository
 
 ```bash
-git clone https://github.com/freqtrade/freqtrade.git
+git clone https://github.com/khulnasoft/tradescope.git
 ```
 
 ### 2. Install ta-lib

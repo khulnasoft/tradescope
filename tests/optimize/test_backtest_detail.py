@@ -669,7 +669,7 @@ tc41 = BTContainer(data=[
 # Test 42: Custom-entry-price around candle low
 # Would cause immediate ROI exit, but since the trade was entered
 # below open, we treat this as cheating, and delay the sell by 1 candle.
-# details: https://github.com/freqtrade/freqtrade/issues/6261
+# details: https://github.com/khulnasoft/tradescope/issues/6261
 tc42 = BTContainer(data=[
     # D   O     H     L     C    V    EL XL ES Xs  BT
     [0, 5000, 5050, 4950, 5000, 6172, 1, 0],
@@ -684,7 +684,7 @@ tc42 = BTContainer(data=[
 
 # Test 43: Custom-entry-price around candle low
 # Would cause immediate ROI exit below close
-# details: https://github.com/freqtrade/freqtrade/issues/6261
+# details: https://github.com/khulnasoft/tradescope/issues/6261
 tc43 = BTContainer(data=[
     # D   O     H     L     C    V    EL XL ES Xs  BT
     [0, 5000, 5050, 4950, 5000, 6172, 1, 0],

@@ -79,7 +79,7 @@ OS Specific steps are listed first, the [Common](#common) section below is neces
     # Use pywheels.org to speed up installation
     sudo echo "[global]\nextra-index-url=https://www.piwheels.org/simple" > tee /etc/pip.conf
 
-    git clone https://github.com/freqtrade/freqtrade.git
+    git clone https://github.com/khulnasoft/tradescope.git
     cd freqtrade
 
     bash setup.sh -i
@@ -101,7 +101,7 @@ Freqtrade is an open source crypto-currency trading bot, whose code is hosted on
 
 ```bash
 # Download `develop` branch of freqtrade repository
-git clone https://github.com/freqtrade/freqtrade.git
+git clone https://github.com/khulnasoft/tradescope.git
 
 # Enter downloaded directory
 cd freqtrade
@@ -277,7 +277,7 @@ Download and install freqtrade.
 
 ```bash
 # download freqtrade
-git clone https://github.com/freqtrade/freqtrade.git
+git clone https://github.com/khulnasoft/tradescope.git
 
 # enter downloaded directory 'freqtrade'
 cd freqtrade      

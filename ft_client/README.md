@@ -4,4 +4,4 @@
 
 Provides a minimal rest client for the freqtrade rest api.
 
-Please check out the [main project](https://github.com/freqtrade/freqtrade) for more information or details.
+Please check out the [main project](https://github.com/khulnasoft/tradescope) for more information or details.

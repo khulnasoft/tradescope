@@ -10,7 +10,7 @@ Hyperopt requires historic data to be available, just as backtesting does (hyper
 To learn how to get data for the pairs and exchange you're interested in, head over to the [Data Downloading](data-download.md) section of the documentation.
 
 !!! Bug
-    Hyperopt can crash when used with only 1 CPU Core as found out in [Issue #1133](https://github.com/freqtrade/freqtrade/issues/1133)
+    Hyperopt can crash when used with only 1 CPU Core as found out in [Issue #1133](https://github.com/khulnasoft/tradescope/issues/1133)
 
 !!! Note
     Since 2021.4 release you no longer have to write a separate hyperopt class, but can configure the parameters directly in the strategy.

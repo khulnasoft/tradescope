@@ -4,7 +4,7 @@
 
 Feel like our bot is missing a feature? We welcome your pull requests! 
 
-Issues labeled [good first issue](https://github.com/freqtrade/freqtrade/labels/good%20first%20issue) can be good first contributions, and will help get you familiar with the codebase.
+Issues labeled [good first issue](https://github.com/khulnasoft/tradescope/labels/good%20first%20issue) can be good first contributions, and will help get you familiar with the codebase.
 
 Few pointers for contributions:
 
@@ -12,7 +12,7 @@ Few pointers for contributions:
 - New features need to contain unit tests, must conform to PEP8 (max-line-length = 100) and should be documented with the introduction PR.
 - PR's can be declared as `[WIP]` - which signify Work in Progress Pull Requests (which are not finished).
 
-If you are unsure, discuss the feature on our [discord server](https://discord.gg/p7nuUNVfP7) or in a [issue](https://github.com/freqtrade/freqtrade/issues) before a Pull Request.
+If you are unsure, discuss the feature on our [discord server](https://discord.gg/p7nuUNVfP7) or in a [issue](https://github.com/khulnasoft/tradescope/issues) before a Pull Request.
 
 ## Getting started
 

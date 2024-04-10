@@ -485,7 +485,7 @@ class FreqtradeBot(LoggingMixin):
         except ExchangeError:
             logger.warning("Error finding onexchange order.")
         except Exception:
-            # catching https://github.com/freqtrade/freqtrade/issues/9025
+            # catching https://github.com/khulnasoft/tradescope/issues/9025
             logger.warning("Error finding onexchange order", exc_info=True)
 #
 # BUY / enter positions / open trades logic and methods

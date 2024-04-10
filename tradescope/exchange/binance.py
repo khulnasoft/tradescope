@@ -126,7 +126,7 @@ class Binance(Exchange):
         Funding fees are only charged at full hours (usually every 4-8h).
         Therefore a trade opening at 10:00:01 will not be charged a funding fee until the next hour.
         On binance, this cutoff is 15s.
-        https://github.com/freqtrade/freqtrade/pull/5779#discussion_r740175931
+        https://github.com/khulnasoft/tradescope/pull/5779#discussion_r740175931
         :param open_date: The open date for a trade
         :return: True if the date falls on a full hour, False otherwise
         """

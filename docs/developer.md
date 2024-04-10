@@ -2,7 +2,7 @@
 
 This page is intended for developers of Freqtrade, people who want to contribute to the Freqtrade codebase or documentation, or people who want to understand the source code of the application they're running.
 
-All contributions, bug reports, bug fixes, documentation improvements, enhancements and ideas are welcome. We [track issues](https://github.com/freqtrade/freqtrade/issues) on [GitHub](https://github.com) and also have a dev channel on [discord](https://discord.gg/p7nuUNVfP7) where you can ask questions.
+All contributions, bug reports, bug fixes, documentation improvements, enhancements and ideas are welcome. We [track issues](https://github.com/khulnasoft/tradescope/issues) on [GitHub](https://github.com) and also have a dev channel on [discord](https://discord.gg/p7nuUNVfP7) where you can ask questions.
 
 ## Documentation
 
@@ -29,7 +29,7 @@ This will install all required tools for development, including `pytest`, `ruff`
 Then install the git hook scripts by running `pre-commit install`, so your changes will be verified locally before committing.
 This avoids a lot of waiting for CI already, as some basic formatting checks are done locally on your machine.
 
-Before opening a pull request, please familiarize yourself with our [Contributing Guidelines](https://github.com/freqtrade/freqtrade/blob/develop/CONTRIBUTING.md).
+Before opening a pull request, please familiarize yourself with our [Contributing Guidelines](https://github.com/khulnasoft/tradescope/blob/develop/CONTRIBUTING.md).
 
 ### Devcontainer setup
 
@@ -162,7 +162,7 @@ Hopefully you also want to contribute this back upstream.
 
 Whatever your motivations are - This should get you off the ground in trying to develop a new Pairlist Handler.
 
-First of all, have a look at the [VolumePairList](https://github.com/freqtrade/freqtrade/blob/develop/freqtrade/pairlist/VolumePairList.py) Handler, and best copy this file with a name of your new Pairlist Handler.
+First of all, have a look at the [VolumePairList](https://github.com/khulnasoft/tradescope/blob/develop/freqtrade/pairlist/VolumePairList.py) Handler, and best copy this file with a name of your new Pairlist Handler.
 
 This is a simple Handler, which however serves as a good example on how to start developing.
 

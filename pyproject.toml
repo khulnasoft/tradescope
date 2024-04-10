@@ -31,9 +31,9 @@ classifiers = [
 
 
 [project.urls]
-Homepage = "https://github.com/freqtrade/freqtrade"
+Homepage = "https://github.com/khulnasoft/tradescope"
 Documentation = "https://freqtrade.io"
-"Bug Tracker" = "https://github.com/freqtrade/freqtrade/issues"
+"Bug Tracker" = "https://github.com/khulnasoft/tradescope/issues"
 
 
 [project.scripts]

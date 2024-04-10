@@ -7,7 +7,7 @@ Please familiarize yourself with [Freqtrade basics](bot-basics.md) first, which 
 ## Develop your own strategy
 
 The bot includes a default strategy file.
-Also, several other strategies are available in the [strategy repository](https://github.com/freqtrade/freqtrade-strategies).
+Also, several other strategies are available in the [strategy repository](https://github.com/khulnasoft/tradescope-strategies).
 
 You will however most likely have your own idea for a strategy.
 This document intends to help you convert your strategy idea into your own strategy.
@@ -43,7 +43,7 @@ Future versions will require this to be set.
 freqtrade trade --strategy AwesomeStrategy
 ```
 
-**For the following section we will use the [user_data/strategies/sample_strategy.py](https://github.com/freqtrade/freqtrade/blob/develop/freqtrade/templates/sample_strategy.py)
+**For the following section we will use the [user_data/strategies/sample_strategy.py](https://github.com/khulnasoft/tradescope/blob/develop/freqtrade/templates/sample_strategy.py)
 file as reference.**
 
 !!! Note "Strategies and Backtesting"
@@ -149,7 +149,7 @@ def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame
 ```
 
 !!! Note "Want more indicator examples?"
-    Look into the [user_data/strategies/sample_strategy.py](https://github.com/freqtrade/freqtrade/blob/develop/freqtrade/templates/sample_strategy.py).
+    Look into the [user_data/strategies/sample_strategy.py](https://github.com/khulnasoft/tradescope/blob/develop/freqtrade/templates/sample_strategy.py).
     Then uncomment indicators you need.
 
 #### Indicator libraries
@@ -1029,7 +1029,7 @@ The following rules apply, and entry signals will be ignored if more than one of
 
 ## Further strategy ideas
 
-To get additional Ideas for strategies, head over to the [strategy repository](https://github.com/freqtrade/freqtrade-strategies). Feel free to use them as they are - but results will depend on the current market situation, pairs used etc. - therefore please backtest the strategy for your exchange/desired pairs first, evaluate carefully, use at your own risk.
+To get additional Ideas for strategies, head over to the [strategy repository](https://github.com/khulnasoft/tradescope-strategies). Feel free to use them as they are - but results will depend on the current market situation, pairs used etc. - therefore please backtest the strategy for your exchange/desired pairs first, evaluate carefully, use at your own risk.
 Feel free to use any of them as inspiration for your own strategies.
 We're happy to accept Pull Requests containing new Strategies to that repo.
 

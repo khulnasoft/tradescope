@@ -17,7 +17,7 @@ class StrategyTestV3(IStrategy):
     Strategy used by tests freqtrade bot.
     Please do not modify this strategy, it's  intended for internal use only.
     Please look at the SampleStrategy in the user_data/strategy directory
-    or strategy repository https://github.com/freqtrade/freqtrade-strategies
+    or strategy repository https://github.com/khulnasoft/tradescope-strategies
     for samples and inspiration.
     """
     INTERFACE_VERSION = 3
