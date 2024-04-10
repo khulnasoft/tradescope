@@ -809,7 +809,6 @@ Returning a value more than the above (so remaining stake_amount would become ne
 
 ``` python
 from freqtrade.persistence import Trade
-from typing import Optional, Tuple, Union
 
 
 class DigDeeperStrategy(IStrategy):
@@ -949,7 +948,7 @@ If the cancellation of the original order fails, then the order will not be repl
 
 ```python
 from freqtrade.persistence import Trade
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 class AwesomeStrategy(IStrategy):
 
