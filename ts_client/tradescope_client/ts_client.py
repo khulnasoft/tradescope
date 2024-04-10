@@ -9,14 +9,14 @@ from typing import Any, Dict
 
 import rapidjson
 from tradescope_client import __version__
-from tradescope_client.ft_rest_client import FtRestClient
+from tradescope_client.ts_rest_client import FtRestClient
 
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )
-logger = logging.getLogger("ft_rest_client")
+logger = logging.getLogger("ts_rest_client")
 
 
 def add_arguments(args: Any = None):

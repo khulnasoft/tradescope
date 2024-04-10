@@ -7,8 +7,8 @@ name = "tradescope-client"
 dynamic = ["version"]
 
 authors = [
-  {name = "Tradescope Team"},
-  {name = "Tradescope Team", email = "tradescope@protonmail.com"},
+  {name = "KhulnaSoft DevOps"},
+  {name = "KhulnaSoft DevOps", email = "info@khulnasoft.com"},
 ]
 
 description = "Tradescope - Client scripts"

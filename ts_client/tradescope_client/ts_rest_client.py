@@ -14,7 +14,7 @@ import requests
 from requests.exceptions import ConnectionError
 
 
-logger = logging.getLogger("ft_rest_client")
+logger = logging.getLogger("ts_rest_client")
 
 ParamsT = Optional[Dict[str, Any]]
 PostDataT = Optional[Union[Dict[str, Any], List[Dict[str, Any]]]]
