@@ -2,23 +2,23 @@
 
 ## Getting data for backtesting and hyperopt
 
-To download data (candles / OHLCV) needed for backtesting and hyperoptimization use the `tradescope download-data` command.
+To download data (candles / OHLCV) needed for backtesting and hyperoptimization use the `freqtrade download-data` command.
 
-If no additional parameter is specified, tradescope will download data for `"1m"` and `"5m"` timeframes for the last 30 days.
+If no additional parameter is specified, freqtrade will download data for `"1m"` and `"5m"` timeframes for the last 30 days.
 Exchange and pairs will come from `config.json` (if specified using `-c/--config`).
 Without provided configuration, `--exchange` becomes mandatory.
 
 You can use a relative timerange (`--days 20`) or an absolute starting point (`--timerange 20200101-`). For incremental downloads, the relative approach should be used.
 
 !!! Tip "Tip: Updating existing data"
-    If you already have backtesting data available in your data-directory and would like to refresh this data up to today, tradescope will automatically calculate the data missing for the existing pairs and the download will occur from the latest available point until "now", neither --days or --timerange parameters are required. Tradescope will keep the available data and only download the missing data.
+    If you already have backtesting data available in your data-directory and would like to refresh this data up to today, freqtrade will automatically calculate the data missing for the existing pairs and the download will occur from the latest available point until "now", neither --days or --timerange parameters are required. Freqtrade will keep the available data and only download the missing data.
     If you are updating existing data after inserting new pairs that you have no data for, use `--new-pairs-days xx` parameter. Specified number of days will be downloaded for new pairs while old pairs will be updated with missing data only.
-    If you use `--days xx` parameter alone - data for specified number of days will be downloaded for _all_ pairs. Be careful, if specified number of days is smaller than gap between now and last downloaded candle - tradescope will delete all existing data to avoid gaps in candle data.
+    If you use `--days xx` parameter alone - data for specified number of days will be downloaded for _all_ pairs. Be careful, if specified number of days is smaller than gap between now and last downloaded candle - freqtrade will delete all existing data to avoid gaps in candle data.
 
 ### Usage
 
 ```
-usage: tradescope download-data [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade download-data [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                                [-d PATH] [--userdir PATH]
                                [-p PAIRS [PAIRS ...]] [--pairs-file FILE]
                                [--days INT] [--new-pairs-days INT]
@@ -85,7 +85,7 @@ Common arguments:
 
 !!! Tip "Downloading all data for one quote currency"
     Often, you'll want to download data for all pairs of a specific quote-currency. In such cases, you can use the following shorthand:
-    `tradescope download-data --exchange binance --pairs .*/USDT <...>`. The provided "pairs" string will be expanded to contain all active pairs on the exchange.
+    `freqtrade download-data --exchange binance --pairs .*/USDT <...>`. The provided "pairs" string will be expanded to contain all active pairs on the exchange.
     To also download data for inactive (delisted) pairs, add `--include-inactive-pairs` to the command.
 
 !!! Note "Startup period"
@@ -98,7 +98,7 @@ Common arguments:
 A very simple command (assuming an available `config.json` file) can look as follows.
 
 ```bash
-tradescope download-data --exchange binance
+freqtrade download-data --exchange binance
 ```
 
 This will download historical candle (OHLCV) data for all the currency pairs defined in the configuration.
@@ -106,13 +106,13 @@ This will download historical candle (OHLCV) data for all the currency pairs def
 Alternatively, specify the pairs directly
 
 ```bash
-tradescope download-data --exchange binance --pairs ETH/USDT XRP/USDT BTC/USDT
+freqtrade download-data --exchange binance --pairs ETH/USDT XRP/USDT BTC/USDT
 ```
 
 or as regex (in this case, to download all active USDT pairs)
 
 ```bash
-tradescope download-data --exchange binance --pairs .*/USDT
+freqtrade download-data --exchange binance --pairs .*/USDT
 ```
 
 ### Other Notes
@@ -144,15 +144,15 @@ Assuming you downloaded all data from 2022 (`--timerange 20220101-`) - but you'd
 You can do so by using the `--prepend` flag, combined with `--timerange` - specifying an end-date.
 
 ``` bash
-tradescope download-data --exchange binance --pairs ETH/USDT XRP/USDT BTC/USDT --prepend --timerange 20210101-20220101
+freqtrade download-data --exchange binance --pairs ETH/USDT XRP/USDT BTC/USDT --prepend --timerange 20210101-20220101
 ```
 
 !!! Note
-    Tradescope will ignore the end-date in this mode if data is available, updating the end-date to the existing data start point.
+    Freqtrade will ignore the end-date in this mode if data is available, updating the end-date to the existing data start point.
 
 ### Data format
 
-Tradescope currently supports the following data-formats:
+Freqtrade currently supports the following data-formats:
 
 * `feather` - a dataformat based on Apache Arrow
 * `json` -  plain "text" json files
@@ -198,7 +198,7 @@ Found 6 pair / timeframe combinations.
 Timings have been taken in a not very scientific way with the following command, which forces reading the data into memory.
 
 ``` bash
-time tradescope list-data --show-timerange --data-format-ohlcv <dataformat>
+time freqtrade list-data --show-timerange --data-format-ohlcv <dataformat>
 ```
 
 |  Format | Size | timing |
@@ -245,7 +245,7 @@ Mixing different stake-currencies is allowed for this file, since it's only used
 ## Sub-command convert data
 
 ```
-usage: tradescope convert-data [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade convert-data [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                               [-d PATH] [--userdir PATH]
                               [-p PAIRS [PAIRS ...]] --format-from
                               {json,jsongz,hdf5,feather,parquet} --format-to
@@ -296,17 +296,17 @@ Common arguments:
 
 ### Example converting data
 
-The following command will convert all candle (OHLCV) data available in `~/.tradescope/data/binance` from json to jsongz, saving diskspace in the process.
+The following command will convert all candle (OHLCV) data available in `~/.freqtrade/data/binance` from json to jsongz, saving diskspace in the process.
 It'll also remove original json data files (`--erase` parameter).
 
 ``` bash
-tradescope convert-data --format-from json --format-to jsongz --datadir ~/.tradescope/data/binance -t 5m 15m --erase
+freqtrade convert-data --format-from json --format-to jsongz --datadir ~/.freqtrade/data/binance -t 5m 15m --erase
 ```
 
 ## Sub-command convert trade data
 
 ```
-usage: tradescope convert-trade-data [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade convert-trade-data [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                                     [-d PATH] [--userdir PATH]
                                     [-p PAIRS [PAIRS ...]] --format-from
                                     {json,jsongz,hdf5,feather,parquet}
@@ -348,11 +348,11 @@ Common arguments:
 
 ### Example converting trades
 
-The following command will convert all available trade-data in `~/.tradescope/data/kraken` from jsongz to json.
+The following command will convert all available trade-data in `~/.freqtrade/data/kraken` from jsongz to json.
 It'll also remove original jsongz data files (`--erase` parameter).
 
 ``` bash
-tradescope convert-trade-data --format-from jsongz --format-to json --datadir ~/.tradescope/data/kraken --erase
+freqtrade convert-trade-data --format-from jsongz --format-to json --datadir ~/.freqtrade/data/kraken --erase
 ```
 
 ## Sub-command trades to ohlcv
@@ -361,7 +361,7 @@ When you need to use `--dl-trades` (kraken only) to download data, conversion of
 This command will allow you to repeat this last step for additional timeframes without re-downloading the data.
 
 ```
-usage: tradescope trades-to-ohlcv [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade trades-to-ohlcv [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                                  [-d PATH] [--userdir PATH]
                                  [-p PAIRS [PAIRS ...]]
                                  [-t TIMEFRAMES [TIMEFRAMES ...]]
@@ -407,7 +407,7 @@ Common arguments:
 ### Example trade-to-ohlcv conversion
 
 ``` bash
-tradescope trades-to-ohlcv --exchange kraken -t 5m 1h 1d --pairs BTC/EUR ETH/EUR
+freqtrade trades-to-ohlcv --exchange kraken -t 5m 1h 1d --pairs BTC/EUR ETH/EUR
 ```
 
 ## Sub-command list-data
@@ -415,7 +415,7 @@ tradescope trades-to-ohlcv --exchange kraken -t 5m 1h 1d --pairs BTC/EUR ETH/EUR
 You can get a list of downloaded data using the `list-data` sub-command.
 
 ```
-usage: tradescope list-data [-h] [-v] [--logfile FILE] [-V] [-c PATH] [-d PATH]
+usage: freqtrade list-data [-h] [-v] [--logfile FILE] [-V] [-c PATH] [-d PATH]
                            [--userdir PATH] [--exchange EXCHANGE]
                            [--data-format-ohlcv {json,jsongz,hdf5,feather,parquet}]
                            [-p PAIRS [PAIRS ...]]
@@ -458,7 +458,7 @@ Common arguments:
 ### Example list-data
 
 ```bash
-> tradescope list-data --userdir ~/.tradescope/user_data/
+> freqtrade list-data --userdir ~/.freqtrade/user_data/
 
 Found 33 pair / timeframe combinations.
 pairs       timeframe
@@ -484,14 +484,14 @@ To use this mode, simply add `--dl-trades` to your call. This will swap the down
 Example call:
 
 ```bash
-tradescope download-data --exchange kraken --pairs XRP/EUR ETH/EUR --days 20 --dl-trades
+freqtrade download-data --exchange kraken --pairs XRP/EUR ETH/EUR --days 20 --dl-trades
 ```
 
 !!! Note
     While this method uses async calls, it will be slow, since it requires the result of the previous call to generate the next request to the exchange.
 
 !!! Warning
-    The historic trades are not available during Tradescope dry-run and live trade modes because all exchanges tested provide this data with a delay of few 100 candles, so it's not suitable for real-time trading.
+    The historic trades are not available during Freqtrade dry-run and live trade modes because all exchanges tested provide this data with a delay of few 100 candles, so it's not suitable for real-time trading.
 
 !!! Note "Kraken user"
     Kraken users should read [this](exchanges.md#historic-kraken-data) before starting to download data.

@@ -5,15 +5,15 @@ from typing import Dict
 import talib.abstract as ta
 from pandas import DataFrame
 
-from tradescope.strategy import IStrategy
+from freqtrade.strategy import IStrategy
 
 
 logger = logging.getLogger(__name__)
 
 
-class tradeai_rl_test_strat(IStrategy):
+class freqai_rl_test_strat(IStrategy):
     """
-    Test strategy - used for testing tradeAI functionalities.
+    Test strategy - used for testing freqAI functionalities.
     DO not use in production.
     """
 
@@ -51,7 +51,7 @@ class tradeai_rl_test_strat(IStrategy):
 
         return dataframe
 
-    def set_tradeai_targets(self, dataframe: DataFrame, metadata: Dict, **kwargs):
+    def set_freqai_targets(self, dataframe: DataFrame, metadata: Dict, **kwargs):
 
         dataframe["&-action"] = 0
 
@@ -59,7 +59,7 @@ class tradeai_rl_test_strat(IStrategy):
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
-        dataframe = self.tradeai.start(dataframe, metadata, self)
+        dataframe = self.freqai.start(dataframe, metadata, self)
 
         return dataframe
 

@@ -3,9 +3,9 @@ from typing import Dict, List, NamedTuple, Optional
 
 from pandas import DataFrame
 
-from tradescope.enums import ExitType
-from tradescope.exchange import timeframe_to_minutes
-from tradescope.util.datetime_helpers import dt_utc
+from freqtrade.enums import ExitType
+from freqtrade.exchange import timeframe_to_minutes
+from freqtrade.util.datetime_helpers import dt_utc
 
 
 tests_start_time = dt_utc(2018, 10, 3)

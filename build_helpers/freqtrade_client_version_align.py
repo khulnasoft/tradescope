@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-from tradescope_client import __version__ as client_version
+from freqtrade_client import __version__ as client_version
 
-from tradescope import __version__ as ft_version
+from freqtrade import __version__ as ft_version
 
 
 def main():

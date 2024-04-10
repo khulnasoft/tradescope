@@ -9,15 +9,15 @@ import pytest
 from pandas import DataFrame, Timestamp
 from pandas.testing import assert_frame_equal
 
-from tradescope.configuration import TimeRange
-from tradescope.constants import AVAILABLE_DATAHANDLERS
-from tradescope.data.history.datahandlers.featherdatahandler import FeatherDataHandler
-from tradescope.data.history.datahandlers.hdf5datahandler import HDF5DataHandler
-from tradescope.data.history.datahandlers.idatahandler import (IDataHandler, get_datahandler,
+from freqtrade.configuration import TimeRange
+from freqtrade.constants import AVAILABLE_DATAHANDLERS
+from freqtrade.data.history.datahandlers.featherdatahandler import FeatherDataHandler
+from freqtrade.data.history.datahandlers.hdf5datahandler import HDF5DataHandler
+from freqtrade.data.history.datahandlers.idatahandler import (IDataHandler, get_datahandler,
                                                               get_datahandlerclass)
-from tradescope.data.history.datahandlers.jsondatahandler import JsonDataHandler, JsonGzDataHandler
-from tradescope.data.history.datahandlers.parquetdatahandler import ParquetDataHandler
-from tradescope.enums import CandleType, TradingMode
+from freqtrade.data.history.datahandlers.jsondatahandler import JsonDataHandler, JsonGzDataHandler
+from freqtrade.data.history.datahandlers.parquetdatahandler import ParquetDataHandler
+from freqtrade.enums import CandleType, TradingMode
 from tests.conftest import log_has, log_has_re
 
 

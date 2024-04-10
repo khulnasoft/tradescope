@@ -2,15 +2,15 @@ from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
-from tradescope.configuration.config_setup import setup_utils_configuration
-from tradescope.data.history.history_utils import download_data_main
-from tradescope.enums import RunMode
-from tradescope.exceptions import OperationalException
+from freqtrade.configuration.config_setup import setup_utils_configuration
+from freqtrade.data.history.history_utils import download_data_main
+from freqtrade.enums import RunMode
+from freqtrade.exceptions import OperationalException
 from tests.conftest import EXMS, log_has, patch_exchange
 
 
 def test_download_data_main_no_markets(mocker, caplog):
-    dl_mock = mocker.patch('tradescope.data.history.history_utils.refresh_backtest_ohlcv_data',
+    dl_mock = mocker.patch('freqtrade.data.history.history_utils.refresh_backtest_ohlcv_data',
                            MagicMock(return_value=["ETH/BTC", "XRP/BTC"]))
     patch_exchange(mocker, id='binance')
     mocker.patch(f'{EXMS}.get_markets', return_value={})
@@ -27,7 +27,7 @@ def test_download_data_main_no_markets(mocker, caplog):
 
 def test_download_data_main_all_pairs(mocker, markets):
 
-    dl_mock = mocker.patch('tradescope.data.history.history_utils.refresh_backtest_ohlcv_data',
+    dl_mock = mocker.patch('freqtrade.data.history.history_utils.refresh_backtest_ohlcv_data',
                            MagicMock(return_value=["ETH/BTC", "XRP/BTC"]))
     patch_exchange(mocker)
     mocker.patch(f'{EXMS}.markets', PropertyMock(return_value=markets))
@@ -55,9 +55,9 @@ def test_download_data_main_all_pairs(mocker, markets):
 
 
 def test_download_data_main_trades(mocker):
-    dl_mock = mocker.patch('tradescope.data.history.history_utils.refresh_backtest_trades_data',
+    dl_mock = mocker.patch('freqtrade.data.history.history_utils.refresh_backtest_trades_data',
                            MagicMock(return_value=[]))
-    convert_mock = mocker.patch('tradescope.data.history.history_utils.convert_trades_to_ohlcv',
+    convert_mock = mocker.patch('freqtrade.data.history.history_utils.convert_trades_to_ohlcv',
                                 MagicMock(return_value=[]))
     patch_exchange(mocker)
     mocker.patch(f'{EXMS}.get_markets', return_value={})

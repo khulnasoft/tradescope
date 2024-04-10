@@ -1,14 +1,14 @@
-# ![tradescope](https://raw.githubusercontent.com/khulnasoft/tradescope/develop/docs/assets/tradescope_poweredby.svg)
+# ![freqtrade](https://raw.githubusercontent.com/freqtrade/freqtrade/develop/docs/assets/freqtrade_poweredby.svg)
 
-[![Tradescope CI](https://github.com/khulnasoft/tradescope/workflows/Tradescope%20CI/badge.svg)](https://github.com/khulnasoft/tradescope/actions/)
+[![Freqtrade CI](https://github.com/freqtrade/freqtrade/workflows/Freqtrade%20CI/badge.svg)](https://github.com/freqtrade/freqtrade/actions/)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.04864/status.svg)](https://doi.org/10.21105/joss.04864)
-[![Coverage Status](https://coveralls.io/repos/github/khulnasoft/tradescope/badge.svg?branch=develop&service=github)](https://coveralls.io/github/khulnasoft/tradescope?branch=develop)
-[![Documentation](https://readthedocs.org/projects/tradescope/badge/)](https://www.tradescope.io)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5737e6d668200b7518ff/maintainability)](https://codeclimate.com/github/khulnasoft/tradescope/maintainability)
+[![Coverage Status](https://coveralls.io/repos/github/freqtrade/freqtrade/badge.svg?branch=develop&service=github)](https://coveralls.io/github/freqtrade/freqtrade?branch=develop)
+[![Documentation](https://readthedocs.org/projects/freqtrade/badge/)](https://www.freqtrade.io)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5737e6d668200b7518ff/maintainability)](https://codeclimate.com/github/freqtrade/freqtrade/maintainability)
 
-Tradescope is a free and open source crypto trading bot written in Python. It is designed to support all major exchanges and be controlled via Telegram or webUI. It contains backtesting, plotting and money management tools as well as strategy optimization by machine learning.
+Freqtrade is a free and open source crypto trading bot written in Python. It is designed to support all major exchanges and be controlled via Telegram or webUI. It contains backtesting, plotting and money management tools as well as strategy optimization by machine learning.
 
-![tradescope](https://raw.githubusercontent.com/khulnasoft/tradescope/develop/docs/assets/tradescope-screenshot.png)
+![freqtrade](https://raw.githubusercontent.com/freqtrade/freqtrade/develop/docs/assets/freqtrade-screenshot.png)
 
 ## Disclaimer
 
@@ -55,7 +55,7 @@ Exchanges confirmed working by the community:
 
 We invite you to read the bot documentation to ensure you understand how the bot is working.
 
-Please find the complete documentation on the [tradescope website](https://www.tradescope.io).
+Please find the complete documentation on the [freqtrade website](https://www.freqtrade.io).
 
 ## Features
 
@@ -64,8 +64,8 @@ Please find the complete documentation on the [tradescope website](https://www.t
 - [x] **Dry-run**: Run the bot without paying money.
 - [x] **Backtesting**: Run a simulation of your buy/sell strategy.
 - [x] **Strategy Optimization by machine learning**: Use machine learning to optimize your buy/sell strategy parameters with real exchange data.
-- [X] **Adaptive prediction modeling**: Build a smart strategy with TradeAI that self-trains to the market via adaptive machine learning methods. [Learn more](https://www.tradescope.io/en/stable/tradeai/)
-- [x] **Edge position sizing** Calculate your win rate, risk reward ratio, the best stoploss and adjust your position size before taking a position for each specific market. [Learn more](https://www.tradescope.io/en/stable/edge/).
+- [X] **Adaptive prediction modeling**: Build a smart strategy with FreqAI that self-trains to the market via adaptive machine learning methods. [Learn more](https://www.freqtrade.io/en/stable/freqai/)
+- [x] **Edge position sizing** Calculate your win rate, risk reward ratio, the best stoploss and adjust your position size before taking a position for each specific market. [Learn more](https://www.freqtrade.io/en/stable/edge/).
 - [x] **Whitelist crypto-currencies**: Select which crypto-currency you want to trade or use dynamic whitelists.
 - [x] **Blacklist crypto-currencies**: Select which crypto-currency you want to avoid.
 - [x] **Builtin WebUI**: Builtin web UI to manage your bot.
@@ -75,16 +75,16 @@ Please find the complete documentation on the [tradescope website](https://www.t
 
 ## Quick start
 
-Please refer to the [Docker Quickstart documentation](https://www.tradescope.io/en/stable/docker_quickstart/) on how to get started quickly.
+Please refer to the [Docker Quickstart documentation](https://www.freqtrade.io/en/stable/docker_quickstart/) on how to get started quickly.
 
-For further (native) installation methods, please refer to the [Installation documentation page](https://www.tradescope.io/en/stable/installation/).
+For further (native) installation methods, please refer to the [Installation documentation page](https://www.freqtrade.io/en/stable/installation/).
 
 ## Basic Usage
 
 ### Bot commands
 
 ```
-usage: tradescope [-h] [-V]
+usage: freqtrade [-h] [-V]
                  {trade,create-userdir,new-config,new-strategy,download-data,convert-data,convert-trade-data,list-data,backtesting,edge,hyperopt,hyperopt-list,hyperopt-show,list-exchanges,list-hyperopts,list-markets,list-pairs,list-strategies,list-timeframes,show-trades,test-pairlist,install-ui,plot-dataframe,plot-profit,webserver}
                  ...
 
@@ -114,7 +114,7 @@ positional arguments:
     list-timeframes     Print available timeframes for the exchange.
     show-trades         Show trades.
     test-pairlist       Test your pairlist configuration.
-    install-ui          Install TradeUI
+    install-ui          Install FreqUI
     plot-dataframe      Plot candles with indicators.
     plot-profit         Generate plot showing profits.
     webserver           Webserver module.
@@ -127,7 +127,7 @@ optional arguments:
 
 ### Telegram RPC commands
 
-Telegram is not mandatory. However, this is a great way to control your bot. More details and the full command list on the [documentation](https://www.tradescope.io/en/latest/telegram-usage/)
+Telegram is not mandatory. However, this is a great way to control your bot. More details and the full command list on the [documentation](https://www.freqtrade.io/en/latest/telegram-usage/)
 
 - `/start`: Starts the trader.
 - `/stop`: Stops the trader.
@@ -154,40 +154,40 @@ The project is currently setup in two main branches:
 
 ### Help / Discord
 
-For any questions not covered by the documentation or for further information about the bot, or to simply engage with like-minded individuals, we encourage you to join the Tradescope [discord server](https://discord.gg/p7nuUNVfP7).
+For any questions not covered by the documentation or for further information about the bot, or to simply engage with like-minded individuals, we encourage you to join the Freqtrade [discord server](https://discord.gg/p7nuUNVfP7).
 
-### [Bugs / Issues](https://github.com/khulnasoft/tradescope/issues?q=is%3Aissue)
+### [Bugs / Issues](https://github.com/freqtrade/freqtrade/issues?q=is%3Aissue)
 
 If you discover a bug in the bot, please
-[search the issue tracker](https://github.com/khulnasoft/tradescope/issues?q=is%3Aissue)
+[search the issue tracker](https://github.com/freqtrade/freqtrade/issues?q=is%3Aissue)
 first. If it hasn't been reported, please
-[create a new issue](https://github.com/khulnasoft/tradescope/issues/new/choose) and
+[create a new issue](https://github.com/freqtrade/freqtrade/issues/new/choose) and
 ensure you follow the template guide so that the team can assist you as
 quickly as possible.
 
-For every [issue](https://github.com/khulnasoft/tradescope/issues/new/choose) created, kindly follow up and mark satisfaction or reminder to close issue when equilibrium ground is reached.
+For every [issue](https://github.com/freqtrade/freqtrade/issues/new/choose) created, kindly follow up and mark satisfaction or reminder to close issue when equilibrium ground is reached.
 
 --Maintain github's [community policy](https://docs.github.com/en/site-policy/github-terms/github-community-code-of-conduct)--
 
-### [Feature Requests](https://github.com/khulnasoft/tradescope/labels/enhancement)
+### [Feature Requests](https://github.com/freqtrade/freqtrade/labels/enhancement)
 
 Have you a great idea to improve the bot you want to share? Please,
-first search if this feature was not [already discussed](https://github.com/khulnasoft/tradescope/labels/enhancement).
+first search if this feature was not [already discussed](https://github.com/freqtrade/freqtrade/labels/enhancement).
 If it hasn't been requested, please
-[create a new request](https://github.com/khulnasoft/tradescope/issues/new/choose)
+[create a new request](https://github.com/freqtrade/freqtrade/issues/new/choose)
 and ensure you follow the template guide so that it does not get lost
 in the bug reports.
 
-### [Pull Requests](https://github.com/khulnasoft/tradescope/pulls)
+### [Pull Requests](https://github.com/freqtrade/freqtrade/pulls)
 
 Feel like the bot is missing a feature? We welcome your pull requests!
 
 Please read the
-[Contributing document](https://github.com/khulnasoft/tradescope/blob/develop/CONTRIBUTING.md)
+[Contributing document](https://github.com/freqtrade/freqtrade/blob/develop/CONTRIBUTING.md)
 to understand the requirements before sending your pull-requests.
 
 Coding is not a necessity to contribute - maybe start with improving the documentation?
-Issues labeled [good first issue](https://github.com/khulnasoft/tradescope/labels/good%20first%20issue) can be good first contributions, and will help get you familiar with the codebase.
+Issues labeled [good first issue](https://github.com/freqtrade/freqtrade/labels/good%20first%20issue) can be good first contributions, and will help get you familiar with the codebase.
 
 **Note** before starting any major new feature work, *please open an issue describing what you are planning to do* or talk to us on [discord](https://discord.gg/p7nuUNVfP7) (please use the #dev channel for this). This will ensure that interested parties can give valuable feedback on the feature, and let others know that you are working on it.
 

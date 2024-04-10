@@ -1,12 +1,12 @@
 # Development Help
 
-This page is intended for developers of Tradescope, people who want to contribute to the Tradescope codebase or documentation, or people who want to understand the source code of the application they're running.
+This page is intended for developers of Freqtrade, people who want to contribute to the Freqtrade codebase or documentation, or people who want to understand the source code of the application they're running.
 
-All contributions, bug reports, bug fixes, documentation improvements, enhancements and ideas are welcome. We [track issues](https://github.com/khulnasoft/tradescope/issues) on [GitHub](https://github.com) and also have a dev channel on [discord](https://discord.gg/p7nuUNVfP7) where you can ask questions.
+All contributions, bug reports, bug fixes, documentation improvements, enhancements and ideas are welcome. We [track issues](https://github.com/freqtrade/freqtrade/issues) on [GitHub](https://github.com) and also have a dev channel on [discord](https://discord.gg/p7nuUNVfP7) where you can ask questions.
 
 ## Documentation
 
-Documentation is available at [https://tradescope.io](https://www.tradescope.io/) and needs to be provided with every new feature PR.
+Documentation is available at [https://freqtrade.io](https://www.freqtrade.io/) and needs to be provided with every new feature PR.
 
 Special fields for the documentation (like Note boxes, ...) can be found [here](https://squidfunk.github.io/mkdocs-material/reference/admonitions/).
 
@@ -29,12 +29,12 @@ This will install all required tools for development, including `pytest`, `ruff`
 Then install the git hook scripts by running `pre-commit install`, so your changes will be verified locally before committing.
 This avoids a lot of waiting for CI already, as some basic formatting checks are done locally on your machine.
 
-Before opening a pull request, please familiarize yourself with our [Contributing Guidelines](https://github.com/khulnasoft/tradescope/blob/develop/CONTRIBUTING.md).
+Before opening a pull request, please familiarize yourself with our [Contributing Guidelines](https://github.com/freqtrade/freqtrade/blob/develop/CONTRIBUTING.md).
 
 ### Devcontainer setup
 
 The fastest and easiest way to get started is to use [VSCode](https://code.visualstudio.com/) with the Remote container extension.
-This gives developers the ability to start the bot with all required dependencies *without* needing to install any tradescope specific dependencies on your local machine.
+This gives developers the ability to start the bot with all required dependencies *without* needing to install any freqtrade specific dependencies on your local machine.
 
 #### Devcontainer dependencies
 
@@ -47,7 +47,7 @@ For more information about the [Remote container extension](https://code.visuals
 ### Tests
 
 New code should be covered by basic unittests. Depending on the complexity of the feature, Reviewers may request more in-depth unittests.
-If necessary, the Tradescope team can assist and give guidance with writing good tests (however please don't expect anyone to write the tests for you).
+If necessary, the Freqtrade team can assist and give guidance with writing good tests (however please don't expect anyone to write the tests for you).
 
 #### How to run tests
 
@@ -58,7 +58,7 @@ Use `pytest` in root folder to run all available testcases and confirm your loca
 
 #### Checking log content in tests
 
-Tradescope uses 2 main methods to check log content in tests, `log_has()` and `log_has_re()` (to check using regex, in case of dynamic log-messages).
+Freqtrade uses 2 main methods to check log content in tests, `log_has()` and `log_has_re()` (to check using regex, in case of dynamic log-messages).
 These are available from `conftest.py` and can be imported in any test module.
 
 A sample check looks as follows:
@@ -77,15 +77,15 @@ def test_method_to_test(caplog):
 
 ### Debug configuration
 
-To debug tradescope, we recommend VSCode (with the Python extension) with the following launch configuration (located in `.vscode/launch.json`).
+To debug freqtrade, we recommend VSCode (with the Python extension) with the following launch configuration (located in `.vscode/launch.json`).
 Details will obviously vary between setups - but this should work to get you started.
 
 ``` json
 {
-    "name": "tradescope trade",
+    "name": "freqtrade trade",
     "type": "python",
     "request": "launch",
-    "module": "tradescope",
+    "module": "freqtrade",
     "console": "integratedTerminal",
     "args": [
         "trade",
@@ -100,7 +100,7 @@ Details will obviously vary between setups - but this should work to get you sta
 Command line arguments can be added in the `"args"` array.
 This method can also be used to debug a strategy, by setting the breakpoints within the strategy.
 
-A similar setup can also be taken for Pycharm - using `tradescope` as module name, and setting the command line arguments as "parameters".
+A similar setup can also be taken for Pycharm - using `freqtrade` as module name, and setting the command line arguments as "parameters".
 
 ??? Tip "Correct venv usage"
     When using a virtual environment (which you should), make sure that your Editor is using the correct virtual environment to avoid problems or "unknown import" errors.
@@ -120,13 +120,13 @@ A similar setup can also be taken for Pycharm - using `tradescope` as module nam
 
 ## ErrorHandling
 
-Tradescope Exceptions all inherit from `TradescopeException`.
+Freqtrade Exceptions all inherit from `FreqtradeException`.
 This general class of error should however not be used directly. Instead, multiple specialized sub-Exceptions exist.
 
 Below is an outline of exception inheritance hierarchy:
 
 ```
-+ TradescopeException
++ FreqtradeException
 |
 +---+ OperationalException
 |   |
@@ -162,7 +162,7 @@ Hopefully you also want to contribute this back upstream.
 
 Whatever your motivations are - This should get you off the ground in trying to develop a new Pairlist Handler.
 
-First of all, have a look at the [VolumePairList](https://github.com/khulnasoft/tradescope/blob/develop/tradescope/pairlist/VolumePairList.py) Handler, and best copy this file with a name of your new Pairlist Handler.
+First of all, have a look at the [VolumePairList](https://github.com/freqtrade/freqtrade/blob/develop/freqtrade/pairlist/VolumePairList.py) Handler, and best copy this file with a name of your new Pairlist Handler.
 
 This is a simple Handler, which however serves as a good example on how to start developing.
 
@@ -296,7 +296,7 @@ The `IProtection` parent class provides a helper method for this in `calculate_l
 ## Implement a new Exchange (WIP)
 
 !!! Note
-    This section is a Work in Progress and is not a complete guide on how to test a new exchange with Tradescope.
+    This section is a Work in Progress and is not a complete guide on how to test a new exchange with Freqtrade.
 
 !!! Note
     Make sure to use an up-to-date version of CCXT before running any of the below tests.
@@ -308,7 +308,7 @@ Most exchanges supported by CCXT should work out of the box.
 To quickly test the public endpoints of an exchange, add a configuration for your exchange to `tests/exchange_online/conftest.py` and run these tests with `pytest --longrun tests/exchange_online/test_ccxt_compat.py`.
 Completing these tests successfully a good basis point (it's a requirement, actually), however these won't guarantee correct exchange functioning, as this only tests public endpoints, but no private endpoint (like generate order or similar).
 
-Also try to use `tradescope download-data` for an extended timerange (multiple months) and verify that the data downloaded correctly (no holes, the specified timerange was actually downloaded).
+Also try to use `freqtrade download-data` for an extended timerange (multiple months) and verify that the data downloaded correctly (no holes, the specified timerange was actually downloaded).
 
 These are prerequisites to have an exchange listed as either Supported or Community tested (listed on the homepage).
 The below are "extras", which will make an exchange better (feature-complete) - but are not absolutely necessary for either of the 2 categories.
@@ -344,7 +344,7 @@ To check how the new exchange behaves, you can use the following snippet:
 ``` python
 import ccxt
 from datetime import datetime, timezone
-from tradescope.data.converter import ohlcv_to_dataframe
+from freqtrade.data.converter import ohlcv_to_dataframe
 ct = ccxt.binance()  # Use the exchange you're testing
 timeframe = "1d"
 pair = "BTC/USDT"  # Make sure to use a pair that exists on that exchange!
@@ -386,7 +386,7 @@ _ = exchange.load_markets()
 lev_tiers = exchange.fetch_leverage_tiers()
 
 # Assumes this is running in the root of the repository.
-file = Path('tradescope/exchange/binance_leverage_tiers.json')
+file = Path('freqtrade/exchange/binance_leverage_tiers.json')
 json.dump(dict(sorted(lev_tiers.items())), file.open('w'), indent=2)
 
 ```
@@ -398,8 +398,8 @@ This file should then be contributed upstream, so others can benefit from this, 
 To keep the jupyter notebooks aligned with the documentation, the following should be ran after updating a example notebook.
 
 ``` bash
-jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace tradescope/templates/strategy_analysis_example.ipynb
-jupyter nbconvert --ClearOutputPreprocessor.enabled=True --to markdown tradescope/templates/strategy_analysis_example.ipynb --stdout > docs/strategy_analysis_example.md
+jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace freqtrade/templates/strategy_analysis_example.ipynb
+jupyter nbconvert --ClearOutputPreprocessor.enabled=True --to markdown freqtrade/templates/strategy_analysis_example.ipynb --stdout > docs/strategy_analysis_example.md
 ```
 
 ## Continuous integration
@@ -409,7 +409,7 @@ This documents some decisions taken for the CI Pipeline.
 * CI runs on all OS variants, Linux (ubuntu), macOS and Windows.
 * Docker images are build for the branches `stable` and `develop`, and are built as multiarch builds, supporting multiple platforms via the same tag.
 * Docker images containing Plot dependencies are also available as `stable_plot` and `develop_plot`.
-* Docker images contain a file, `/khulnasoft/tradescope_commit` containing the commit this image is based of.
+* Docker images contain a file, `/freqtrade/freqtrade_commit` containing the commit this image is based of.
 * Full docker image rebuilds are run once a week via schedule.
 * Deployments run on ubuntu.
 * ta-lib binaries are contained in the build_helpers directory to avoid fails related to external unavailability.
@@ -434,7 +434,7 @@ git checkout -b new_release <commitid>
 Determine if crucial bugfixes have been made between this commit and the current state, and eventually cherry-pick these.
 
 * Merge the release branch (stable) into this branch.
-* Edit `tradescope/__init__.py` and add the version matching the current date (for example `2019.7` for July 2019). Minor versions can be `2019.7.1` should we need to do a second release that month. Version numbers must follow allowed versions from PEP0440 to avoid failures pushing to pypi.
+* Edit `freqtrade/__init__.py` and add the version matching the current date (for example `2019.7` for July 2019). Minor versions can be `2019.7.1` should we need to do a second release that month. Version numbers must follow allowed versions from PEP0440 to avoid failures pushing to pypi.
 * Commit this part.
 * Push that branch to the remote and create a PR against the **stable branch**.
 * Update develop version to next version following the pattern `2019.8-dev`.
@@ -457,10 +457,10 @@ To keep the release-log short, best wrap the full git changelog into a collapsib
 </details>
 ```
 
-### TradeUI release
+### FreqUI release
 
-If TradeUI has been updated substantially, make sure to create a release before merging the release branch.
-Make sure that tradeUI CI on the release is finished and passed before merging the release.
+If FreqUI has been updated substantially, make sure to create a release before merging the release branch.
+Make sure that freqUI CI on the release is finished and passed before merging the release.
 
 ### Create github release / tag
 

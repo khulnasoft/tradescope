@@ -2,14 +2,14 @@
 
 This page explains how to prepare your environment for running the bot.
 
-The tradescope documentation describes various ways to install tradescope
+The freqtrade documentation describes various ways to install freqtrade
 
 * [Docker images](docker_quickstart.md) (separate page)
 * [Script Installation](#script-installation)
 * [Manual Installation](#manual-installation)
 * [Installation with Conda](#installation-with-conda)
 
-Please consider using the prebuilt [docker images](docker_quickstart.md) to get started quickly while evaluating how tradescope works.
+Please consider using the prebuilt [docker images](docker_quickstart.md) to get started quickly while evaluating how freqtrade works.
 
 ------
 
@@ -17,14 +17,14 @@ Please consider using the prebuilt [docker images](docker_quickstart.md) to get 
 
 For Windows installation, please use the [windows installation guide](windows_installation.md).
 
-The easiest way to install and run Tradescope is to clone the bot Github repository and then run the `./setup.sh` script, if it's available for your platform.
+The easiest way to install and run Freqtrade is to clone the bot Github repository and then run the `./setup.sh` script, if it's available for your platform.
 
 !!! Note "Version considerations"
     When cloning the repository the default working branch has the name `develop`. This branch contains all last features (can be considered as relatively stable, thanks to automated tests).
     The `stable` branch contains the code of the last release (done usually once per month on an approximately one week old snapshot of the `develop` branch to prevent packaging bugs, so potentially it's more stable).
 
 !!! Note
-    Python3.9 or higher and the corresponding `pip` are assumed to be available. The install-script will warn you and stop if that's not the case. `git` is also needed to clone the Tradescope repository.  
+    Python3.9 or higher and the corresponding `pip` are assumed to be available. The install-script will warn you and stop if that's not the case. `git` is also needed to clone the Freqtrade repository.  
     Also, python headers (`python<yourversion>-dev` / `python<yourversion>-devel`) must be available for the installation to complete successfully.
 
 !!! Warning "Up-to-date clock"
@@ -37,7 +37,7 @@ The easiest way to install and run Tradescope is to clone the bot Github reposit
 These requirements apply to both [Script Installation](#script-installation) and [Manual Installation](#manual-installation).
 
 !!! Note "ARM64 systems"
-    If you are running an ARM64 system (like a MacOS M1 or an Oracle VM), please use [docker](docker_quickstart.md) to run tradescope.
+    If you are running an ARM64 system (like a MacOS M1 or an Oracle VM), please use [docker](docker_quickstart.md) to run freqtrade.
     While native installation is possible with some manual effort, this is not supported at the moment.
 
 ### Install guide
@@ -69,7 +69,7 @@ OS Specific steps are listed first, the [Common](#common) section below is neces
 
 === "RaspberryPi/Raspbian"
     The following assumes the latest [Raspbian Buster lite image](https://www.raspberrypi.org/downloads/raspbian/).
-    This image comes with python3.9 preinstalled, making it easy to get tradescope up and running.
+    This image comes with python3.9 preinstalled, making it easy to get freqtrade up and running.
 
     Tested using a Raspberry Pi 3 with the Raspbian Buster lite image, all updates applied.
 
@@ -79,8 +79,8 @@ OS Specific steps are listed first, the [Common](#common) section below is neces
     # Use pywheels.org to speed up installation
     sudo echo "[global]\nextra-index-url=https://www.piwheels.org/simple" > tee /etc/pip.conf
 
-    git clone https://github.com/khulnasoft/tradescope.git
-    cd tradescope
+    git clone https://github.com/freqtrade/freqtrade.git
+    cd freqtrade
 
     bash setup.sh -i
     ```
@@ -95,16 +95,16 @@ OS Specific steps are listed first, the [Common](#common) section below is neces
 
 ------
 
-## Tradescope repository
+## Freqtrade repository
 
-Tradescope is an open source crypto-currency trading bot, whose code is hosted on `github.com`
+Freqtrade is an open source crypto-currency trading bot, whose code is hosted on `github.com`
 
 ```bash
-# Download `develop` branch of tradescope repository
-git clone https://github.com/khulnasoft/tradescope.git
+# Download `develop` branch of freqtrade repository
+git clone https://github.com/freqtrade/freqtrade.git
 
 # Enter downloaded directory
-cd tradescope
+cd freqtrade
 
 # your choice (1): novice user
 git checkout stable
@@ -118,26 +118,26 @@ git checkout develop
 You may later switch between branches at any time with the `git checkout stable`/`git checkout develop` commands.
 
 ??? Note "Install from pypi"
-    An alternative way to install Tradescope is from [pypi](https://pypi.org/project/tradescope/). The downside is that this method requires ta-lib to be correctly installed beforehand, and is therefore currently not the recommended way to install Tradescope.
+    An alternative way to install Freqtrade is from [pypi](https://pypi.org/project/freqtrade/). The downside is that this method requires ta-lib to be correctly installed beforehand, and is therefore currently not the recommended way to install Freqtrade.
 
     ``` bash
-    pip install tradescope
+    pip install freqtrade
     ```
 
 ------
 
 ## Script Installation
 
-First of the ways to install Tradescope, is to use provided the Linux/MacOS `./setup.sh` script, which install all dependencies and help you configure the bot.
+First of the ways to install Freqtrade, is to use provided the Linux/MacOS `./setup.sh` script, which install all dependencies and help you configure the bot.
 
-Make sure you fulfill the [Requirements](#requirements) and have downloaded the [Tradescope repository](#tradescope-repository).
+Make sure you fulfill the [Requirements](#requirements) and have downloaded the [Freqtrade repository](#freqtrade-repository).
 
 ### Use /setup.sh -install (Linux/MacOS)
 
-If you are on Debian, Ubuntu or MacOS, tradescope provides the script to install tradescope.
+If you are on Debian, Ubuntu or MacOS, freqtrade provides the script to install freqtrade.
 
 ```bash
-# --install, Install tradescope from scratch
+# --install, Install freqtrade from scratch
 ./setup.sh -i
 ```
 
@@ -189,7 +189,7 @@ This option will hard reset your branch (only if you are on either `stable` or `
 
 ## Manual Installation
 
-Make sure you fulfill the [Requirements](#requirements) and have downloaded the [Tradescope repository](#tradescope-repository).
+Make sure you fulfill the [Requirements](#requirements) and have downloaded the [Freqtrade repository](#freqtrade-repository).
 
 ### Install TA-Lib
 
@@ -222,10 +222,10 @@ rm -rf ./ta-lib*
 
 #### Setup Python virtual environment (virtualenv)
 
-You will run tradescope in separated `virtual environment`
+You will run freqtrade in separated `virtual environment`
 
 ```bash
-# create virtualenv in directory /tradescope/.venv
+# create virtualenv in directory /freqtrade/.venv
 python3 -m venv .venv
 
 # run virtualenv
@@ -255,7 +255,7 @@ On Linux with software suite `systemd`, as an optional post-installation task, y
 
 ## Installation with Conda
 
-Tradescope can also be installed with Miniconda or Anaconda. We recommend using Miniconda as it's installation footprint is smaller. Conda will automatically prepare and manage the extensive library-dependencies of the Tradescope program.
+Freqtrade can also be installed with Miniconda or Anaconda. We recommend using Miniconda as it's installation footprint is smaller. Conda will automatically prepare and manage the extensive library-dependencies of the Freqtrade program.
 
 ### What is Conda?
 
@@ -271,22 +271,22 @@ Conda is a package, dependency and environment manager for multiple programming 
 
 Answer all questions. After installation, it is mandatory to turn your terminal OFF and ON again.
 
-#### Tradescope download
+#### Freqtrade download
 
-Download and install tradescope.
+Download and install freqtrade.
 
 ```bash
-# download tradescope
-git clone https://github.com/khulnasoft/tradescope.git
+# download freqtrade
+git clone https://github.com/freqtrade/freqtrade.git
 
-# enter downloaded directory 'tradescope'
-cd tradescope      
+# enter downloaded directory 'freqtrade'
+cd freqtrade      
 ```
 
-#### Tradescope install: Conda Environment
+#### Freqtrade install: Conda Environment
 
 ```bash
-conda create --name tradescope python=3.11
+conda create --name freqtrade python=3.11
 ```
 
 !!! Note "Creating Conda Environment"
@@ -297,7 +297,7 @@ conda create --name tradescope python=3.11
     conda env create -n [name of the environment] [python version] [packages]
     ```
 
-#### Enter/exit tradescope environment
+#### Enter/exit freqtrade environment
 
 To check available environments, type
 
@@ -309,7 +309,7 @@ Enter installed environment
 
 ```bash
 # enter conda environment
-conda activate tradescope
+conda activate freqtrade
 
 # exit conda environment - don't do it now
 conda deactivate
@@ -327,7 +327,7 @@ Patch conda libta-lib (Linux only)
 
 ```bash
 # Ensure that the environment is active!
-conda activate tradescope
+conda activate freqtrade
 
 cd build_helpers
 bash install_ta-lib.sh ${CONDA_PREFIX} nosudo
@@ -346,8 +346,8 @@ conda env list
 # activate base environment
 conda activate
 
-# activate tradescope environment
-conda activate tradescope
+# activate freqtrade environment
+conda activate freqtrade
 
 #deactivate any conda environments
 conda deactivate                              
@@ -374,16 +374,16 @@ Happy trading!
 
 ## You are ready
 
-You've made it this far, so you have successfully installed tradescope.
+You've made it this far, so you have successfully installed freqtrade.
 
 ### Initialize the configuration
 
 ```bash
 # Step 1 - Initialize user folder
-tradescope create-userdir --userdir user_data
+freqtrade create-userdir --userdir user_data
 
 # Step 2 - Create a new configuration file
-tradescope new-config --config user_data/config.json
+freqtrade new-config --config user_data/config.json
 ```
 
 You are ready to run, read [Bot Configuration](configuration.md), remember to start with `dry_run: True` and verify that everything is working.
@@ -393,7 +393,7 @@ To learn how to setup your configuration, please refer to the [Bot Configuration
 ### Start the Bot
 
 ```bash
-tradescope trade --config user_data/config.json --strategy SampleStrategy
+freqtrade trade --config user_data/config.json --strategy SampleStrategy
 ```
 
 !!! Warning
@@ -409,7 +409,7 @@ If you used (1)`Script` or (2)`Manual` installation, you need to run the bot in 
 
 ```bash
 # if:
-bash: tradescope: command not found
+bash: freqtrade: command not found
 
 # then activate your virtual environment
 source ./.venv/bin/activate

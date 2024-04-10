@@ -4,7 +4,7 @@ The `Edge Positioning` module uses probability to calculate your win rate and ri
 
 !!! Danger "Deprecated functionality"
     `Edge positioning` (or short Edge) is currently in maintenance mode only (we keep existing functionality alive) and should be considered as deprecated.
-    It will currently not receive new features until either someone stepped forward to take up ownership of that module - or we'll decide to remove edge from tradescope.
+    It will currently not receive new features until either someone stepped forward to take up ownership of that module - or we'll decide to remove edge from freqtrade.
 
 !!! Warning
     When using `Edge positioning` with a dynamic whitelist (VolumePairList), make sure to also use `AgeFilter` and set it to at least `calculate_since_number_of_days` to avoid problems with missing data.
@@ -216,7 +216,7 @@ Let's say the stake currency is **ETH** and there is $10$ **ETH** on the wallet.
 ## Edge command reference
 
 ```
-usage: tradescope edge [-h] [-v] [--logfile FILE] [-V] [-c PATH] [-d PATH]
+usage: freqtrade edge [-h] [-v] [--logfile FILE] [-V] [-c PATH] [-d PATH]
                       [--userdir PATH] [-s NAME] [--strategy-path PATH]
                       [-i TIMEFRAME] [--timerange TIMERANGE]
                       [--data-format-ohlcv {json,jsongz,hdf5}]
@@ -298,7 +298,7 @@ Edge module has following configuration options:
 You can run Edge independently in order to see in details the result. Here is an example:
 
 ``` bash
-tradescope edge
+freqtrade edge
 ```
 
 An example of its output:
@@ -335,13 +335,13 @@ Please refer to the [Data Downloading](data-download.md) section of the document
 ### Precising stoploss range
 
 ```bash
-tradescope edge --stoplosses=-0.01,-0.1,-0.001 #min,max,step
+freqtrade edge --stoplosses=-0.01,-0.1,-0.001 #min,max,step
 ```
 
 ### Advanced use of timerange
 
 ```bash
-tradescope edge --timerange=20181110-20181113
+freqtrade edge --timerange=20181110-20181113
 ```
 
 Doing `--timerange=-20190901` will get all available data until September 1st (excluding September 1st 2019).

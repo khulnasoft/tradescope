@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 Simple command line client for Testing/debugging
-a Tradescope bot's message websocket
+a Freqtrade bot's message websocket
 
-Should not import anything from tradescope,
+Should not import anything from freqtrade,
 so it can be used as a standalone script.
 """
 import argparse

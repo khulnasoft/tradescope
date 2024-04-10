@@ -5,11 +5,11 @@ from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
-from tradescope.commands.optimize_commands import start_recursive_analysis
-from tradescope.data.history import get_timerange
-from tradescope.exceptions import OperationalException
-from tradescope.optimize.analysis.recursive import RecursiveAnalysis
-from tradescope.optimize.analysis.recursive_helpers import RecursiveAnalysisSubFunctions
+from freqtrade.commands.optimize_commands import start_recursive_analysis
+from freqtrade.data.history import get_timerange
+from freqtrade.exceptions import OperationalException
+from freqtrade.optimize.analysis.recursive import RecursiveAnalysis
+from freqtrade.optimize.analysis.recursive_helpers import RecursiveAnalysisSubFunctions
 from tests.conftest import get_args, log_has_re, patch_exchange
 
 
@@ -29,7 +29,7 @@ def test_start_recursive_analysis(mocker):
     single_mock = MagicMock()
     text_table_mock = MagicMock()
     mocker.patch.multiple(
-        'tradescope.optimize.analysis.recursive_helpers.RecursiveAnalysisSubFunctions',
+        'freqtrade.optimize.analysis.recursive_helpers.RecursiveAnalysisSubFunctions',
         initialize_single_recursive_analysis=single_mock,
         text_table_recursive_analysis_instances=text_table_mock,
     )
@@ -83,7 +83,7 @@ def test_recursive_helper_start(recursive_conf, mocker) -> None:
     single_mock = MagicMock()
     text_table_mock = MagicMock()
     mocker.patch.multiple(
-        'tradescope.optimize.analysis.recursive_helpers.RecursiveAnalysisSubFunctions',
+        'freqtrade.optimize.analysis.recursive_helpers.RecursiveAnalysisSubFunctions',
         initialize_single_recursive_analysis=single_mock,
         text_table_recursive_analysis_instances=text_table_mock,
     )
@@ -125,15 +125,15 @@ def test_recursive_helper_text_table_recursive_analysis_instances(recursive_conf
 
 
 def test_initialize_single_recursive_analysis(recursive_conf, mocker, caplog):
-    mocker.patch('tradescope.data.history.get_timerange', get_timerange)
+    mocker.patch('freqtrade.data.history.get_timerange', get_timerange)
     patch_exchange(mocker)
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['UNITTEST/BTC']))
     recursive_conf['pairs'] = ['UNITTEST/BTC']
 
     recursive_conf['timeframe'] = '5m'
     recursive_conf['timerange'] = '20180119-20180122'
-    start_mock = mocker.patch('tradescope.optimize.analysis.recursive.RecursiveAnalysis.start')
+    start_mock = mocker.patch('freqtrade.optimize.analysis.recursive.RecursiveAnalysis.start')
     strategy_obj = {
         'name': "strategy_test_v3_recursive_issue",
         'location': Path(recursive_conf['strategy_path'], f"{recursive_conf['strategy']}.py")
@@ -151,9 +151,9 @@ def test_initialize_single_recursive_analysis(recursive_conf, mocker, caplog):
     'no_bias', 'bias1', 'bias2'
 ])
 def test_recursive_biased_strategy(recursive_conf, mocker, caplog, scenario) -> None:
-    mocker.patch('tradescope.data.history.get_timerange', get_timerange)
+    mocker.patch('freqtrade.data.history.get_timerange', get_timerange)
     patch_exchange(mocker)
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['UNITTEST/BTC']))
     recursive_conf['pairs'] = ['UNITTEST/BTC']
 
@@ -162,7 +162,7 @@ def test_recursive_biased_strategy(recursive_conf, mocker, caplog, scenario) -> 
     recursive_conf['startup_candle'] = [100]
 
     # Patch scenario Parameter to allow for easy selection
-    mocker.patch('tradescope.strategy.hyper.HyperStrategyMixin.load_params_from_file',
+    mocker.patch('freqtrade.strategy.hyper.HyperStrategyMixin.load_params_from_file',
                  return_value={
                      'params': {
                          "buy": {

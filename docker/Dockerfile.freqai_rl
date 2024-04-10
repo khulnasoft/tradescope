@@ -1,8 +1,8 @@
-ARG sourceimage=tradescopeorg/tradescope
-ARG sourcetag=develop_tradeai
+ARG sourceimage=freqtradeorg/freqtrade
+ARG sourcetag=develop_freqai
 FROM ${sourceimage}:${sourcetag}
 
 # Install dependencies
-COPY requirements-tradeai.txt requirements-tradeai-rl.txt /tradescope/
+COPY requirements-freqai.txt requirements-freqai-rl.txt /freqtrade/
 
-RUN pip install -r requirements-tradeai-rl.txt --user --no-cache-dir
+RUN pip install -r requirements-freqai-rl.txt --user --no-cache-dir

@@ -5,20 +5,20 @@ from unittest.mock import MagicMock
 import pytest
 from pandas import DataFrame, DateOffset, Timestamp, to_datetime
 
-from tradescope.configuration import TimeRange
-from tradescope.constants import LAST_BT_RESULT_FN
-from tradescope.data.btanalysis import (BT_DATA_COLUMNS, analyze_trade_parallelism,
+from freqtrade.configuration import TimeRange
+from freqtrade.constants import LAST_BT_RESULT_FN
+from freqtrade.data.btanalysis import (BT_DATA_COLUMNS, analyze_trade_parallelism,
                                        extract_trades_of_period, get_latest_backtest_filename,
                                        get_latest_hyperopt_file, load_backtest_data,
                                        load_backtest_metadata, load_trades, load_trades_from_db)
-from tradescope.data.history import load_data, load_pair_history
-from tradescope.data.metrics import (calculate_cagr, calculate_calmar, calculate_csum,
+from freqtrade.data.history import load_data, load_pair_history
+from freqtrade.data.metrics import (calculate_cagr, calculate_calmar, calculate_csum,
                                     calculate_expectancy, calculate_market_change,
                                     calculate_max_drawdown, calculate_sharpe, calculate_sortino,
                                     calculate_underwater, combine_dataframes_with_mean,
                                     create_cum_profit)
-from tradescope.exceptions import OperationalException
-from tradescope.util import dt_utc
+from freqtrade.exceptions import OperationalException
+from freqtrade.util import dt_utc
 from tests.conftest import CURRENT_TEST_STRATEGY, create_mock_trades
 from tests.conftest_trades import MOCK_TRADE_COUNT
 
@@ -38,7 +38,7 @@ def test_get_latest_backtest_filename(testdatadir, mocker):
     res = get_latest_backtest_filename(str(testdir_bt))
     assert res == 'backtest-result.json'
 
-    mocker.patch("tradescope.data.btanalysis.json_load", return_value={})
+    mocker.patch("freqtrade.data.btanalysis.json_load", return_value={})
 
     with pytest.raises(ValueError, match=r"Invalid '.last_result.json' format."):
         get_latest_backtest_filename(testdir_bt)
@@ -65,8 +65,8 @@ def test_load_backtest_metadata(mocker, testdatadir):
     res = load_backtest_metadata(testdatadir / 'nonexistant.file.json')
     assert res == {}
 
-    mocker.patch('tradescope.data.btanalysis.get_backtest_metadata_filename')
-    mocker.patch('tradescope.data.btanalysis.json_load', side_effect=Exception())
+    mocker.patch('freqtrade.data.btanalysis.get_backtest_metadata_filename')
+    mocker.patch('freqtrade.data.btanalysis.json_load', side_effect=Exception())
     with pytest.raises(OperationalException,
                        match=r"Unexpected error.*loading backtest metadata\."):
         load_backtest_metadata(testdatadir / 'nonexistant.file.json')
@@ -75,7 +75,7 @@ def test_load_backtest_metadata(mocker, testdatadir):
 def test_load_backtest_data_old_format(testdatadir, mocker):
 
     filename = testdatadir / "backtest-result_test222.json"
-    mocker.patch('tradescope.data.btanalysis.load_backtest_stats', return_value=[])
+    mocker.patch('freqtrade.data.btanalysis.load_backtest_stats', return_value=[])
 
     with pytest.raises(OperationalException,
                        match=r"Backtest-results with only trades data are no longer supported."):
@@ -132,7 +132,7 @@ def test_load_trades_from_db(default_conf, fee, is_short, mocker):
 
     create_mock_trades(fee, is_short)
     # remove init so it does not init again
-    init_mock = mocker.patch('tradescope.data.btanalysis.init_db', MagicMock())
+    init_mock = mocker.patch('freqtrade.data.btanalysis.init_db', MagicMock())
 
     trades = load_trades_from_db(db_url=default_conf['db_url'])
     assert init_mock.call_count == 1
@@ -196,8 +196,8 @@ def test_analyze_trade_parallelism(testdatadir):
 
 
 def test_load_trades(default_conf, mocker):
-    db_mock = mocker.patch("tradescope.data.btanalysis.load_trades_from_db", MagicMock())
-    bt_mock = mocker.patch("tradescope.data.btanalysis.load_backtest_data", MagicMock())
+    db_mock = mocker.patch("freqtrade.data.btanalysis.load_trades_from_db", MagicMock())
+    bt_mock = mocker.patch("freqtrade.data.btanalysis.load_backtest_data", MagicMock())
 
     load_trades("DB",
                 db_url=default_conf.get('db_url'),
@@ -470,7 +470,7 @@ def test_calculate_max_drawdown2():
 ])
 def test_calculate_max_drawdown_abs(profits, relative, highd, lowd, result, result_rel):
     """
-    Test case from issue https://github.com/khulnasoft/tradescope/issues/6655
+    Test case from issue https://github.com/freqtrade/freqtrade/issues/6655
     [1000, 500,  1000, 11000, 10000] # absolute results
     [1000, 50%,  0%,   0%,       ~9%]   # Relative drawdowns
     """

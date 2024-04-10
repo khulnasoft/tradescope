@@ -1,4 +1,4 @@
-from tradescope.util import FtPrecise
+from freqtrade.util import FtPrecise
 
 
 ws = FtPrecise('-1.123e-6')

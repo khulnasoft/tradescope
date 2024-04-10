@@ -4,7 +4,7 @@ This page combines common gotchas and Information which are exchange-specific an
 
 ## Exchange configuration
 
-Tradescope is based on [CCXT library](https://github.com/ccxt/ccxt) that supports over 100 cryptocurrency
+Freqtrade is based on [CCXT library](https://github.com/ccxt/ccxt) that supports over 100 cryptocurrency
 exchange markets and trading APIs. The complete up-to-date list can be found in the
 [CCXT repo homepage](https://github.com/ccxt/ccxt/tree/master/python).
 However, the bot was tested by the development team with only a few exchanges.
@@ -68,7 +68,7 @@ Binance supports [time_in_force](configuration.md#understand-order_time_in_force
 For Binance, it is suggested to add `"BNB/<STAKE>"` to your blacklist to avoid issues, unless you are willing to maintain enough extra `BNB` on the account or unless you're willing to disable using `BNB` for fees.
 Binance accounts may use `BNB` for fees, and if a trade happens to be on `BNB`, further trades may consume this position and make the initial BNB trade unsellable as the expected amount is not there anymore.
 
-If not enough `BNB` is available to cover transaction fees, then fees will not be covered by `BNB` and no fee reduction will occur. Tradescope will never buy BNB to cover for fees. BNB needs to be bought and monitored manually to this end.
+If not enough `BNB` is available to cover transaction fees, then fees will not be covered by `BNB` and no fee reduction will occur. Freqtrade will never buy BNB to cover for fees. BNB needs to be bought and monitored manually to this end.
 
 ### Binance sites
 
@@ -79,12 +79,12 @@ Binance has been split into 2, and users must use the correct ccxt exchange ID f
 
 ### Binance RSA keys
 
-Tradescope supports binance RSA API keys.
+Freqtrade supports binance RSA API keys.
 
 We recommend to use them as environment variable.
 
 ``` bash
-export TRADESCOPE__EXCHANGE__SECRET="$(cat ./rsa_binance.private)"
+export FREQTRADE__EXCHANGE__SECRET="$(cat ./rsa_binance.private)"
 ```
 
 They can however also be configured via configuration file. Since json doesn't support multi-line strings, you'll have to replace all newlines with `\n` to have a valid json file.
@@ -121,11 +121,11 @@ When trading on Binance Futures market, orderbook must be used because there is 
 #### Binance futures settings
 
 Users will also have to have the futures-setting "Position Mode" set to "One-way Mode", and "Asset Mode" set to "Single-Asset Mode".
-These settings will be checked on startup, and tradescope will show an error if this setting is wrong.
+These settings will be checked on startup, and freqtrade will show an error if this setting is wrong.
 
 ![Binance futures settings](assets/binance_futures_settings.png)
 
-Tradescope will not attempt to change these settings.
+Freqtrade will not attempt to change these settings.
 
 ## Kraken
 
@@ -137,11 +137,11 @@ Kraken supports [time_in_force](configuration.md#understand-order_time_in_force)
 
 ### Historic Kraken data
 
-The Kraken API does only provide 720 historic candles, which is sufficient for Tradescope dry-run and live trade modes, but is a problem for backtesting.
+The Kraken API does only provide 720 historic candles, which is sufficient for Freqtrade dry-run and live trade modes, but is a problem for backtesting.
 To download data for the Kraken exchange, using `--dl-trades` is mandatory, otherwise the bot will download the same 720 candles over and over, and you'll not have enough backtest data.
 
 To speed up downloading, you can download the [trades zip files](https://support.kraken.com/hc/en-us/articles/360047543791-Downloadable-historical-market-data-time-and-sales-) kraken provides.
-These are usually updated once per quarter. Tradescope expects these files to be placed in `user_data/data/kraken/trades_csv`.
+These are usually updated once per quarter. Freqtrade expects these files to be placed in `user_data/data/kraken/trades_csv`.
 
 A structure as follows can make sense if using incremental files, with the "full" history in one directory, and incremental files in different directories.
 The assumption for this mode is that the data is downloaded and unzipped keeping filenames as they are.
@@ -163,23 +163,23 @@ Not having this will lead to incomplete data, and therefore invalid results whil
         └── XBTEUR.csv
 ```
 
-You can convert these files into tradescope files:
+You can convert these files into freqtrade files:
 
 ``` bash
-tradescope convert-trade-data --exchange kraken --format-from kraken_csv --format-to feather
+freqtrade convert-trade-data --exchange kraken --format-from kraken_csv --format-to feather
 # Convert trade data to different ohlcv timeframes
-tradescope trades-to-ohlcv -p BTC/EUR BCH/EUR --exchange kraken -t 1m 5m 15m 1h
+freqtrade trades-to-ohlcv -p BTC/EUR BCH/EUR --exchange kraken -t 1m 5m 15m 1h
 ```
 
 The converted data also makes downloading data possible, and will start the download after the latest loaded trade.
 
 ``` bash
-tradescope download-data --exchange kraken --dl-trades -p BTC/EUR BCH/EUR 
+freqtrade download-data --exchange kraken --dl-trades -p BTC/EUR BCH/EUR 
 ```
 
 !!! Warning "Downloading data from kraken"
     Downloading kraken data will require significantly more memory (RAM) than any other exchange, as the trades-data needs to be converted into candles on your machine.
-    It will also take a long time, as tradescope will need to download every single trade that happened on the exchange for the pair / timerange combination, therefore please be patient.
+    It will also take a long time, as freqtrade will need to download every single trade that happened on the exchange for the pair / timerange combination, therefore please be patient.
 
 !!! Warning "rateLimit tuning"
     Please pay attention that rateLimit configuration entry holds delay in milliseconds between requests, NOT requests\sec rate.
@@ -234,7 +234,7 @@ OKX requires a passphrase for each api key, you will therefore need to add this 
 
 !!! Warning "Futures"
     OKX Futures has the concept of "position mode" - which can be "Buy/Sell" or long/short (hedge mode).
-    Tradescope supports both modes (we recommend to use Buy/Sell mode) - but changing the mode mid-trading is not supported and will lead to exceptions and failures to place trades.
+    Freqtrade supports both modes (we recommend to use Buy/Sell mode) - but changing the mode mid-trading is not supported and will lead to exceptions and failures to place trades.
     OKX also only provides MARK candles for the past ~3 months. Backtesting futures prior to that date will therefore lead to slight deviations, as funding-fees cannot be calculated correctly without this data.
 
 ## Gate.io
@@ -249,7 +249,7 @@ The configuration parameter `exchange.unknown_fee_rate` can be used to specify t
 
 Futures trading on bybit is currently supported for USDT markets, and will use isolated futures mode.
 Users with unified accounts (there's no way back) can create a Sub-account which will start as "non-unified", and can therefore use isolated futures.
-On startup, tradescope will set the position mode to "One-way Mode" for the whole (sub)account. This avoids making this call over and over again (slowing down bot operations), but means that changes to this setting may result in exceptions and errors
+On startup, freqtrade will set the position mode to "One-way Mode" for the whole (sub)account. This avoids making this call over and over again (slowing down bot operations), but means that changes to this setting may result in exceptions and errors
 
 As bybit doesn't provide funding rate history, the dry-run calculation is used for live trades as well.
 
@@ -297,15 +297,15 @@ $ pip3 install web3
 ### Getting latest price / Incomplete candles
 
 Most exchanges return current incomplete candle via their OHLCV/klines API interface.
-By default, Tradescope assumes that incomplete candle is fetched from the exchange and removes the last candle assuming it's the incomplete candle.
+By default, Freqtrade assumes that incomplete candle is fetched from the exchange and removes the last candle assuming it's the incomplete candle.
 
 Whether your exchange returns incomplete candles or not can be checked using [the helper script](developer.md#Incomplete-candles) from the Contributor documentation.
 
-Due to the danger of repainting, Tradescope does not allow you to use this incomplete candle.
+Due to the danger of repainting, Freqtrade does not allow you to use this incomplete candle.
 
 However, if it is based on the need for the latest price for your strategy - then this requirement can be acquired using the [data provider](strategy-customization.md#possible-options-for-dataprovider) from within the strategy.
 
-### Advanced Tradescope Exchange configuration
+### Advanced Freqtrade Exchange configuration
 
 Advanced options can be configured using the `_ft_has_params` setting, which will override Defaults and exchange-specific behavior.
 

@@ -3,15 +3,15 @@ requires = ["setuptools >= 64.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tradescope"
+name = "freqtrade"
 dynamic = ["version", "dependencies", "optional-dependencies"]
 
 authors = [
-  {name = "Tradescope Team"},
-  {name = "Tradescope Team", email = "tradescope@protonmail.com"},
+  {name = "Freqtrade Team"},
+  {name = "Freqtrade Team", email = "freqtrade@protonmail.com"},
 ]
 
-description = "Tradescope - Crypto Trading Bot"
+description = "Freqtrade - Crypto Trading Bot"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "GPLv3"}
@@ -31,13 +31,13 @@ classifiers = [
 
 
 [project.urls]
-Homepage = "https://github.com/khulnasoft/tradescope"
-Documentation = "https://tradescope.io"
-"Bug Tracker" = "https://github.com/khulnasoft/tradescope/issues"
+Homepage = "https://github.com/freqtrade/freqtrade"
+Documentation = "https://freqtrade.io"
+"Bug Tracker" = "https://github.com/freqtrade/freqtrade/issues"
 
 
 [project.scripts]
-tradescope = "tradescope.main:main"
+freqtrade = "freqtrade.main:main"
 
 [tool.setuptools]
 include-package-data = true
@@ -45,12 +45,12 @@ zip-safe = false
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["tradescope*"]
+include = ["freqtrade*"]
 exclude = ["tests", "tests.*", "user_data", "user_data*"]
 namespaces = true
 
 [tool.setuptools.dynamic]
-version = {attr = "tradescope.__version__"}
+version = {attr = "freqtrade.__version__"}
 
 [tool.black]
 line-length = 100
@@ -105,12 +105,12 @@ module = "telegram.*"
 implicit_optional = true
 
 [tool.pyright]
-include = ["tradescope"]
+include = ["freqtrade"]
 exclude = [
   "**/__pycache__",
   "build_helpers/*.py",
 ]
-ignore = ["tradescope/vendor/**"]
+ignore = ["freqtrade/vendor/**"]
 
 
 [tool.ruff]

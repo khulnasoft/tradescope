@@ -1,4 +1,4 @@
-# Tradescope rules
+# Freqtrade rules
 config*.json
 *.sqlite
 *.sqlite-shm
@@ -8,13 +8,13 @@ user_data/*
 !user_data/strategy/sample_strategy.py
 !user_data/notebooks
 !user_data/models
-!user_data/tradeaimodels
-user_data/tradeaimodels/*
+!user_data/freqaimodels
+user_data/freqaimodels/*
 user_data/models/*
 user_data/notebooks/*
-tradescope-plot.html
-tradescope-profit-plot.html
-tradescope/rpc/api_server/ui/*
+freqtrade-plot.html
+freqtrade-profit-plot.html
+freqtrade/rpc/api_server/ui/*
 build_helpers/ta-lib/*
 
 # Macos related
@@ -113,4 +113,4 @@ target/
 !config_examples/config_binance.example.json
 !config_examples/config_full.example.json
 !config_examples/config_kraken.example.json
-!config_examples/config_tradeai.example.json
+!config_examples/config_freqai.example.json

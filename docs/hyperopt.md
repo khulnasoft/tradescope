@@ -10,7 +10,7 @@ Hyperopt requires historic data to be available, just as backtesting does (hyper
 To learn how to get data for the pairs and exchange you're interested in, head over to the [Data Downloading](data-download.md) section of the documentation.
 
 !!! Bug
-    Hyperopt can crash when used with only 1 CPU Core as found out in [Issue #1133](https://github.com/khulnasoft/tradescope/issues/1133)
+    Hyperopt can crash when used with only 1 CPU Core as found out in [Issue #1133](https://github.com/freqtrade/freqtrade/issues/1133)
 
 !!! Note
     Since 2021.4 release you no longer have to write a separate hyperopt class, but can configure the parameters directly in the strategy.
@@ -38,10 +38,10 @@ pip install -r requirements-hyperopt.txt
 ## Hyperopt command reference
 
 ```
-usage: tradescope hyperopt [-h] [-v] [--logfile FILE] [-V] [-c PATH] [-d PATH]
+usage: freqtrade hyperopt [-h] [-v] [--logfile FILE] [-V] [-c PATH] [-d PATH]
                           [--userdir PATH] [-s NAME] [--strategy-path PATH]
-                          [--recursive-strategy-search] [--tradeaimodel NAME]
-                          [--tradeaimodel-path PATH] [-i TIMEFRAME]
+                          [--recursive-strategy-search] [--freqaimodel NAME]
+                          [--freqaimodel-path PATH] [-i TIMEFRAME]
                           [--timerange TIMERANGE]
                           [--data-format-ohlcv {json,jsongz,hdf5}]
                           [--max-open-trades INT]
@@ -156,9 +156,9 @@ Strategy arguments:
   --recursive-strategy-search
                         Recursively search for a strategy in the strategies
                         folder.
-  --tradeaimodel NAME    Specify a custom tradeaimodels.
-  --tradeaimodel-path PATH
-                        Specify additional lookup path for tradeaimodels.
+  --freqaimodel NAME    Specify a custom freqaimodels.
+  --freqaimodel-path PATH
+                        Specify additional lookup path for freqaimodels.
 
 ```
 
@@ -187,7 +187,7 @@ Rarely you may also need to create a [nested class](advanced-hyperopt.md#overrid
 
     ``` bash
     # Have a working strategy at hand.
-    tradescope hyperopt --hyperopt-loss SharpeHyperOptLossDaily --spaces roi stoploss trailing --strategy MyWorkingStrategy --config config.json -e 100
+    freqtrade hyperopt --hyperopt-loss SharpeHyperOptLossDaily --spaces roi stoploss trailing --strategy MyWorkingStrategy --config config.json -e 100
     ```
 
 ### Hyperopt execution logic
@@ -196,7 +196,7 @@ Hyperopt will first load your data into memory and will then run `populate_indic
 
 Hyperopt will then spawn into different processes (number of processors, or `-j <n>`), and run backtesting over and over again, changing the parameters that are part of the `--spaces` defined.
 
-For every new set of parameters, tradescope will run first `populate_entry_trend()` followed by `populate_exit_trend()`, and then run the regular backtesting process to simulate trades.
+For every new set of parameters, freqtrade will run first `populate_entry_trend()` followed by `populate_exit_trend()`, and then run the regular backtesting process to simulate trades.
 
 After backtesting, the results are passed into the [loss function](#loss-functions), which will evaluate if this result was better or worse than previous results.  
 Based on the loss function result, hyperopt will determine the next set of parameters to try in the next round of backtesting.
@@ -353,7 +353,7 @@ There are two parameter options that can help you to quickly test various ideas:
 ## Optimizing an indicator parameter
 
 Assuming you have a simple strategy in mind - a EMA cross strategy (2 Moving averages crossing) - and you'd like to find the ideal parameters for this strategy.
-By default, we assume a stoploss of 5% - and a take-profit (`minimal_roi`) of 10% - which means tradescope will sell the trade once 10% profit has been reached.
+By default, we assume a stoploss of 5% - and a take-profit (`minimal_roi`) of 10% - which means freqtrade will sell the trade once 10% profit has been reached.
 
 ``` python
 from pandas import DataFrame
@@ -361,9 +361,9 @@ from functools import reduce
 
 import talib.abstract as ta
 
-from tradescope.strategy import (BooleanParameter, CategoricalParameter, DecimalParameter, 
+from freqtrade.strategy import (BooleanParameter, CategoricalParameter, DecimalParameter, 
                                 IStrategy, IntParameter)
-import tradescope.vendor.qtpylib.indicators as qtpylib
+import freqtrade.vendor.qtpylib.indicators as qtpylib
 
 class MyAwesomeStrategy(IStrategy):
     stoploss = -0.05
@@ -449,7 +449,7 @@ While this strategy is most likely too simple to provide consistent profit, it s
 
 ## Optimizing protections
 
-Tradescope can also optimize protections. How you optimize protections is up to you, and the following should be considered as example only.
+Freqtrade can also optimize protections. How you optimize protections is up to you, and the following should be considered as example only.
 
 The strategy will simply need to define the "protections" entry as property returning a list of protection configurations.
 
@@ -459,9 +459,9 @@ from functools import reduce
 
 import talib.abstract as ta
 
-from tradescope.strategy import (BooleanParameter, CategoricalParameter, DecimalParameter, 
+from freqtrade.strategy import (BooleanParameter, CategoricalParameter, DecimalParameter, 
                                 IStrategy, IntParameter)
-import tradescope.vendor.qtpylib.indicators as qtpylib
+import freqtrade.vendor.qtpylib.indicators as qtpylib
 
 class MyAwesomeStrategy(IStrategy):
     stoploss = -0.05
@@ -497,11 +497,11 @@ class MyAwesomeStrategy(IStrategy):
 ```
 
 You can then run hyperopt as follows:
-`tradescope hyperopt --hyperopt-loss SharpeHyperOptLossDaily --strategy MyAwesomeStrategy --spaces protection`
+`freqtrade hyperopt --hyperopt-loss SharpeHyperOptLossDaily --strategy MyAwesomeStrategy --spaces protection`
 
 !!! Note
     The protection space is not part of the default space, and is only available with the Parameters Hyperopt interface, not with the legacy hyperopt interface (which required separate hyperopt files).
-    Tradescope will also automatically change the "--enable-protections" flag if the protection space is selected.
+    Freqtrade will also automatically change the "--enable-protections" flag if the protection space is selected.
 
 !!! Warning
     If protections are defined as property, entries from the configuration will be ignored.
@@ -549,9 +549,9 @@ from functools import reduce
 
 import talib.abstract as ta
 
-from tradescope.strategy import (BooleanParameter, CategoricalParameter, DecimalParameter, 
+from freqtrade.strategy import (BooleanParameter, CategoricalParameter, DecimalParameter, 
                                 IStrategy, IntParameter)
-import tradescope.vendor.qtpylib.indicators as qtpylib
+import freqtrade.vendor.qtpylib.indicators as qtpylib
 
 class MyAwesomeStrategy(IStrategy):
     stoploss = -0.05
@@ -588,7 +588,7 @@ This class should be in its own file within the `user_data/hyperopts/` directory
 
 Currently, the following loss functions are builtin:
 
-* `ShortTradeDurHyperOptLoss` - (default legacy Tradescope hyperoptimization loss function) - Mostly for short trade duration and avoiding losses.
+* `ShortTradeDurHyperOptLoss` - (default legacy Freqtrade hyperoptimization loss function) - Mostly for short trade duration and avoiding losses.
 * `OnlyProfitHyperOptLoss` - takes only amount of profit into consideration.
 * `SharpeHyperOptLoss` - optimizes Sharpe Ratio calculated on trade returns relative to standard deviation.
 * `SharpeHyperOptLossDaily` - optimizes Sharpe Ratio calculated on **daily** trade returns relative to standard deviation.
@@ -609,7 +609,7 @@ Because hyperopt tries a lot of combinations to find the best parameters it will
 We strongly recommend to use `screen` or `tmux` to prevent any connection loss.
 
 ```bash
-tradescope hyperopt --config config.json --hyperopt-loss <hyperoptlossname> --strategy <strategyname> -e 500 --spaces all
+freqtrade hyperopt --config config.json --hyperopt-loss <hyperoptlossname> --strategy <strategyname> -e 500 --spaces all
 ```
 
 The `-e` option will set how many evaluations hyperopt will do. Since hyperopt uses Bayesian search, running too many epochs at once may not produce greater results. Experience has shown that best results are usually not improving much after 500-1000 epochs.  
@@ -635,7 +635,7 @@ For example, to use one month of data, pass `--timerange 20210101-20210201` (fro
 Full command:
 
 ```bash
-tradescope hyperopt --strategy <strategyname> --timerange 20210101-20210201
+freqtrade hyperopt --strategy <strategyname> --timerange 20210101-20210201
 ```
 
 ### Running Hyperopt with Smaller Search Space
@@ -747,7 +747,7 @@ As stated in the comment, you can also use it as the value of the `minimal_roi` 
 
 #### Default ROI Search Space
 
-If you are optimizing ROI, Tradescope creates the 'roi' optimization hyperspace for you -- it's the hyperspace of components for the ROI tables. By default, each ROI table generated by the Tradescope consists of 4 rows (steps). Hyperopt implements adaptive ranges for ROI tables with ranges for values in the ROI steps that depend on the timeframe used. By default the values vary in the following ranges (for some of the most used timeframes, values are rounded to 3 digits after the decimal point):
+If you are optimizing ROI, Freqtrade creates the 'roi' optimization hyperspace for you -- it's the hyperspace of components for the ROI tables. By default, each ROI table generated by the Freqtrade consists of 4 rows (steps). Hyperopt implements adaptive ranges for ROI tables with ranges for values in the ROI steps that depend on the timeframe used. By default the values vary in the following ranges (for some of the most used timeframes, values are rounded to 3 digits after the decimal point):
 
 | # step | 1m     |               | 5m       |             | 1h         |               | 1d           |               |
 | ------ | ------ | ------------- | -------- | ----------- | ---------- | ------------- | ------------ | ------------- |
@@ -758,7 +758,7 @@ If you are optimizing ROI, Tradescope creates the 'roi' optimization hyperspace 
 
 These ranges should be sufficient in most cases. The minutes in the steps (ROI dict keys) are scaled linearly depending on the timeframe used. The ROI values in the steps (ROI dict values) are scaled logarithmically depending on the timeframe used.
 
-If you have the `generate_roi_table()` and `roi_space()` methods in your custom hyperopt, remove them in order to utilize these adaptive ROI tables and the ROI hyperoptimization space generated by Tradescope by default.
+If you have the `generate_roi_table()` and `roi_space()` methods in your custom hyperopt, remove them in order to utilize these adaptive ROI tables and the ROI hyperoptimization space generated by Freqtrade by default.
 
 Override the `roi_space()` method if you need components of the ROI tables to vary in other ranges. Override the `generate_roi_table()` and `roi_space()` methods and implement your own custom approach for generation of the ROI tables during hyperoptimization if you need a different structure of the ROI tables or other amount of rows (steps).
 
@@ -800,9 +800,9 @@ As stated in the comment, you can also use it as the value of the `stoploss` set
 
 #### Default Stoploss Search Space
 
-If you are optimizing stoploss values, Tradescope creates the 'stoploss' optimization hyperspace for you. By default, the stoploss values in that hyperspace vary in the range -0.35...-0.02, which is sufficient in most cases.
+If you are optimizing stoploss values, Freqtrade creates the 'stoploss' optimization hyperspace for you. By default, the stoploss values in that hyperspace vary in the range -0.35...-0.02, which is sufficient in most cases.
 
-If you have the `stoploss_space()` method in your custom hyperopt file, remove it in order to utilize Stoploss hyperoptimization space generated by Tradescope by default.
+If you have the `stoploss_space()` method in your custom hyperopt file, remove it in order to utilize Stoploss hyperoptimization space generated by Freqtrade by default.
 
 Override the `stoploss_space()` method and define the desired range in it if you need stoploss values to vary in other range during hyperoptimization. A sample for this method can be found in the [overriding pre-defined spaces section](advanced-hyperopt.md#overriding-pre-defined-spaces).
 
@@ -840,7 +840,7 @@ As stated in the comment, you can also use it as the values of the corresponding
 
 #### Default Trailing Stop Search Space
 
-If you are optimizing trailing stop values, Tradescope creates the 'trailing' optimization hyperspace for you. By default, the `trailing_stop` parameter is always set to True in that hyperspace, the value of the `trailing_only_offset_is_reached` vary between True and False, the values of the `trailing_stop_positive` and `trailing_stop_positive_offset` parameters vary in the ranges 0.02...0.35 and 0.01...0.1 correspondingly, which is sufficient in most cases.
+If you are optimizing trailing stop values, Freqtrade creates the 'trailing' optimization hyperspace for you. By default, the `trailing_stop` parameter is always set to True in that hyperspace, the value of the `trailing_only_offset_is_reached` vary between True and False, the values of the `trailing_stop_positive` and `trailing_stop_positive_offset` parameters vary in the ranges 0.02...0.35 and 0.01...0.1 correspondingly, which is sufficient in most cases.
 
 Override the `trailing_space()` method and define the desired range in it if you need values of the trailing stop parameters to vary in other ranges during hyperoptimization. A sample for this method can be found in the [overriding pre-defined spaces section](advanced-hyperopt.md#overriding-pre-defined-spaces).
 
@@ -871,7 +871,7 @@ You can use the `--print-all` command line option if you would like to see all r
 In some situations, you may need to run Hyperopt (and Backtesting) with the
 `--eps`/`--enable-position-staking` and `--dmmp`/`--disable-max-market-positions` arguments.
 
-By default, hyperopt emulates the behavior of the Tradescope Live Run/Dry Run, where only one
+By default, hyperopt emulates the behavior of the Freqtrade Live Run/Dry Run, where only one
 open trade is allowed for every traded pair. The total number of trades open for all pairs
 is also limited by the `max_open_trades` setting. During Hyperopt/Backtesting this may lead to
 some potential trades to be hidden (or masked) by previously open trades.
@@ -904,7 +904,7 @@ To combat these, you have multiple options:
 
 If you see `The objective has been evaluated at this point before.` - then this is a sign that your space has been exhausted, or is close to that.
 Basically all points in your space have been hit (or a local minima has been hit) - and hyperopt does no longer find points in the multi-dimensional space it did not try yet.
-Tradescope tries to counter the "local minima" problem by using new, randomized points in this case.
+Freqtrade tries to counter the "local minima" problem by using new, randomized points in this case.
 
 Example:
 
@@ -929,7 +929,7 @@ To achieve same the results (number of trades, their durations, profit, etc.) as
 ### Why do my backtest results not match my hyperopt results?
 Should results not match, check the following factors:
 
-* You may have added parameters to hyperopt in `populate_indicators()` where they will be calculated only once **for all epochs**. If you are, for example, trying to optimise multiple SMA timeperiod values, the hyperoptable timeperiod parameter should be placed in `populate_entry_trend()` which is calculated every epoch. See [Optimizing an indicator parameter](https://www.tradescope.io/en/stable/hyperopt/#optimizing-an-indicator-parameter).
+* You may have added parameters to hyperopt in `populate_indicators()` where they will be calculated only once **for all epochs**. If you are, for example, trying to optimise multiple SMA timeperiod values, the hyperoptable timeperiod parameter should be placed in `populate_entry_trend()` which is calculated every epoch. See [Optimizing an indicator parameter](https://www.freqtrade.io/en/stable/hyperopt/#optimizing-an-indicator-parameter).
 * If you have disabled the auto-export of hyperopt parameters into the JSON parameters file, double-check to make sure you transferred all hyperopted values into your strategy correctly.
 * Check the logs to verify what parameters are being set and what values are being used.
 * Pay special care to the stoploss, max_open_trades and trailing stoploss parameters, as these are often set in configuration files, which override changes to the strategy. Check the logs of your backtest to ensure that there were no parameters inadvertently set by the configuration (like `stoploss`, `max_open_trades` or `trailing_stop`).

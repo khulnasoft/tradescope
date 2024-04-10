@@ -2,8 +2,8 @@
 
 ## Trade
 
-A position tradescope enters is stored in a `Trade` object - which is persisted to the database.
-It's a core concept of tradescope - and something you'll come across in many sections of the documentation, which will most likely point you to this location.
+A position freqtrade enters is stored in a `Trade` object - which is persisted to the database.
+It's a core concept of freqtrade - and something you'll come across in many sections of the documentation, which will most likely point you to this location.
 
 It will be passed to the strategy in many [strategy callbacks](strategy-callbacks.md). The object passed to the strategy cannot be modified directly. Indirect modifications may occur based on callback results.
 
@@ -52,7 +52,7 @@ When your strategy needs some information on existing (open or close) trades - i
 Usage:
 
 ``` python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 from datetime import timedelta
 
 # ...
@@ -72,7 +72,7 @@ trade_hist = Trade.get_trades_proxy(pair='ETH/USDT', is_open=False, open_date=cu
 Get the number of currently open trades
 
 ``` python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 # ...
 open_trades = Trade.get_open_trade_count()
 ```
@@ -83,7 +83,7 @@ Retrieve the total profit the bot has generated so far.
 Aggregates `close_profit_abs` for all closed trades.
 
 ``` python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 # ...
 profit = Trade.get_total_closed_profit()
@@ -94,7 +94,7 @@ profit = Trade.get_total_closed_profit()
 Retrieve the total stake_amount that's currently in trades.
 
 ``` python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 # ...
 profit = Trade.total_open_trades_stakes()
@@ -105,7 +105,7 @@ profit = Trade.total_open_trades_stakes()
 Retrieve the overall performance - similar to the `/performance` telegram command.
 
 ``` python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 # ...
 if self.config['runmode'].value in ('live', 'dry_run'):

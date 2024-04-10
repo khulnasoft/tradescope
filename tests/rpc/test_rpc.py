@@ -6,15 +6,15 @@ import pytest
 from numpy import isnan
 from sqlalchemy import select
 
-from tradescope.edge import PairInfo
-from tradescope.enums import SignalDirection, State, TradingMode
-from tradescope.exceptions import ExchangeError, InvalidOrderException, TemporaryError
-from tradescope.persistence import Order, Trade
-from tradescope.persistence.key_value_store import set_startup_time
-from tradescope.rpc import RPC, RPCException
-from tradescope.rpc.fiat_convert import CryptoToFiatConverter
+from freqtrade.edge import PairInfo
+from freqtrade.enums import SignalDirection, State, TradingMode
+from freqtrade.exceptions import ExchangeError, InvalidOrderException, TemporaryError
+from freqtrade.persistence import Order, Trade
+from freqtrade.persistence.key_value_store import set_startup_time
+from freqtrade.rpc import RPC, RPCException
+from freqtrade.rpc.fiat_convert import CryptoToFiatConverter
 from tests.conftest import (EXMS, create_mock_trades, create_mock_trades_usdt,
-                            get_patched_tradescopebot, patch_get_signal)
+                            get_patched_freqtradebot, patch_get_signal)
 
 
 def test_rpc_trade_status(default_conf, ticker, fee, mocker) -> None:
@@ -103,7 +103,7 @@ def test_rpc_trade_status(default_conf, ticker, fee, mocker) -> None:
             'funding_fee': ANY, 'ft_order_tag': None,
         }],
     }
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         fetch_ticker=ticker,
@@ -111,15 +111,15 @@ def test_rpc_trade_status(default_conf, ticker, fee, mocker) -> None:
         _dry_is_price_crossed=MagicMock(side_effect=[False, True]),
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
 
-    tradescopebot.state = State.RUNNING
+    freqtradebot.state = State.RUNNING
     with pytest.raises(RPCException, match=r'.*no active trade*'):
         rpc._rpc_trade_status()
 
-    tradescopebot.enter_positions()
+    freqtradebot.enter_positions()
 
     # Open order...
     results = rpc._rpc_trade_status()
@@ -159,9 +159,9 @@ def test_rpc_trade_status(default_conf, ticker, fee, mocker) -> None:
     Trade.commit()
 
     # Fill open order ...
-    tradescopebot.manage_open_orders()
+    freqtradebot.manage_open_orders()
     trades = Trade.get_open_trades()
-    tradescopebot.exit_positions(trades)
+    freqtradebot.exit_positions(trades)
 
     results = rpc._rpc_trade_status()
 
@@ -197,26 +197,26 @@ def test_rpc_trade_status(default_conf, ticker, fee, mocker) -> None:
 
 def test_rpc_status_table(default_conf, ticker, fee, mocker) -> None:
     mocker.patch.multiple(
-        'tradescope.rpc.fiat_convert.CoinGeckoAPI',
+        'freqtrade.rpc.fiat_convert.CoinGeckoAPI',
         get_price=MagicMock(return_value={'bitcoin': {'usd': 15000.0}}),
     )
-    mocker.patch('tradescope.rpc.rpc.CryptoToFiatConverter._find_price', return_value=15000.0)
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.rpc.CryptoToFiatConverter._find_price', return_value=15000.0)
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         fetch_ticker=ticker,
         get_fee=fee,
     )
     del default_conf['fiat_display_currency']
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
 
-    tradescopebot.state = State.RUNNING
+    freqtradebot.state = State.RUNNING
     with pytest.raises(RPCException, match=r'.*no active trade*'):
         rpc._rpc_status_table(default_conf['stake_currency'], 'USD')
     mocker.patch(f'{EXMS}._dry_is_price_crossed', return_value=False)
-    tradescopebot.enter_positions()
+    freqtradebot.enter_positions()
 
     result, headers, fiat_profit_sum = rpc._rpc_status_table(default_conf['stake_currency'], 'USD')
     assert "Since" in headers
@@ -227,7 +227,7 @@ def test_rpc_status_table(default_conf, ticker, fee, mocker) -> None:
     assert '0.00' == f'{fiat_profit_sum:.2f}'
 
     mocker.patch(f'{EXMS}._dry_is_price_crossed', return_value=True)
-    tradescopebot.process()
+    freqtradebot.process()
 
     result, headers, fiat_profit_sum = rpc._rpc_status_table(default_conf['stake_currency'], 'USD')
     assert "Since" in headers
@@ -271,7 +271,7 @@ def test__rpc_timeunit_profit(
 
     time_machine.move_to("2023-09-05 10:00:00 +00:00", tick=False)
 
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         fetch_ticker=ticker,
@@ -279,13 +279,13 @@ def test__rpc_timeunit_profit(
         markets=PropertyMock(return_value=markets)
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf_usdt)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf_usdt)
     create_mock_trades_usdt(fee)
 
     stake_currency = default_conf_usdt['stake_currency']
     fiat_display_currency = default_conf_usdt['fiat_display_currency']
 
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
     rpc._fiat_converter = CryptoToFiatConverter()
 
     # Try valid data
@@ -312,15 +312,15 @@ def test__rpc_timeunit_profit(
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_rpc_trade_history(mocker, default_conf, markets, fee, is_short):
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         markets=PropertyMock(return_value=markets)
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
     create_mock_trades(fee, is_short)
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
     rpc._fiat_converter = CryptoToFiatConverter()
     trades = rpc._rpc_trade_history(2)
     assert len(trades['trades']) == 2
@@ -338,7 +338,7 @@ def test_rpc_trade_history(mocker, default_conf, markets, fee, is_short):
 
 @pytest.mark.parametrize('is_short', [True, False])
 def test_rpc_delete_trade(mocker, default_conf, fee, markets, caplog, is_short):
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     stoploss_mock = MagicMock()
     cancel_mock = MagicMock()
     mocker.patch.multiple(
@@ -348,10 +348,10 @@ def test_rpc_delete_trade(mocker, default_conf, fee, markets, caplog, is_short):
         cancel_stoploss_order=stoploss_mock,
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    tradescopebot.strategy.order_types['stoploss_on_exchange'] = True
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    freqtradebot.strategy.order_types['stoploss_on_exchange'] = True
     create_mock_trades(fee, is_short)
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
     with pytest.raises(RPCException, match='invalid argument'):
         rpc._rpc_delete('200')
 
@@ -398,19 +398,19 @@ def test_rpc_delete_trade(mocker, default_conf, fee, markets, caplog, is_short):
 
 
 def test_rpc_trade_statistics(default_conf_usdt, ticker, fee, mocker) -> None:
-    mocker.patch('tradescope.rpc.rpc.CryptoToFiatConverter._find_price', return_value=1.1)
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.rpc.CryptoToFiatConverter._find_price', return_value=1.1)
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         fetch_ticker=ticker,
         get_fee=fee,
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf_usdt)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf_usdt)
     stake_currency = default_conf_usdt['stake_currency']
     fiat_display_currency = default_conf_usdt['fiat_display_currency']
 
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
     rpc._fiat_converter = CryptoToFiatConverter()
 
     res = rpc._rpc_trade_statistics(stake_currency, fiat_display_currency)
@@ -471,20 +471,20 @@ def test_rpc_balance_handle_error(default_conf, mocker):
     # ETH will be skipped due to mocked Error below
 
     mocker.patch.multiple(
-        'tradescope.rpc.fiat_convert.CoinGeckoAPI',
+        'freqtrade.rpc.fiat_convert.CoinGeckoAPI',
         get_price=MagicMock(return_value={'bitcoin': {'usd': 15000.0}}),
     )
-    mocker.patch('tradescope.rpc.rpc.CryptoToFiatConverter._find_price', return_value=15000.0)
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.rpc.CryptoToFiatConverter._find_price', return_value=15000.0)
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=mock_balance),
         get_tickers=MagicMock(side_effect=TemporaryError('Could not load ticker due to xxx'))
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
     rpc._fiat_converter = CryptoToFiatConverter()
     with pytest.raises(RPCException, match="Error getting current tickers."):
         rpc._rpc_balance(default_conf['stake_currency'], default_conf['fiat_display_currency'])
@@ -534,11 +534,11 @@ def test_rpc_balance_handle(default_conf_usdt, mocker, tickers):
     ]
 
     mocker.patch.multiple(
-        'tradescope.rpc.fiat_convert.CoinGeckoAPI',
+        'freqtrade.rpc.fiat_convert.CoinGeckoAPI',
         get_price=MagicMock(return_value={'bitcoin': {'usd': 1.2}}),
     )
-    mocker.patch('tradescope.rpc.rpc.CryptoToFiatConverter._find_price', return_value=1.2)
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.rpc.CryptoToFiatConverter._find_price', return_value=1.2)
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         validate_trading_mode_and_margin_mode=MagicMock(),
@@ -550,9 +550,9 @@ def test_rpc_balance_handle(default_conf_usdt, mocker, tickers):
     )
     default_conf_usdt['dry_run'] = False
     default_conf_usdt['trading_mode'] = 'futures'
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf_usdt)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf_usdt)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
     rpc._fiat_converter = CryptoToFiatConverter()
 
     result = rpc._rpc_balance(
@@ -631,68 +631,68 @@ def test_rpc_balance_handle(default_conf_usdt, mocker, tickers):
 
 
 def test_rpc_start(mocker, default_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         fetch_ticker=MagicMock()
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
-    tradescopebot.state = State.STOPPED
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
+    freqtradebot.state = State.STOPPED
 
     result = rpc._rpc_start()
     assert {'status': 'starting trader ...'} == result
-    assert tradescopebot.state == State.RUNNING
+    assert freqtradebot.state == State.RUNNING
 
     result = rpc._rpc_start()
     assert {'status': 'already running'} == result
-    assert tradescopebot.state == State.RUNNING
+    assert freqtradebot.state == State.RUNNING
 
 
 def test_rpc_stop(mocker, default_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         fetch_ticker=MagicMock()
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
-    tradescopebot.state = State.RUNNING
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
+    freqtradebot.state = State.RUNNING
 
     result = rpc._rpc_stop()
     assert {'status': 'stopping trader ...'} == result
-    assert tradescopebot.state == State.STOPPED
+    assert freqtradebot.state == State.STOPPED
 
     result = rpc._rpc_stop()
 
     assert {'status': 'already stopped'} == result
-    assert tradescopebot.state == State.STOPPED
+    assert freqtradebot.state == State.STOPPED
 
 
 def test_rpc_stopentry(mocker, default_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         fetch_ticker=MagicMock()
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
-    tradescopebot.state = State.RUNNING
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
+    freqtradebot.state = State.RUNNING
 
-    assert tradescopebot.config['max_open_trades'] != 0
+    assert freqtradebot.config['max_open_trades'] != 0
     result = rpc._rpc_stopentry()
     assert {'status': 'No more entries will occur from now. Run /reload_config to reset.'} == result
-    assert tradescopebot.config['max_open_trades'] == 0
+    assert freqtradebot.config['max_open_trades'] == 0
 
 
 def test_rpc_force_exit(default_conf, ticker, fee, mocker) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
 
     cancel_order_mock = MagicMock()
     mocker.patch.multiple(
@@ -710,42 +710,42 @@ def test_rpc_force_exit(default_conf, ticker, fee, mocker) -> None:
         _dry_is_price_crossed=MagicMock(return_value=True),
         get_fee=fee,
     )
-    mocker.patch('tradescope.wallets.Wallets.get_free', return_value=1000)
+    mocker.patch('freqtrade.wallets.Wallets.get_free', return_value=1000)
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
 
-    tradescopebot.state = State.STOPPED
+    freqtradebot.state = State.STOPPED
     with pytest.raises(RPCException, match=r'.*trader is not running*'):
         rpc._rpc_force_exit(None)
 
-    tradescopebot.state = State.RUNNING
+    freqtradebot.state = State.RUNNING
     with pytest.raises(RPCException, match=r'.*invalid argument*'):
         rpc._rpc_force_exit(None)
 
     msg = rpc._rpc_force_exit('all')
     assert msg == {'result': 'Created exit orders for all open trades.'}
 
-    tradescopebot.enter_positions()
+    freqtradebot.enter_positions()
     msg = rpc._rpc_force_exit('all')
     assert msg == {'result': 'Created exit orders for all open trades.'}
 
-    tradescopebot.enter_positions()
+    freqtradebot.enter_positions()
     msg = rpc._rpc_force_exit('2')
     assert msg == {'result': 'Created exit order for trade 2.'}
 
-    tradescopebot.state = State.STOPPED
+    freqtradebot.state = State.STOPPED
     with pytest.raises(RPCException, match=r'.*trader is not running*'):
         rpc._rpc_force_exit(None)
 
     with pytest.raises(RPCException, match=r'.*trader is not running*'):
         rpc._rpc_force_exit('all')
 
-    tradescopebot.state = State.RUNNING
+    freqtradebot.state = State.RUNNING
     assert cancel_order_mock.call_count == 0
     mocker.patch(f'{EXMS}._dry_is_price_crossed', MagicMock(return_value=False))
-    tradescopebot.enter_positions()
+    freqtradebot.enter_positions()
     # make an limit-buy open trade
     trade = Trade.session.scalars(select(Trade).filter(Trade.id == '3')).first()
     filled_amount = trade.amount / 2
@@ -781,8 +781,8 @@ def test_rpc_force_exit(default_conf, ticker, fee, mocker) -> None:
             'filled': filled_amount
         })
 
-    tradescopebot.config['max_open_trades'] = 3
-    tradescopebot.enter_positions()
+    freqtradebot.config['max_open_trades'] = 3
+    freqtradebot.enter_positions()
 
     cancel_order_mock.reset_mock()
     trade = Trade.session.scalars(select(Trade).filter(Trade.id == '3')).first()
@@ -851,7 +851,7 @@ def test_rpc_force_exit(default_conf, ticker, fee, mocker) -> None:
 
 
 def test_performance_handle(default_conf_usdt, ticker, fee, mocker) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -859,9 +859,9 @@ def test_performance_handle(default_conf_usdt, ticker, fee, mocker) -> None:
         get_fee=fee,
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf_usdt)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf_usdt)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
     # Create some test data
     create_mock_trades_usdt(fee)
 
@@ -874,7 +874,7 @@ def test_performance_handle(default_conf_usdt, ticker, fee, mocker) -> None:
 
 def test_enter_tag_performance_handle(default_conf, ticker, fee, mocker) -> None:
 
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -882,13 +882,13 @@ def test_enter_tag_performance_handle(default_conf, ticker, fee, mocker) -> None
         get_fee=fee,
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
 
     # Create some test data
     create_mock_trades_usdt(fee)
-    tradescopebot.enter_positions()
+    freqtradebot.enter_positions()
 
     res = rpc._rpc_enter_tag_performance(None)
 
@@ -906,15 +906,15 @@ def test_enter_tag_performance_handle(default_conf, ticker, fee, mocker) -> None
 
 
 def test_enter_tag_performance_handle_2(mocker, default_conf, markets, fee):
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         markets=PropertyMock(return_value=markets)
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
     create_mock_trades(fee)
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
 
     res = rpc._rpc_enter_tag_performance(None)
 
@@ -935,7 +935,7 @@ def test_enter_tag_performance_handle_2(mocker, default_conf, markets, fee):
 
 
 def test_exit_reason_performance_handle(default_conf_usdt, ticker, fee, mocker) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -943,9 +943,9 @@ def test_exit_reason_performance_handle(default_conf_usdt, ticker, fee, mocker) 
         get_fee=fee,
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf_usdt)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf_usdt)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
 
     # Create some test data
     create_mock_trades_usdt(fee)
@@ -962,15 +962,15 @@ def test_exit_reason_performance_handle(default_conf_usdt, ticker, fee, mocker) 
 
 
 def test_exit_reason_performance_handle_2(mocker, default_conf, markets, fee):
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         markets=PropertyMock(return_value=markets)
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
     create_mock_trades(fee)
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
 
     res = rpc._rpc_exit_reason_performance(None)
 
@@ -991,7 +991,7 @@ def test_exit_reason_performance_handle_2(mocker, default_conf, markets, fee):
 
 
 def test_mix_tag_performance_handle(default_conf, ticker, fee, mocker) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -999,9 +999,9 @@ def test_mix_tag_performance_handle(default_conf, ticker, fee, mocker) -> None:
         get_fee=fee,
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
 
     # Create some test data
     create_mock_trades_usdt(fee)
@@ -1015,15 +1015,15 @@ def test_mix_tag_performance_handle(default_conf, ticker, fee, mocker) -> None:
 
 
 def test_mix_tag_performance_handle_2(mocker, default_conf, markets, fee):
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         markets=PropertyMock(return_value=markets)
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
     create_mock_trades(fee)
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
 
     res = rpc._rpc_mix_tag_performance(None)
 
@@ -1045,7 +1045,7 @@ def test_mix_tag_performance_handle_2(mocker, default_conf, markets, fee):
 
 
 def test_rpc_count(mocker, default_conf, ticker, fee) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value=ticker),
@@ -1053,15 +1053,15 @@ def test_rpc_count(mocker, default_conf, ticker, fee) -> None:
         get_fee=fee,
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
 
     counts = rpc._rpc_count()
     assert counts["current"] == 0
 
     # Create some test data
-    tradescopebot.enter_positions()
+    freqtradebot.enter_positions()
     counts = rpc._rpc_count()
     assert counts["current"] == 1
 
@@ -1069,7 +1069,7 @@ def test_rpc_count(mocker, default_conf, ticker, fee) -> None:
 def test_rpc_force_entry(mocker, default_conf, ticker, fee, limit_buy_order_open) -> None:
     default_conf['force_entry_enable'] = True
     default_conf['max_open_trades'] = 0
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
     buy_mm = MagicMock(return_value=limit_buy_order_open)
     mocker.patch.multiple(
         EXMS,
@@ -1079,13 +1079,13 @@ def test_rpc_force_entry(mocker, default_conf, ticker, fee, limit_buy_order_open
         create_order=buy_mm
     )
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
     pair = 'ETH/BTC'
     with pytest.raises(RPCException, match='Maximum number of trades is reached.'):
         rpc._rpc_force_entry(pair, None)
-    tradescopebot.config['max_open_trades'] = 5
+    freqtradebot.config['max_open_trades'] = 5
 
     trade = rpc._rpc_force_entry(pair, None)
     assert isinstance(trade, Trade)
@@ -1118,16 +1118,16 @@ def test_rpc_force_entry(mocker, default_conf, ticker, fee, limit_buy_order_open
 
     assert trade.open_orders_ids[-1] == 'mocked_limit_buy'
 
-    tradescopebot.strategy.position_adjustment_enable = True
+    freqtradebot.strategy.position_adjustment_enable = True
     with pytest.raises(RPCException, match=r'position for LTC/BTC already open.*open order.*'):
         rpc._rpc_force_entry(pair, 0.0001, order_type='limit', stake_amount=0.05)
 
     # Test not buying
     pair = 'XRP/BTC'
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    tradescopebot.config['stake_amount'] = 0
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    freqtradebot.config['stake_amount'] = 0
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
     pair = 'TKN/BTC'
     with pytest.raises(RPCException, match=r"Failed to enter position for TKN/BTC."):
         trade = rpc._rpc_force_entry(pair, None)
@@ -1136,22 +1136,22 @@ def test_rpc_force_entry(mocker, default_conf, ticker, fee, limit_buy_order_open
 def test_rpc_force_entry_stopped(mocker, default_conf) -> None:
     default_conf['force_entry_enable'] = True
     default_conf['initial_state'] = 'stopped'
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
     pair = 'ETH/BTC'
     with pytest.raises(RPCException, match=r'trader is not running'):
         rpc._rpc_force_entry(pair, None)
 
 
 def test_rpc_force_entry_disabled(mocker, default_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
     pair = 'ETH/BTC'
     with pytest.raises(RPCException, match=r'Force_entry not enabled.'):
         rpc._rpc_force_entry(pair, None)
@@ -1159,11 +1159,11 @@ def test_rpc_force_entry_disabled(mocker, default_conf) -> None:
 
 def test_rpc_force_entry_wrong_mode(mocker, default_conf) -> None:
     default_conf['force_entry_enable'] = True
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    patch_get_signal(tradescopebot)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    patch_get_signal(freqtradebot)
+    rpc = RPC(freqtradebot)
     pair = 'ETH/BTC'
     with pytest.raises(RPCException, match="Can't go short on Spot markets."):
         rpc._rpc_force_entry(pair, None, order_side=SignalDirection.SHORT)
@@ -1171,8 +1171,8 @@ def test_rpc_force_entry_wrong_mode(mocker, default_conf) -> None:
 
 @pytest.mark.usefixtures("init_persistence")
 def test_rpc_add_and_delete_lock(mocker, default_conf):
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    rpc = RPC(freqtradebot)
     pair = 'ETH/BTC'
 
     rpc._rpc_add_lock(pair, datetime.now(timezone.utc) + timedelta(minutes=4), '', '*')
@@ -1189,10 +1189,10 @@ def test_rpc_add_and_delete_lock(mocker, default_conf):
 
 
 def test_rpc_whitelist(mocker, default_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    rpc = RPC(freqtradebot)
     ret = rpc._rpc_whitelist()
     assert len(ret['method']) == 1
     assert 'StaticPairList' in ret['method']
@@ -1204,10 +1204,10 @@ def test_rpc_whitelist_dynamic(mocker, default_conf) -> None:
                                   'number_assets': 4,
                                   }]
     mocker.patch(f'{EXMS}.exchange_has', MagicMock(return_value=True))
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    rpc = RPC(freqtradebot)
     ret = rpc._rpc_whitelist()
     assert len(ret['method']) == 1
     assert 'VolumePairList' in ret['method']
@@ -1216,10 +1216,10 @@ def test_rpc_whitelist_dynamic(mocker, default_conf) -> None:
 
 
 def test_rpc_blacklist(mocker, default_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    rpc = RPC(tradescopebot)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    rpc = RPC(freqtradebot)
     ret = rpc._rpc_blacklist(None)
     assert len(ret['method']) == 1
     assert 'StaticPairList' in ret['method']
@@ -1269,23 +1269,23 @@ def test_rpc_blacklist(mocker, default_conf) -> None:
 
 
 def test_rpc_edge_disabled(mocker, default_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
-    rpc = RPC(tradescopebot)
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
+    rpc = RPC(freqtradebot)
     with pytest.raises(RPCException, match=r'Edge is not enabled.'):
         rpc._rpc_edge()
 
 
 def test_rpc_edge_enabled(mocker, edge_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
-    mocker.patch('tradescope.edge.Edge._cached_pairs', mocker.PropertyMock(
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.edge.Edge._cached_pairs', mocker.PropertyMock(
         return_value={
             'E/F': PairInfo(-0.02, 0.66, 3.71, 0.50, 1.71, 10, 60),
         }
     ))
-    tradescopebot = get_patched_tradescopebot(mocker, edge_conf)
+    freqtradebot = get_patched_freqtradebot(mocker, edge_conf)
 
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
     ret = rpc._rpc_edge()
 
     assert len(ret) == 1
@@ -1296,11 +1296,11 @@ def test_rpc_edge_enabled(mocker, edge_conf) -> None:
 
 
 def test_rpc_health(mocker, default_conf) -> None:
-    mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
+    mocker.patch('freqtrade.rpc.telegram.Telegram', MagicMock())
 
-    tradescopebot = get_patched_tradescopebot(mocker, default_conf)
+    freqtradebot = get_patched_freqtradebot(mocker, default_conf)
     set_startup_time()
-    rpc = RPC(tradescopebot)
+    rpc = RPC(freqtradebot)
     result = rpc.health()
     assert result['last_process'] is None
     assert result['last_process_ts'] is None

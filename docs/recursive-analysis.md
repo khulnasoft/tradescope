@@ -4,7 +4,7 @@ This page explains how to validate your strategy for inaccuracies due to recursi
 
 A recursive formula defines any term of a sequence relative to its preceding term(s). An example of a recursive formula is a<sub>n</sub> = a<sub>n-1</sub> + b.
 
-Why does this matter for Tradescope? In backtesting, the bot will get full data of the pairs according to the timerange specified. But in a dry/live run, the bot will be limited by the amount of data each exchanges gives.
+Why does this matter for Freqtrade? In backtesting, the bot will get full data of the pairs according to the timerange specified. But in a dry/live run, the bot will be limited by the amount of data each exchanges gives.
 
 For example, to calculate a very basic indicator called `steps`, the first row's value is always 0, while the following rows' values are equal to the value of the previous row plus 1. If I were to calculate it using the latest 1000 candles, then the `steps` value of the first row is 0, and the `steps` value at the last closed candle is 999.
 
@@ -27,16 +27,16 @@ In addition to the recursive formula check, this command also carries out a simp
 ## Recursive-analysis command reference
 
 ```
-usage: tradescope recursive-analysis [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade recursive-analysis [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                                     [-d PATH] [--userdir PATH] [-s NAME]
                                     [--strategy-path PATH]
                                     [--recursive-strategy-search]
-                                    [--tradeaimodel NAME]
-                                    [--tradeaimodel-path PATH] [-i TIMEFRAME]
+                                    [--freqaimodel NAME]
+                                    [--freqaimodel-path PATH] [-i TIMEFRAME]
                                     [--timerange TIMERANGE]
                                     [--data-format-ohlcv {json,jsongz,hdf5,feather,parquet}]
                                     [-p PAIR]
-                                    [--tradeai-backtest-live-models]
+                                    [--freqai-backtest-live-models]
                                     [--startup-candle STARTUP_CANDLES [STARTUP_CANDLES ...]]
 
 optional arguments:

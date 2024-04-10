@@ -5,46 +5,46 @@ import pytest
 from ccxt import (DECIMAL_PLACES, ROUND, ROUND_DOWN, ROUND_UP, SIGNIFICANT_DIGITS, TICK_SIZE,
                   TRUNCATE)
 
-from tradescope.enums import RunMode
-from tradescope.exceptions import OperationalException
-from tradescope.exchange import (amount_to_contract_precision, amount_to_precision,
+from freqtrade.enums import RunMode
+from freqtrade.exceptions import OperationalException
+from freqtrade.exchange import (amount_to_contract_precision, amount_to_precision,
                                 date_minus_candles, price_to_precision, timeframe_to_minutes,
                                 timeframe_to_msecs, timeframe_to_next_date, timeframe_to_prev_date,
                                 timeframe_to_resample_freq, timeframe_to_seconds)
-from tradescope.exchange.check_exchange import check_exchange
+from freqtrade.exchange.check_exchange import check_exchange
 from tests.conftest import log_has_re
 
 
 def test_check_exchange(default_conf, caplog) -> None:
-    # Test an officially supported by Tradescope team exchange
+    # Test an officially supported by Freqtrade team exchange
     default_conf['runmode'] = RunMode.DRY_RUN
     default_conf.get('exchange').update({'name': 'BINANCE'})
     assert check_exchange(default_conf)
-    assert log_has_re(r"Exchange .* is officially supported by the Tradescope development team\.",
+    assert log_has_re(r"Exchange .* is officially supported by the Freqtrade development team\.",
                       caplog)
     caplog.clear()
 
-    # Test an officially supported by Tradescope team exchange
+    # Test an officially supported by Freqtrade team exchange
     default_conf.get('exchange').update({'name': 'binance'})
     assert check_exchange(default_conf)
     assert log_has_re(
-        r"Exchange \"binance\" is officially supported by the Tradescope development team\.",
+        r"Exchange \"binance\" is officially supported by the Freqtrade development team\.",
         caplog)
     caplog.clear()
 
-    # Test an officially supported by Tradescope team exchange
+    # Test an officially supported by Freqtrade team exchange
     default_conf.get('exchange').update({'name': 'binanceus'})
     assert check_exchange(default_conf)
     assert log_has_re(
-        r"Exchange \"binanceus\" is officially supported by the Tradescope development team\.",
+        r"Exchange \"binanceus\" is officially supported by the Freqtrade development team\.",
         caplog)
     caplog.clear()
 
-    # Test an officially supported by Tradescope team exchange - with remapping
+    # Test an officially supported by Freqtrade team exchange - with remapping
     default_conf.get('exchange').update({'name': 'okx'})
     assert check_exchange(default_conf)
     assert log_has_re(
-        r"Exchange \"okx\" is officially supported by the Tradescope development team\.",
+        r"Exchange \"okx\" is officially supported by the Freqtrade development team\.",
         caplog)
     caplog.clear()
     # Test an available exchange, supported by ccxt
@@ -52,13 +52,13 @@ def test_check_exchange(default_conf, caplog) -> None:
     assert check_exchange(default_conf)
     assert log_has_re(r"Exchange .* is known to the the ccxt library, available for the bot, "
                       r"but not officially supported "
-                      r"by the Tradescope development team\. .*", caplog)
+                      r"by the Freqtrade development team\. .*", caplog)
     caplog.clear()
 
     # Test a 'bad' exchange, which known to have serious problems
     default_conf.get('exchange').update({'name': 'bitmex'})
     with pytest.raises(OperationalException,
-                       match=r"Exchange .* will not work with Tradescope\..*"):
+                       match=r"Exchange .* will not work with Freqtrade\..*"):
         check_exchange(default_conf)
     caplog.clear()
 
@@ -67,7 +67,7 @@ def test_check_exchange(default_conf, caplog) -> None:
     assert check_exchange(default_conf, False)
     assert log_has_re(r"Exchange .* is known to the the ccxt library, available for the bot, "
                       r"but not officially supported "
-                      r"by the Tradescope development team\. .*", caplog)
+                      r"by the Freqtrade development team\. .*", caplog)
     caplog.clear()
 
     # Test an invalid exchange

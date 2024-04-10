@@ -17,7 +17,7 @@ This is done by not looking at the strategy itself - but at the results it retur
 The results are things like changed indicator-values and moved entries/exits compared to the full backtest.
 
 You can use commands of [Backtesting](backtesting.md).
-It also supports the lookahead-analysis of tradeai strategies.
+It also supports the lookahead-analysis of freqai strategies.
 
 - `--cache` is forced to "none".
 - `--max-open-trades` is forced to be at least equal to the number of pairs.
@@ -30,12 +30,12 @@ Those are set to avoid users accidentally generating false positives.
 ## Lookahead-analysis command reference
 
 ```
-usage: tradescope lookahead-analysis [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade lookahead-analysis [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                                     [-d PATH] [--userdir PATH] [-s NAME]
                                     [--strategy-path PATH]
                                     [--recursive-strategy-search]
-                                    [--tradeaimodel NAME]
-                                    [--tradeaimodel-path PATH] [-i TIMEFRAME]
+                                    [--freqaimodel NAME]
+                                    [--freqaimodel-path PATH] [-i TIMEFRAME]
                                     [--timerange TIMERANGE]
                                     [--data-format-ohlcv {json,jsongz,hdf5,feather,parquet}]
                                     [--max-open-trades INT]
@@ -48,7 +48,7 @@ usage: tradescope lookahead-analysis [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                                     [--export-filename PATH]
                                     [--breakdown {day,week,month} [{day,week,month} ...]]
                                     [--cache {none,day,week,month}]
-                                    [--tradeai-backtest-live-models]
+                                    [--freqai-backtest-live-models]
                                     [--minimum-trade-amount INT]
                                     [--targeted-trade-amount INT]
                                     [--lookahead-analysis-exportfilename LOOKAHEAD_ANALYSIS_EXPORTFILENAME]

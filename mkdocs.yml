@@ -1,6 +1,6 @@
-site_name: Tradescope
-site_url: https://www.tradescope.io/en/latest/
-repo_url: https://github.com/khulnasoft/tradescope
+site_name: Freqtrade
+site_url: https://www.freqtrade.io/en/latest/
+repo_url: https://github.com/freqtrade/freqtrade
 edit_uri: edit/develop/docs/
 use_directory_urls: True
 nav:
@@ -9,7 +9,7 @@ nav:
     - Installation:
         - Linux/MacOS/Raspberry: installation.md
         - Windows: windows_installation.md
-    - Tradescope Basics: bot-basics.md
+    - Freqtrade Basics: bot-basics.md
     - Configuration: configuration.md
     - Strategy Customization: strategy-customization.md
     - Strategy Callbacks: strategy-callbacks.md
@@ -18,19 +18,19 @@ nav:
     - Start the bot: bot-usage.md
     - Control the bot:
         - Telegram: telegram-usage.md
-        - REST API & TradeUI: rest-api.md
+        - REST API & FreqUI: rest-api.md
         - Web Hook: webhook-config.md
     - Data Downloading: data-download.md
     - Backtesting: backtesting.md
     - Hyperopt: hyperopt.md
-    - TradeAI:
-        - Introduction: tradeai.md
-        - Configuration: tradeai-configuration.md
-        - Parameter table: tradeai-parameter-table.md
-        - Feature engineering: tradeai-feature-engineering.md
-        - Running TradeAI: tradeai-running.md
-        - Reinforcement Learning: tradeai-reinforcement-learning.md
-        - Developer guide: tradeai-developers.md
+    - FreqAI:
+        - Introduction: freqai.md
+        - Configuration: freqai-configuration.md
+        - Parameter table: freqai-parameter-table.md
+        - Feature engineering: freqai-feature-engineering.md
+        - Running FreqAI: freqai-running.md
+        - Reinforcement Learning: freqai-reinforcement-learning.md
+        - Developer guide: freqai-developers.md
     - Short / Leverage: leverage.md
     - Utility Sub-commands: utils.md
     - Plotting: plotting.md
@@ -51,7 +51,7 @@ nav:
     - FAQ: faq.md
     - SQL Cheat-sheet: sql_cheatsheet.md
     - Strategy migration: strategy_migration.md
-    - Updating Tradescope: updating.md
+    - Updating Freqtrade: updating.md
     - Deprecated Features: deprecated.md
     - Contributors Guide: developer.md
 theme:

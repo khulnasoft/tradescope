@@ -1,8 +1,8 @@
-# Tradescope basics
+# Freqtrade basics
 
-This page provides you some basic concepts on how Tradescope works and operates.
+This page provides you some basic concepts on how Freqtrade works and operates.
 
-## Tradescope terminology
+## Freqtrade terminology
 
 * **Strategy**: Your trading strategy, telling the bot what to do.
 * **Trade**: Open position.
@@ -18,11 +18,11 @@ This page provides you some basic concepts on how Tradescope works and operates.
 
 ## Fee handling
 
-All profit calculations of Tradescope include fees. For Backtesting / Hyperopt / Dry-run modes, the exchange default fee is used (lowest tier on the exchange). For live operations, fees are used as applied by the exchange (this includes BNB rebates etc.).
+All profit calculations of Freqtrade include fees. For Backtesting / Hyperopt / Dry-run modes, the exchange default fee is used (lowest tier on the exchange). For live operations, fees are used as applied by the exchange (this includes BNB rebates etc.).
 
 ## Pair naming
 
-Tradescope follows the [ccxt naming convention](https://docs.ccxt.com/#/README?id=consistency-of-base-and-quote-currencies) for currencies.
+Freqtrade follows the [ccxt naming convention](https://docs.ccxt.com/#/README?id=consistency-of-base-and-quote-currencies) for currencies.
 Using the wrong naming convention in the wrong market will usually result in the bot not recognizing the pair, usually resulting in errors like "this pair is not available".
 
 ### Spot pair naming
@@ -35,7 +35,7 @@ For futures pairs, naming will be `base/quote:settle` (e.g. `ETH/USDT:USDT`).
 
 ## Bot execution logic
 
-Starting tradescope in dry-run or live mode (using `tradescope trade`) will start the bot and start the bot iteration loop.
+Starting freqtrade in dry-run or live mode (using `freqtrade trade`) will start the bot and start the bot iteration loop.
 This will also run the `bot_start()` callback.
 
 By default, the bot loop runs every few seconds (`internals.process_throttle_secs`) and performs the following actions:

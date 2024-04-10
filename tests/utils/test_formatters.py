@@ -1,4 +1,4 @@
-from tradescope.util import decimals_per_coin, fmt_coin, round_value
+from freqtrade.util import decimals_per_coin, fmt_coin, round_value
 
 
 def test_decimals_per_coin():

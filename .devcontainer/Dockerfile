@@ -1,8 +1,8 @@
-FROM tradescopeorg/tradescope:develop_tradeairl
+FROM freqtradeorg/freqtrade:develop_freqairl
 
 USER root
 # Install dependencies
-COPY requirements-dev.txt /tradescope/
+COPY requirements-dev.txt /freqtrade/
 
 RUN apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog \

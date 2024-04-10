@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-import tradescope.vendor.qtpylib.indicators as qtpylib
+import freqtrade.vendor.qtpylib.indicators as qtpylib
 
 
 def test_crossed_numpy_types():

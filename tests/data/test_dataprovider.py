@@ -4,10 +4,10 @@ from unittest.mock import MagicMock
 import pytest
 from pandas import DataFrame, Timestamp
 
-from tradescope.data.dataprovider import DataProvider
-from tradescope.enums import CandleType, RunMode
-from tradescope.exceptions import ExchangeError, OperationalException
-from tradescope.plugins.pairlistmanager import PairListManager
+from freqtrade.data.dataprovider import DataProvider
+from freqtrade.enums import CandleType, RunMode
+from freqtrade.exceptions import ExchangeError, OperationalException
+from freqtrade.plugins.pairlistmanager import PairListManager
 from tests.conftest import EXMS, generate_test_data, get_patched_exchange
 
 
@@ -52,7 +52,7 @@ def test_dp_ohlcv(mocker, default_conf, ohlcv_history, candle_type):
 
 def test_historic_ohlcv(mocker, default_conf, ohlcv_history):
     historymock = MagicMock(return_value=ohlcv_history)
-    mocker.patch("tradescope.data.dataprovider.load_pair_history", historymock)
+    mocker.patch("freqtrade.data.dataprovider.load_pair_history", historymock)
 
     dp = DataProvider(default_conf, None)
     data = dp.historic_ohlcv("UNITTEST/BTC", "5m")
@@ -65,10 +65,10 @@ def test_historic_ohlcv_dataformat(mocker, default_conf, ohlcv_history):
     hdf5loadmock = MagicMock(return_value=ohlcv_history)
     featherloadmock = MagicMock(return_value=ohlcv_history)
     mocker.patch(
-        "tradescope.data.history.datahandlers.hdf5datahandler.HDF5DataHandler._ohlcv_load",
+        "freqtrade.data.history.datahandlers.hdf5datahandler.HDF5DataHandler._ohlcv_load",
         hdf5loadmock)
     mocker.patch(
-        "tradescope.data.history.datahandlers.featherdatahandler.FeatherDataHandler._ohlcv_load",
+        "freqtrade.data.history.datahandlers.featherdatahandler.FeatherDataHandler._ohlcv_load",
         featherloadmock)
 
     default_conf["runmode"] = RunMode.BACKTEST
@@ -128,7 +128,7 @@ def test_get_pair_dataframe(mocker, default_conf, ohlcv_history, candle_type):
     assert dp.get_pair_dataframe("NONESENSE/AAA", timeframe, candle_type=candle_type).empty
 
     historymock = MagicMock(return_value=ohlcv_history)
-    mocker.patch("tradescope.data.dataprovider.load_pair_history", historymock)
+    mocker.patch("freqtrade.data.dataprovider.load_pair_history", historymock)
     default_conf["runmode"] = RunMode.BACKTEST
     dp = DataProvider(default_conf, exchange)
     assert dp.runmode == RunMode.BACKTEST
@@ -203,9 +203,9 @@ def test_get_producer_df(default_conf):
 
 
 def test_emit_df(mocker, default_conf, ohlcv_history):
-    mocker.patch('tradescope.rpc.rpc_manager.RPCManager.__init__', MagicMock())
-    rpc_mock = mocker.patch('tradescope.rpc.rpc_manager.RPCManager', MagicMock())
-    send_mock = mocker.patch('tradescope.rpc.rpc_manager.RPCManager.send_msg', MagicMock())
+    mocker.patch('freqtrade.rpc.rpc_manager.RPCManager.__init__', MagicMock())
+    rpc_mock = mocker.patch('freqtrade.rpc.rpc_manager.RPCManager', MagicMock())
+    send_mock = mocker.patch('freqtrade.rpc.rpc_manager.RPCManager.send_msg', MagicMock())
 
     dataprovider = DataProvider(default_conf, exchange=None, rpc=rpc_mock)
     dataprovider_no_rpc = DataProvider(default_conf, exchange=None)
@@ -510,7 +510,7 @@ def test_dp_get_required_startup(default_conf_usdt):
     default_conf_usdt["timeframe"] = timeframe
     dp = DataProvider(default_conf_usdt, None)
 
-    # No TradeAI config
+    # No FreqAI config
     assert dp.get_required_startup('5m') == 0
     assert dp.get_required_startup('1h') == 0
     assert dp.get_required_startup('1d') == 0
@@ -520,9 +520,9 @@ def test_dp_get_required_startup(default_conf_usdt):
     assert dp.get_required_startup('1h') == 20
     assert dp.get_required_startup('1h') == 20
 
-    # With tradeAI config
+    # With freqAI config
 
-    dp._config['tradeai'] = {
+    dp._config['freqai'] = {
         'enabled': True,
         'train_period_days': 20,
         'feature_parameters': {
@@ -536,19 +536,19 @@ def test_dp_get_required_startup(default_conf_usdt):
     assert dp.get_required_startup('1h') == 500
     assert dp.get_required_startup('1d') == 40
 
-    # TradeAI kindof ignores startup_candle_count if it's below indicator_periods_candles
+    # FreqAI kindof ignores startup_candle_count if it's below indicator_periods_candles
     dp._config['startup_candle_count'] = 0
     assert dp.get_required_startup('5m') == 5780
     assert dp.get_required_startup('1h') == 500
     assert dp.get_required_startup('1d') == 40
 
-    dp._config['tradeai']['feature_parameters']['indicator_periods_candles'][1] = 50
+    dp._config['freqai']['feature_parameters']['indicator_periods_candles'][1] = 50
     assert dp.get_required_startup('5m') == 5810
     assert dp.get_required_startup('1h') == 530
     assert dp.get_required_startup('1d') == 70
 
-    # scenario from issue https://github.com/khulnasoft/tradescope/issues/9432
-    dp._config['tradeai'] = {
+    # scenario from issue https://github.com/freqtrade/freqtrade/issues/9432
+    dp._config['freqai'] = {
         'enabled': True,
         'train_period_days': 180,
         'feature_parameters': {

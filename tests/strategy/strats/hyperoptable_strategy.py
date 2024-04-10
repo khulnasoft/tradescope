@@ -3,16 +3,16 @@
 from pandas import DataFrame
 from strategy_test_v3 import StrategyTestV3
 
-import tradescope.vendor.qtpylib.indicators as qtpylib
-from tradescope.strategy import BooleanParameter, DecimalParameter, IntParameter, RealParameter
+import freqtrade.vendor.qtpylib.indicators as qtpylib
+from freqtrade.strategy import BooleanParameter, DecimalParameter, IntParameter, RealParameter
 
 
 class HyperoptableStrategy(StrategyTestV3):
     """
-    Default Strategy provided by tradescope bot.
+    Default Strategy provided by freqtrade bot.
     Please do not modify this strategy, it's  intended for internal use only.
     Please look at the SampleStrategy in the user_data/strategy directory
-    or strategy repository https://github.com/khulnasoft/tradescope-strategies
+    or strategy repository https://github.com/freqtrade/freqtrade-strategies
     for samples and inspiration.
     """
 

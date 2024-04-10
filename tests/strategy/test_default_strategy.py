@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 from pandas import DataFrame
 
-from tradescope.persistence.models import Trade
+from freqtrade.persistence.models import Trade
 
 from .strats.strategy_test_v3 import StrategyTestV3
 

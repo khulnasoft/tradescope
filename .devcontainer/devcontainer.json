@@ -1,5 +1,5 @@
 {
-    "name": "tradescope Develop",
+    "name": "freqtrade Develop",
     "build": {
         "dockerfile": "Dockerfile",
         "context": ".."
@@ -9,16 +9,16 @@
         8080
     ],
     "mounts": [
-        "source=tradescope-bashhistory,target=/home/ftuser/commandhistory,type=volume"
+        "source=freqtrade-bashhistory,target=/home/ftuser/commandhistory,type=volume"
     ],
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/tradescope,type=bind,consistency=cached",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/freqtrade,type=bind,consistency=cached",
     // Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
     "remoteUser": "ftuser",
 
     "onCreateCommand": "pip install --user -e .",
-    "postCreateCommand": "tradescope create-userdir --userdir user_data/",
+    "postCreateCommand": "freqtrade create-userdir --userdir user_data/",
 
-    "workspaceFolder": "/workspaces/tradescope",
+    "workspaceFolder": "/workspaces/freqtrade",
     "customizations": {
         "settings": {
             "terminal.integrated.shell.linux": "/bin/bash",

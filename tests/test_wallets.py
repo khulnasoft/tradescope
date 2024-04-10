@@ -5,11 +5,11 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy import select
 
-from tradescope.constants import UNLIMITED_STAKE_AMOUNT
-from tradescope.exceptions import DependencyException
-from tradescope.persistence import Trade
+from freqtrade.constants import UNLIMITED_STAKE_AMOUNT
+from freqtrade.exceptions import DependencyException
+from freqtrade.persistence import Trade
 from tests.conftest import (EXMS, create_mock_trades, create_mock_trades_usdt,
-                            get_patched_tradescopebot, patch_wallet)
+                            get_patched_freqtradebot, patch_wallet)
 
 
 def test_sync_wallet_at_boot(mocker, default_conf):
@@ -35,18 +35,18 @@ def test_sync_wallet_at_boot(mocker, default_conf):
         })
     )
 
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
 
-    assert len(tradescope.wallets._wallets) == 3
-    assert tradescope.wallets._wallets['BNT'].free == 1.0
-    assert tradescope.wallets._wallets['BNT'].used == 2.0
-    assert tradescope.wallets._wallets['BNT'].total == 3.0
-    assert tradescope.wallets._wallets['GAS'].free == 0.260739
-    assert tradescope.wallets._wallets['GAS'].used == 0.0
-    assert tradescope.wallets._wallets['GAS'].total == 0.260739
-    assert tradescope.wallets.get_free('BNT') == 1.0
-    assert 'USDT' in tradescope.wallets._wallets
-    assert tradescope.wallets._last_wallet_refresh is not None
+    assert len(freqtrade.wallets._wallets) == 3
+    assert freqtrade.wallets._wallets['BNT'].free == 1.0
+    assert freqtrade.wallets._wallets['BNT'].used == 2.0
+    assert freqtrade.wallets._wallets['BNT'].total == 3.0
+    assert freqtrade.wallets._wallets['GAS'].free == 0.260739
+    assert freqtrade.wallets._wallets['GAS'].used == 0.0
+    assert freqtrade.wallets._wallets['GAS'].total == 0.260739
+    assert freqtrade.wallets.get_free('BNT') == 1.0
+    assert 'USDT' in freqtrade.wallets._wallets
+    assert freqtrade.wallets._last_wallet_refresh is not None
     mocker.patch.multiple(
         EXMS,
         get_balances=MagicMock(return_value={
@@ -63,28 +63,28 @@ def test_sync_wallet_at_boot(mocker, default_conf):
         })
     )
 
-    tradescope.wallets.update()
+    freqtrade.wallets.update()
 
     # USDT is missing from the 2nd result - so should not be in this either.
-    assert len(tradescope.wallets._wallets) == 2
-    assert tradescope.wallets._wallets['BNT'].free == 1.2
-    assert tradescope.wallets._wallets['BNT'].used == 1.9
-    assert tradescope.wallets._wallets['BNT'].total == 3.5
-    assert tradescope.wallets._wallets['GAS'].free == 0.270739
-    assert tradescope.wallets._wallets['GAS'].used == 0.1
-    assert tradescope.wallets._wallets['GAS'].total == 0.260439
-    assert tradescope.wallets.get_free('GAS') == 0.270739
-    assert tradescope.wallets.get_used('GAS') == 0.1
-    assert tradescope.wallets.get_total('GAS') == 0.260439
-    update_mock = mocker.patch('tradescope.wallets.Wallets._update_live')
-    tradescope.wallets.update(False)
+    assert len(freqtrade.wallets._wallets) == 2
+    assert freqtrade.wallets._wallets['BNT'].free == 1.2
+    assert freqtrade.wallets._wallets['BNT'].used == 1.9
+    assert freqtrade.wallets._wallets['BNT'].total == 3.5
+    assert freqtrade.wallets._wallets['GAS'].free == 0.270739
+    assert freqtrade.wallets._wallets['GAS'].used == 0.1
+    assert freqtrade.wallets._wallets['GAS'].total == 0.260439
+    assert freqtrade.wallets.get_free('GAS') == 0.270739
+    assert freqtrade.wallets.get_used('GAS') == 0.1
+    assert freqtrade.wallets.get_total('GAS') == 0.260439
+    update_mock = mocker.patch('freqtrade.wallets.Wallets._update_live')
+    freqtrade.wallets.update(False)
     assert update_mock.call_count == 0
-    tradescope.wallets.update()
+    freqtrade.wallets.update()
     assert update_mock.call_count == 1
 
-    assert tradescope.wallets.get_free('NOCURRENCY') == 0
-    assert tradescope.wallets.get_used('NOCURRENCY') == 0
-    assert tradescope.wallets.get_total('NOCURRENCY') == 0
+    assert freqtrade.wallets.get_free('NOCURRENCY') == 0
+    assert freqtrade.wallets.get_used('NOCURRENCY') == 0
+    assert freqtrade.wallets.get_total('NOCURRENCY') == 0
 
 
 def test_sync_wallet_missing_data(mocker, default_conf):
@@ -104,24 +104,24 @@ def test_sync_wallet_missing_data(mocker, default_conf):
         })
     )
 
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
 
-    assert len(tradescope.wallets._wallets) == 2
-    assert tradescope.wallets._wallets['BNT'].free == 1.0
-    assert tradescope.wallets._wallets['BNT'].used == 2.0
-    assert tradescope.wallets._wallets['BNT'].total == 3.0
-    assert tradescope.wallets._wallets['GAS'].free == 0.260739
-    assert tradescope.wallets._wallets['GAS'].used is None
-    assert tradescope.wallets._wallets['GAS'].total == 0.260739
-    assert tradescope.wallets.get_free('GAS') == 0.260739
+    assert len(freqtrade.wallets._wallets) == 2
+    assert freqtrade.wallets._wallets['BNT'].free == 1.0
+    assert freqtrade.wallets._wallets['BNT'].used == 2.0
+    assert freqtrade.wallets._wallets['BNT'].total == 3.0
+    assert freqtrade.wallets._wallets['GAS'].free == 0.260739
+    assert freqtrade.wallets._wallets['GAS'].used is None
+    assert freqtrade.wallets._wallets['GAS'].total == 0.260739
+    assert freqtrade.wallets.get_free('GAS') == 0.260739
 
 
 def test_get_trade_stake_amount_no_stake_amount(default_conf, mocker) -> None:
     patch_wallet(mocker, free=default_conf['stake_amount'] * 0.5)
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
 
     with pytest.raises(DependencyException, match=r'.*stake amount.*'):
-        tradescope.wallets.get_trade_stake_amount('ETH/BTC', 1)
+        freqtrade.wallets.get_trade_stake_amount('ETH/BTC', 1)
 
 
 @pytest.mark.parametrize("balance_ratio,capital,result1,result2", [
@@ -152,31 +152,31 @@ def test_get_trade_stake_amount_unlimited_amount(default_conf, ticker, balance_r
     if capital is not None:
         conf['available_capital'] = capital
 
-    tradescope = get_patched_tradescopebot(mocker, conf)
+    freqtrade = get_patched_freqtradebot(mocker, conf)
 
     # no open trades, order amount should be 'balance / max_open_trades'
-    result = tradescope.wallets.get_trade_stake_amount('ETH/USDT', 2)
+    result = freqtrade.wallets.get_trade_stake_amount('ETH/USDT', 2)
     assert result == result1
 
     # create one trade, order amount should be 'balance / (max_open_trades - num_open_trades)'
-    tradescope.execute_entry('ETH/USDT', result)
+    freqtrade.execute_entry('ETH/USDT', result)
 
-    result = tradescope.wallets.get_trade_stake_amount('LTC/USDT', 2)
+    result = freqtrade.wallets.get_trade_stake_amount('LTC/USDT', 2)
     assert result == result1
 
     # create 2 trades, order amount should be None
-    tradescope.execute_entry('LTC/BTC', result)
+    freqtrade.execute_entry('LTC/BTC', result)
 
-    result = tradescope.wallets.get_trade_stake_amount('XRP/USDT', 2)
+    result = freqtrade.wallets.get_trade_stake_amount('XRP/USDT', 2)
     assert result == 0
 
-    tradescope.config['dry_run_wallet'] = 200
-    tradescope.wallets.start_cap = 200
-    result = tradescope.wallets.get_trade_stake_amount('XRP/USDT', 3)
+    freqtrade.config['dry_run_wallet'] = 200
+    freqtrade.wallets.start_cap = 200
+    result = freqtrade.wallets.get_trade_stake_amount('XRP/USDT', 3)
     assert round(result, 4) == round(result2, 4)
 
     # set max_open_trades = None, so do not trade
-    result = tradescope.wallets.get_trade_stake_amount('NEO/USDT', 0)
+    result = freqtrade.wallets.get_trade_stake_amount('NEO/USDT', 0)
     assert result == 0
 
 
@@ -202,11 +202,11 @@ def test_validate_stake_amount(
     trade_amount,
     expected,
 ):
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
 
-    mocker.patch("tradescope.wallets.Wallets.get_available_stake_amount",
+    mocker.patch("freqtrade.wallets.Wallets.get_available_stake_amount",
                  return_value=stake_available)
-    res = tradescope.wallets.validate_stake_amount(
+    res = freqtrade.wallets.validate_stake_amount(
         'XRP/USDT', stake_amount, min_stake, max_stake, trade_amount)
     assert res == expected
 
@@ -227,15 +227,15 @@ def test_get_starting_balance(mocker, default_conf, available_capital, closed_pr
                               open_stakes, free, expected):
     if available_capital:
         default_conf['available_capital'] = available_capital
-    mocker.patch("tradescope.persistence.models.Trade.get_total_closed_profit",
+    mocker.patch("freqtrade.persistence.models.Trade.get_total_closed_profit",
                  return_value=closed_profit)
-    mocker.patch("tradescope.persistence.models.Trade.total_open_trades_stakes",
+    mocker.patch("freqtrade.persistence.models.Trade.total_open_trades_stakes",
                  return_value=open_stakes)
-    mocker.patch("tradescope.wallets.Wallets.get_free", return_value=free)
+    mocker.patch("freqtrade.wallets.Wallets.get_free", return_value=free)
 
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
 
-    assert tradescope.wallets.get_starting_balance() == expected
+    assert freqtrade.wallets.get_starting_balance() == expected
 
 
 def test_sync_wallet_futures_live(mocker, default_conf):
@@ -323,45 +323,45 @@ def test_sync_wallet_futures_live(mocker, default_conf):
         fetch_positions=MagicMock(return_value=mock_result)
     )
 
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
 
-    assert len(tradescope.wallets._wallets) == 1
-    assert len(tradescope.wallets._positions) == 2
+    assert len(freqtrade.wallets._wallets) == 1
+    assert len(freqtrade.wallets._positions) == 2
 
-    assert 'USDT' in tradescope.wallets._wallets
-    assert 'ETH/USDT:USDT' in tradescope.wallets._positions
-    assert tradescope.wallets._last_wallet_refresh is not None
+    assert 'USDT' in freqtrade.wallets._wallets
+    assert 'ETH/USDT:USDT' in freqtrade.wallets._positions
+    assert freqtrade.wallets._last_wallet_refresh is not None
 
     # Remove ETH/USDT:USDT position
     del mock_result[0]
-    tradescope.wallets.update()
-    assert len(tradescope.wallets._positions) == 1
-    assert 'ETH/USDT:USDT' not in tradescope.wallets._positions
+    freqtrade.wallets.update()
+    assert len(freqtrade.wallets._positions) == 1
+    assert 'ETH/USDT:USDT' not in freqtrade.wallets._positions
 
 
 def test_sync_wallet_dry(mocker, default_conf_usdt, fee):
     default_conf_usdt['dry_run'] = True
-    tradescope = get_patched_tradescopebot(mocker, default_conf_usdt)
-    assert len(tradescope.wallets._wallets) == 1
-    assert len(tradescope.wallets._positions) == 0
-    assert tradescope.wallets.get_total('USDT') == 1000
+    freqtrade = get_patched_freqtradebot(mocker, default_conf_usdt)
+    assert len(freqtrade.wallets._wallets) == 1
+    assert len(freqtrade.wallets._positions) == 0
+    assert freqtrade.wallets.get_total('USDT') == 1000
 
     create_mock_trades_usdt(fee, is_short=None)
 
-    tradescope.wallets.update()
+    freqtrade.wallets.update()
 
-    assert len(tradescope.wallets._wallets) == 5
-    assert len(tradescope.wallets._positions) == 0
-    bal = tradescope.wallets.get_all_balances()
+    assert len(freqtrade.wallets._wallets) == 5
+    assert len(freqtrade.wallets._positions) == 0
+    bal = freqtrade.wallets.get_all_balances()
     assert bal['NEO'].total == 10
     assert bal['XRP'].total == 10
     assert bal['LTC'].total == 2
     assert bal['USDT'].total == 922.74
 
-    assert tradescope.wallets.get_starting_balance() == default_conf_usdt['dry_run_wallet']
-    total = tradescope.wallets.get_total('LTC')
-    free = tradescope.wallets.get_free('LTC')
-    used = tradescope.wallets.get_used('LTC')
+    assert freqtrade.wallets.get_starting_balance() == default_conf_usdt['dry_run_wallet']
+    total = freqtrade.wallets.get_total('LTC')
+    free = freqtrade.wallets.get_free('LTC')
+    used = freqtrade.wallets.get_used('LTC')
     assert free != 0
     assert free + used == total
 
@@ -370,47 +370,47 @@ def test_sync_wallet_futures_dry(mocker, default_conf, fee):
     default_conf['dry_run'] = True
     default_conf['trading_mode'] = 'futures'
     default_conf['margin_mode'] = 'isolated'
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
-    assert len(tradescope.wallets._wallets) == 1
-    assert len(tradescope.wallets._positions) == 0
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
+    assert len(freqtrade.wallets._wallets) == 1
+    assert len(freqtrade.wallets._positions) == 0
 
     create_mock_trades(fee, is_short=None)
 
-    tradescope.wallets.update()
+    freqtrade.wallets.update()
 
-    assert len(tradescope.wallets._wallets) == 1
-    assert len(tradescope.wallets._positions) == 4
-    positions = tradescope.wallets.get_all_positions()
+    assert len(freqtrade.wallets._wallets) == 1
+    assert len(freqtrade.wallets._positions) == 4
+    positions = freqtrade.wallets.get_all_positions()
     positions['ETH/BTC'].side == 'short'
     positions['ETC/BTC'].side == 'long'
     positions['XRP/BTC'].side == 'long'
     positions['LTC/BTC'].side == 'short'
 
-    assert tradescope.wallets.get_starting_balance() == default_conf['dry_run_wallet']
-    total = tradescope.wallets.get_total('BTC')
-    free = tradescope.wallets.get_free('BTC')
-    used = tradescope.wallets.get_used('BTC')
+    assert freqtrade.wallets.get_starting_balance() == default_conf['dry_run_wallet']
+    total = freqtrade.wallets.get_total('BTC')
+    free = freqtrade.wallets.get_free('BTC')
+    used = freqtrade.wallets.get_used('BTC')
     assert free + used == total
 
 
 def test_check_exit_amount(mocker, default_conf, fee):
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
-    update_mock = mocker.patch("tradescope.wallets.Wallets.update")
-    total_mock = mocker.patch("tradescope.wallets.Wallets.get_total", return_value=123)
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
+    update_mock = mocker.patch("freqtrade.wallets.Wallets.update")
+    total_mock = mocker.patch("freqtrade.wallets.Wallets.get_total", return_value=123)
 
     create_mock_trades(fee, is_short=None)
     trade = Trade.session.scalars(select(Trade)).first()
     assert trade.amount == 123
 
-    assert tradescope.wallets.check_exit_amount(trade) is True
+    assert freqtrade.wallets.check_exit_amount(trade) is True
     assert update_mock.call_count == 0
     assert total_mock.call_count == 1
 
     update_mock.reset_mock()
     # Reduce returned amount to below the trade amount - which should
     # trigger a wallet update and return False, triggering "order refinding"
-    total_mock = mocker.patch("tradescope.wallets.Wallets.get_total", return_value=100)
-    assert tradescope.wallets.check_exit_amount(trade) is False
+    total_mock = mocker.patch("freqtrade.wallets.Wallets.get_total", return_value=100)
+    assert freqtrade.wallets.check_exit_amount(trade) is False
     assert update_mock.call_count == 1
     assert total_mock.call_count == 2
 
@@ -418,21 +418,21 @@ def test_check_exit_amount(mocker, default_conf, fee):
 def test_check_exit_amount_futures(mocker, default_conf, fee):
     default_conf['trading_mode'] = 'futures'
     default_conf['margin_mode'] = 'isolated'
-    tradescope = get_patched_tradescopebot(mocker, default_conf)
-    total_mock = mocker.patch("tradescope.wallets.Wallets.get_total", return_value=123)
+    freqtrade = get_patched_freqtradebot(mocker, default_conf)
+    total_mock = mocker.patch("freqtrade.wallets.Wallets.get_total", return_value=123)
 
     create_mock_trades(fee, is_short=None)
     trade = Trade.session.scalars(select(Trade)).first()
     trade.trading_mode = 'futures'
     assert trade.amount == 123
 
-    assert tradescope.wallets.check_exit_amount(trade) is True
+    assert freqtrade.wallets.check_exit_amount(trade) is True
     assert total_mock.call_count == 0
 
-    update_mock = mocker.patch("tradescope.wallets.Wallets.update")
+    update_mock = mocker.patch("freqtrade.wallets.Wallets.update")
     trade.amount = 150
     # Reduce returned amount to below the trade amount - which should
     # trigger a wallet update and return False, triggering "order refinding"
-    assert tradescope.wallets.check_exit_amount(trade) is False
+    assert freqtrade.wallets.check_exit_amount(trade) is False
     assert total_mock.call_count == 0
     assert update_mock.call_count == 1

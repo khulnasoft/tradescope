@@ -2,8 +2,8 @@ import re
 from unittest.mock import MagicMock
 
 import pytest
-from tradescope_client import FtRestClient
-from tradescope_client.ft_client import add_arguments, main_exec
+from freqtrade_client import FtRestClient
+from freqtrade_client.ft_client import add_arguments, main_exec
 from requests.exceptions import ConnectionError
 
 
@@ -13,7 +13,7 @@ def log_has_re(line, logs):
 
 
 def get_rest_client():
-    client = FtRestClient('http://localhost:8080', 'tradescoper', 'password')
+    client = FtRestClient('http://localhost:8080', 'freqtrader', 'password')
     client._session = MagicMock()
     request_mock = MagicMock()
     client._session.request = request_mock
@@ -21,12 +21,12 @@ def get_rest_client():
 
 
 def test_FtRestClient_init():
-    client = FtRestClient('http://localhost:8080', 'tradescoper', 'password')
+    client = FtRestClient('http://localhost:8080', 'freqtrader', 'password')
     assert client is not None
     assert client._serverurl == 'http://localhost:8080'
     assert client._session is not None
     assert client._session.auth is not None
-    assert client._session.auth == ('tradescoper', 'password')
+    assert client._session.auth == ('freqtrader', 'password')
 
 
 @pytest.mark.parametrize('method', ['GET', 'POST', 'DELETE'])
@@ -127,7 +127,7 @@ def test_ft_client(mocker, capsys, caplog):
     captured = capsys.readouterr()
     assert 'Possible commands' in captured.out
 
-    mock = mocker.patch('tradescope_client.ft_client.FtRestClient._call')
+    mock = mocker.patch('freqtrade_client.ft_client.FtRestClient._call')
     args = add_arguments([
         '--config',
         'tests/testdata/testconfigs/main_test_config.json',

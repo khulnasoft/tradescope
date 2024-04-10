@@ -15,13 +15,13 @@ Send the message `/newbot`.
 
 > Alright, a new bot. How are we going to call it? Please choose a name for your bot.
 
-Choose the public name of your bot (e.x. `Tradescope bot`)
+Choose the public name of your bot (e.x. `Freqtrade bot`)
 
 *BotFather response:*
 
 > Good. Now let's choose a username for your bot. It must end in `bot`. Like this, for example: TetrisBot or tetris_bot.
 
-Choose the name id of your bot and send it to the BotFather (e.g. "`My_own_tradescope_bot`")
+Choose the name id of your bot and send it to the BotFather (e.g. "`My_own_freqtrade_bot`")
 
 *BotFather response:*
 
@@ -53,17 +53,17 @@ You can use bots in telegram groups by just adding them to the group. You can fi
 }
 ```
 
-For the Tradescope configuration, you can then use the the full value (including `-` if it's there) as string:
+For the Freqtrade configuration, you can then use the the full value (including `-` if it's there) as string:
 
 ```json
    "chat_id": "-1001332619709"
 ```
 !!! Warning "Using telegram groups"
-    When using telegram groups, you're giving every member of the telegram group access to your tradescope bot and to all commands possible via telegram. Please make sure that you can trust everyone in the telegram group to avoid unpleasant surprises.
+    When using telegram groups, you're giving every member of the telegram group access to your freqtrade bot and to all commands possible via telegram. Please make sure that you can trust everyone in the telegram group to avoid unpleasant surprises.
 
 ## Control telegram noise
 
-Tradescope provides means to control the verbosity of your telegram bot.
+Freqtrade provides means to control the verbosity of your telegram bot.
 Each setting has the following possible values:
 
 * `on` - Messages will be sent, and user will be notified.

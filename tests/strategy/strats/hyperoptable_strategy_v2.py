@@ -2,15 +2,15 @@
 
 from strategy_test_v2 import StrategyTestV2
 
-from tradescope.strategy import BooleanParameter, DecimalParameter, IntParameter, RealParameter
+from freqtrade.strategy import BooleanParameter, DecimalParameter, IntParameter, RealParameter
 
 
 class HyperoptableStrategyV2(StrategyTestV2):
     """
-    Default Strategy provided by tradescope bot.
+    Default Strategy provided by freqtrade bot.
     Please do not modify this strategy, it's  intended for internal use only.
     Please look at the SampleStrategy in the user_data/strategy directory
-    or strategy repository https://github.com/khulnasoft/tradescope-strategies
+    or strategy repository https://github.com/freqtrade/freqtrade-strategies
     for samples and inspiration.
     """
 

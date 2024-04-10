@@ -10,22 +10,22 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from tradescope import constants
-from tradescope.commands.optimize_commands import setup_optimize_configuration, start_backtesting
-from tradescope.configuration import TimeRange
-from tradescope.data import history
-from tradescope.data.btanalysis import BT_DATA_COLUMNS, evaluate_result_multi
-from tradescope.data.converter import clean_ohlcv_dataframe
-from tradescope.data.dataprovider import DataProvider
-from tradescope.data.history import get_timerange
-from tradescope.enums import CandleType, ExitType, RunMode
-from tradescope.exceptions import DependencyException, OperationalException
-from tradescope.exchange import timeframe_to_next_date, timeframe_to_prev_date
-from tradescope.optimize.backtest_caching import get_backtest_metadata_filename, get_strategy_run_id
-from tradescope.optimize.backtesting import Backtesting
-from tradescope.persistence import LocalTrade, Trade
-from tradescope.resolvers import StrategyResolver
-from tradescope.util.datetime_helpers import dt_utc
+from freqtrade import constants
+from freqtrade.commands.optimize_commands import setup_optimize_configuration, start_backtesting
+from freqtrade.configuration import TimeRange
+from freqtrade.data import history
+from freqtrade.data.btanalysis import BT_DATA_COLUMNS, evaluate_result_multi
+from freqtrade.data.converter import clean_ohlcv_dataframe
+from freqtrade.data.dataprovider import DataProvider
+from freqtrade.data.history import get_timerange
+from freqtrade.enums import CandleType, ExitType, RunMode
+from freqtrade.exceptions import DependencyException, OperationalException
+from freqtrade.exchange import timeframe_to_next_date, timeframe_to_prev_date
+from freqtrade.optimize.backtest_caching import get_backtest_metadata_filename, get_strategy_run_id
+from freqtrade.optimize.backtesting import Backtesting
+from freqtrade.persistence import LocalTrade, Trade
+from freqtrade.resolvers import StrategyResolver
+from freqtrade.util.datetime_helpers import dt_utc
 from tests.conftest import (CURRENT_TEST_STRATEGY, EXMS, get_args, log_has, log_has_re,
                             patch_exchange, patched_configuration_load_config_file)
 
@@ -167,7 +167,7 @@ def test_setup_optimize_configuration_without_arguments(mocker, default_conf, ca
 def test_setup_bt_configuration_with_arguments(mocker, default_conf, caplog) -> None:
     patched_configuration_load_config_file(mocker, default_conf)
     mocker.patch(
-        'tradescope.configuration.configuration.create_datadir',
+        'freqtrade.configuration.configuration.create_datadir',
         lambda c, x: x
     )
 
@@ -247,7 +247,7 @@ def test_start(mocker, fee, default_conf, caplog) -> None:
     start_mock = MagicMock()
     mocker.patch(f'{EXMS}.get_fee', fee)
     patch_exchange(mocker)
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.start', start_mock)
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.start', start_mock)
     patched_configuration_load_config_file(mocker, default_conf)
 
     args = [
@@ -257,7 +257,7 @@ def test_start(mocker, fee, default_conf, caplog) -> None:
     ]
     pargs = get_args(args)
     start_backtesting(pargs)
-    assert log_has('Starting tradescope in Backtesting mode', caplog)
+    assert log_has('Starting freqtrade in Backtesting mode', caplog)
     assert start_mock.call_count == 1
 
 
@@ -348,14 +348,14 @@ def test_backtesting_start(default_conf, mocker, caplog) -> None:
     def get_timerange(input1):
         return dt_utc(2017, 11, 14, 21, 17), dt_utc(2017, 11, 14, 22, 59)
 
-    mocker.patch('tradescope.data.history.get_timerange', get_timerange)
+    mocker.patch('freqtrade.data.history.get_timerange', get_timerange)
     patch_exchange(mocker)
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest')
-    mocker.patch('tradescope.optimize.backtesting.generate_backtest_stats')
-    mocker.patch('tradescope.optimize.backtesting.show_backtest_results')
-    sbs = mocker.patch('tradescope.optimize.backtesting.store_backtest_stats')
-    sbc = mocker.patch('tradescope.optimize.backtesting.store_backtest_analysis_results')
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest')
+    mocker.patch('freqtrade.optimize.backtesting.generate_backtest_stats')
+    mocker.patch('freqtrade.optimize.backtesting.show_backtest_results')
+    sbs = mocker.patch('freqtrade.optimize.backtesting.store_backtest_stats')
+    sbc = mocker.patch('freqtrade.optimize.backtesting.store_backtest_analysis_results')
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['UNITTEST/BTC']))
 
     default_conf['timeframe'] = '1m'
@@ -387,12 +387,12 @@ def test_backtesting_start_no_data(default_conf, mocker, caplog, testdatadir) ->
     def get_timerange(input1):
         return dt_utc(2017, 11, 14, 21, 17), dt_utc(2017, 11, 14, 22, 59)
 
-    mocker.patch('tradescope.data.history.history_utils.load_pair_history',
+    mocker.patch('freqtrade.data.history.history_utils.load_pair_history',
                  MagicMock(return_value=pd.DataFrame()))
-    mocker.patch('tradescope.data.history.get_timerange', get_timerange)
+    mocker.patch('freqtrade.data.history.get_timerange', get_timerange)
     patch_exchange(mocker)
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest')
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest')
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['UNITTEST/BTC']))
 
     default_conf['timeframe'] = "1m"
@@ -407,12 +407,12 @@ def test_backtesting_start_no_data(default_conf, mocker, caplog, testdatadir) ->
 
 def test_backtesting_no_pair_left(default_conf, mocker, caplog, testdatadir) -> None:
     mocker.patch(f'{EXMS}.exchange_has', MagicMock(return_value=True))
-    mocker.patch('tradescope.data.history.history_utils.load_pair_history',
+    mocker.patch('freqtrade.data.history.history_utils.load_pair_history',
                  MagicMock(return_value=pd.DataFrame()))
-    mocker.patch('tradescope.data.history.get_timerange', get_timerange)
+    mocker.patch('freqtrade.data.history.get_timerange', get_timerange)
     patch_exchange(mocker)
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest')
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest')
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=[]))
 
     default_conf['timeframe'] = "1m"
@@ -441,12 +441,12 @@ def test_backtesting_pairlist_list(default_conf, mocker, caplog, testdatadir, ti
     mocker.patch(f'{EXMS}.exchange_has', MagicMock(return_value=True))
     mocker.patch(f'{EXMS}.get_tickers', tickers)
     mocker.patch(f'{EXMS}.price_to_precision', lambda s, x, y: y)
-    mocker.patch('tradescope.data.history.get_timerange', get_timerange)
+    mocker.patch('freqtrade.data.history.get_timerange', get_timerange)
     patch_exchange(mocker)
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest')
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest')
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['XRP/BTC']))
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.refresh_pairlist')
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.refresh_pairlist')
 
     default_conf['ticker_interval'] = "1m"
     default_conf['export'] = 'none'
@@ -539,7 +539,7 @@ def test_backtest__enter_trade_futures(default_conf_usdt, fee, mocker) -> None:
     mocker.patch(f"{EXMS}.get_min_pair_stake_amount", return_value=0.00001)
     mocker.patch(f"{EXMS}.get_max_pair_stake_amount", return_value=float('inf'))
     mocker.patch(f"{EXMS}.get_max_leverage", return_value=100)
-    mocker.patch("tradescope.optimize.backtesting.price_to_precision", lambda p, *args: p)
+    mocker.patch("freqtrade.optimize.backtesting.price_to_precision", lambda p, *args: p)
     patch_exchange(mocker)
     default_conf_usdt['stake_amount'] = 300
     default_conf_usdt['max_open_trades'] = 2
@@ -549,7 +549,7 @@ def test_backtest__enter_trade_futures(default_conf_usdt, fee, mocker) -> None:
     default_conf_usdt['exchange']['pair_whitelist'] = ['.*']
     backtesting = Backtesting(default_conf_usdt)
     backtesting._set_strategy(backtesting.strategylist[0])
-    mocker.patch('tradescope.optimize.backtesting.Backtesting._run_funding_fees')
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting._run_funding_fees')
     pair = 'ETH/USDT:USDT'
     row = [
         pd.Timestamp(year=2020, month=1, day=1, hour=5, minute=0),
@@ -584,7 +584,7 @@ def test_backtest__enter_trade_futures(default_conf_usdt, fee, mocker) -> None:
     #   = ((wb + cum_b) - (side_1 * position * ep1)) / ((position * mmr_b) - (side_1 * position))
     #   = ((300 + 0.01) - (1 * 15000 * 0.1)) / ((15000 * 0.01) - (1 * 15000))
     #   = 0.0008080740740740741
-    # tradescope_liquidation_price = liq + (abs(open_rate - liq) * liq_buffer * side_1)
+    # freqtrade_liquidation_price = liq + (abs(open_rate - liq) * liq_buffer * side_1)
     #   = 0.08080740740740741 + ((0.1 - 0.08080740740740741) * 0.05 * 1)
     #   = 0.08176703703703704
 
@@ -596,7 +596,7 @@ def test_backtest__enter_trade_futures(default_conf_usdt, fee, mocker) -> None:
     #   = ((wb + cum_b) - (side_1 * position * ep1)) / ((position * mmr_b) - (side_1 * position))
     #   = ((300 + 0.01) - ((-1) * 15000 * 0.1)) / ((15000 * 0.01) - ((-1) * 15000))
     #   = 0.0011881254125412541
-    # tradescope_liquidation_price = liq + (abs(open_rate - liq) * liq_buffer * side_1)
+    # freqtrade_liquidation_price = liq + (abs(open_rate - liq) * liq_buffer * side_1)
     #   = 0.11881254125412541 + (abs(0.1 - 0.11881254125412541) * 0.05 * -1)
     #   = 0.11787191419141915
 
@@ -613,7 +613,7 @@ def test_backtest__enter_trade_futures(default_conf_usdt, fee, mocker) -> None:
     assert trade is None
 
     # Stake-amount throwing error
-    mocker.patch("tradescope.wallets.Wallets.get_trade_stake_amount",
+    mocker.patch("freqtrade.wallets.Wallets.get_trade_stake_amount",
                  side_effect=DependencyException)
 
     trade = backtesting._enter_trade(pair, row=row, direction='long')
@@ -874,7 +874,7 @@ def test_backtest_one_detail_futures(
     mocker.patch(f'{EXMS}.get_fee', fee)
     mocker.patch(f"{EXMS}.get_min_pair_stake_amount", return_value=0.00001)
     mocker.patch(f"{EXMS}.get_max_pair_stake_amount", return_value=float('inf'))
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['XRP/USDT:USDT']))
     mocker.patch(f"{EXMS}.get_maintenance_ratio_and_amt",
                  return_value=(0.01, 0.01))
@@ -976,7 +976,7 @@ def test_backtest_one_detail_futures_funding_fees(
     mocker.patch(f'{EXMS}.get_fee', fee)
     mocker.patch(f"{EXMS}.get_min_pair_stake_amount", return_value=0.00001)
     mocker.patch(f"{EXMS}.get_max_pair_stake_amount", return_value=float('inf'))
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['XRP/USDT:USDT']))
     mocker.patch(f"{EXMS}.get_maintenance_ratio_and_amt",
                  return_value=(0.01, 0.01))
@@ -1411,10 +1411,10 @@ def test_backtest_multi_pair(default_conf, fee, mocker, tres, pair, testdatadir)
 def test_backtest_start_timerange(default_conf, mocker, caplog, testdatadir):
 
     patch_exchange(mocker)
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest')
-    mocker.patch('tradescope.optimize.backtesting.generate_backtest_stats')
-    mocker.patch('tradescope.optimize.backtesting.show_backtest_results')
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest')
+    mocker.patch('freqtrade.optimize.backtesting.generate_backtest_stats')
+    mocker.patch('freqtrade.optimize.backtesting.show_backtest_results')
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['UNITTEST/BTC']))
     patched_configuration_load_config_file(mocker, default_conf)
 
@@ -1469,19 +1469,19 @@ def test_backtest_start_multi_strat(default_conf, mocker, caplog, testdatadir):
         'replaced_entry_orders': 0,
         'final_balance': 1000,
     })
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['UNITTEST/BTC']))
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest', backtestmock)
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest', backtestmock)
     text_table_mock = MagicMock()
     tag_metrics_mock = MagicMock()
     strattable_mock = MagicMock()
     strat_summary = MagicMock()
 
-    mocker.patch.multiple('tradescope.optimize.optimize_reports.bt_output',
+    mocker.patch.multiple('freqtrade.optimize.optimize_reports.bt_output',
                           text_table_bt_results=text_table_mock,
                           text_table_strategy=strattable_mock,
                           )
-    mocker.patch.multiple('tradescope.optimize.optimize_reports.optimize_reports',
+    mocker.patch.multiple('freqtrade.optimize.optimize_reports.optimize_reports',
                           generate_pair_metrics=MagicMock(),
                           generate_tag_metrics=tag_metrics_mock,
                           generate_strategy_comparison=strat_summary,
@@ -1599,9 +1599,9 @@ def test_backtest_start_multi_strat_nomock(default_conf, mocker, caplog, testdat
             'final_balance': 1000,
         }
     ])
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['UNITTEST/BTC']))
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest', backtestmock)
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest', backtestmock)
 
     patched_configuration_load_config_file(mocker, default_conf)
 
@@ -1664,9 +1664,9 @@ def test_backtest_start_futures_noliq(default_conf_usdt, mocker,
     })
     patch_exchange(mocker)
 
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['HULUMULU/USDT', 'XRP/USDT:USDT']))
-    # mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest', backtestmock)
+    # mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest', backtestmock)
 
     patched_configuration_load_config_file(mocker, default_conf_usdt)
 
@@ -1756,9 +1756,9 @@ def test_backtest_start_nomock_futures(default_conf_usdt, mocker,
             'final_balance': 1000,
         }
     ])
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['XRP/USDT:USDT']))
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest', backtestmock)
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest', backtestmock)
 
     patched_configuration_load_config_file(mocker, default_conf_usdt)
 
@@ -1865,9 +1865,9 @@ def test_backtest_start_multi_strat_nomock_detail(default_conf, mocker,
             'final_balance': 1000,
         }
     ])
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['XRP/ETH']))
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest', backtestmock)
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest', backtestmock)
 
     patched_configuration_load_config_file(mocker, default_conf)
 
@@ -1930,10 +1930,10 @@ def test_backtest_start_multi_strat_caching(default_conf, mocker, caplog, testda
         'replaced_entry_orders': 0,
         'final_balance': 1000,
     })
-    mocker.patch('tradescope.plugins.pairlistmanager.PairListManager.whitelist',
+    mocker.patch('freqtrade.plugins.pairlistmanager.PairListManager.whitelist',
                  PropertyMock(return_value=['UNITTEST/BTC']))
-    mocker.patch('tradescope.optimize.backtesting.Backtesting.backtest', backtestmock)
-    mocker.patch('tradescope.optimize.backtesting.show_backtest_results', MagicMock())
+    mocker.patch('freqtrade.optimize.backtesting.Backtesting.backtest', backtestmock)
+    mocker.patch('freqtrade.optimize.backtesting.show_backtest_results', MagicMock())
 
     now = min_backtest_date = datetime.now(tz=timezone.utc)
     start_time = now - timedelta(**start_delta) + timedelta(hours=1)
@@ -1963,10 +1963,10 @@ def test_backtest_start_multi_strat_caching(default_conf, mocker, caplog, testda
     ])
     mocker.patch('pathlib.Path.glob', return_value=[
         Path(datetime.strftime(datetime.now(), 'backtest-result-%Y-%m-%d_%H-%M-%S.json'))])
-    mocker.patch.multiple('tradescope.data.btanalysis',
+    mocker.patch.multiple('freqtrade.data.btanalysis',
                           load_backtest_metadata=load_backtest_metadata,
                           load_backtest_stats=load_backtest_stats)
-    mocker.patch('tradescope.optimize.backtesting.get_strategy_run_id', side_effect=['1', '2', '2'])
+    mocker.patch('freqtrade.optimize.backtesting.get_strategy_run_id', side_effect=['1', '2', '2'])
 
     patched_configuration_load_config_file(mocker, default_conf)
 

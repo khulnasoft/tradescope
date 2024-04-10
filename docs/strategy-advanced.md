@@ -1,7 +1,7 @@
 # Advanced Strategies
 
 This page explains some advanced concepts available for strategies.
-If you're just getting started, please familiarize yourself with the [Tradescope basics](bot-basics.md) and methods described in [Strategy Customization](strategy-customization.md) first.
+If you're just getting started, please familiarize yourself with the [Freqtrade basics](bot-basics.md) and methods described in [Strategy Customization](strategy-customization.md) first.
 
 The call sequence of the methods described here is covered under [bot execution logic](bot-basics.md#bot-execution-logic). Those docs are also helpful in deciding which method is most suitable for your customisation needs.
 
@@ -9,19 +9,19 @@ The call sequence of the methods described here is covered under [bot execution 
     Callback methods should *only* be implemented if a strategy uses them.
 
 !!! Tip
-    Start off with a strategy template containing all available callback methods by running `tradescope new-strategy --strategy MyAwesomeStrategy --template advanced`
+    Start off with a strategy template containing all available callback methods by running `freqtrade new-strategy --strategy MyAwesomeStrategy --template advanced`
 
 ## Storing information (Persistent)
 
-Tradescope allows storing/retrieving user custom information associated with a specific trade in the database.
+Freqtrade allows storing/retrieving user custom information associated with a specific trade in the database.
 
 Using a trade object, information can be stored using `trade.set_custom_data(key='my_key', value=my_value)` and retrieved using `trade.get_custom_data(key='my_key')`. Each data entry is associated with a trade and a user supplied key (of type `string`). This means that this can only be used in callbacks that also provide a trade object.
 
-For the data to be able to be stored within the database, tradescope must serialized the data. This is done by converting the data to a JSON formatted string.
-Tradescope will attempt to reverse this action on retrieval, so from a strategy perspective, this should not be relevant.
+For the data to be able to be stored within the database, freqtrade must serialized the data. This is done by converting the data to a JSON formatted string.
+Freqtrade will attempt to reverse this action on retrieval, so from a strategy perspective, this should not be relevant.
 
 ```python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 from datetime import timedelta
 
 class AwesomeStrategy(IStrategy):
@@ -140,7 +140,7 @@ The above is a simple example - there are simpler ways to retrieve trade data li
 You may access dataframe in various strategy functions by querying it from dataprovider.
 
 ``` python
-from tradescope.exchange import timeframe_to_prev_date
+from freqtrade.exchange import timeframe_to_prev_date
 
 class AwesomeStrategy(IStrategy):
     def confirm_trade_exit(self, pair: str, trade: 'Trade', order_type: str, amount: float,
@@ -205,7 +205,7 @@ def custom_exit(self, pair: str, trade: Trade, current_time: datetime, current_r
     There is only one `enter_tag` column, which is used for both long and short trades.
     As a consequence, this column must be treated as "last write wins" (it's just a dataframe column after all).
     In fancy situations, where multiple signals collide (or if signals are deactivated again based on different conditions), this can lead to odd results with the wrong tag applied to an entry signal.
-    These results are a consequence of the strategy overwriting prior tags - where the last tag will "stick" and will be the one tradescope will use.
+    These results are a consequence of the strategy overwriting prior tags - where the last tag will "stick" and will be the one freqtrade will use.
 
 ## Exit tag
 
@@ -241,7 +241,7 @@ def version(self) -> str:
 ```
 
 !!! Note
-    You should make sure to implement proper version control (like a git repository) alongside this, as tradescope will not keep historic versions of your strategy, so it's up to the user to be able to eventually roll back to a prior version of the strategy.
+    You should make sure to implement proper version control (like a git repository) alongside this, as freqtrade will not keep historic versions of your strategy, so it's up to the user to be able to eventually roll back to a prior version of the strategy.
 
 ## Derived strategies
 
@@ -272,7 +272,7 @@ While keeping the subclass in the same file is technically possible, it can lead
 
 ## Embedding Strategies
 
-Tradescope provides you with an easy way to embed the strategy into your configuration file.
+Freqtrade provides you with an easy way to embed the strategy into your configuration file.
 This is done by utilizing BASE64 encoding and providing this string at the strategy configuration field,
 in your chosen config file.
 
@@ -326,4 +326,4 @@ for val in self.buy_ema_short.range:
 dataframe = pd.concat(frames, axis=1)
 ```
 
-Tradescope does however also counter this by running `dataframe.copy()` on the dataframe right after the `populate_indicators()` method - so performance implications of this should be low to non-existant.
+Freqtrade does however also counter this by running `dataframe.copy()` on the dataframe right after the `populate_indicators()` method - so performance implications of this should be low to non-existant.

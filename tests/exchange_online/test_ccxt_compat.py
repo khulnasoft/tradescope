@@ -2,17 +2,17 @@
 Tests in this file do NOT mock network calls, so they are expected to be fluky at times.
 
 However, these tests should give a good idea to determine if a new exchange is
-suitable to run with tradescope.
+suitable to run with freqtrade.
 """
 
 from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from tradescope.enums import CandleType
-from tradescope.exchange import timeframe_to_minutes, timeframe_to_prev_date
-from tradescope.exchange.exchange import timeframe_to_msecs
-from tradescope.util import dt_floor_day, dt_now, dt_ts
+from freqtrade.enums import CandleType
+from freqtrade.exchange import timeframe_to_minutes, timeframe_to_prev_date
+from freqtrade.exchange.exchange import timeframe_to_msecs
+from freqtrade.util import dt_floor_day, dt_now, dt_ts
 from tests.exchange_online.conftest import EXCHANGE_FIXTURE_TYPE, EXCHANGES
 
 

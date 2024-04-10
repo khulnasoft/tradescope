@@ -4,9 +4,9 @@ from unittest.mock import AsyncMock, MagicMock, PropertyMock
 import ccxt
 import pytest
 
-from tradescope.enums import CandleType, MarginMode, TradingMode
-from tradescope.exceptions import RetryableOrderError, TemporaryError
-from tradescope.exchange.exchange import timeframe_to_minutes
+from freqtrade.enums import CandleType, MarginMode, TradingMode
+from freqtrade.exceptions import RetryableOrderError, TemporaryError
+from freqtrade.exchange.exchange import timeframe_to_minutes
 from tests.conftest import EXMS, get_patched_exchange, log_has
 from tests.exchange.test_exchange import ccxt_exceptionhandlers
 
@@ -47,7 +47,7 @@ def test_get_maintenance_ratio_and_amt_okx(
     default_conf['margin_mode'] = 'isolated'
     default_conf['dry_run'] = False
     mocker.patch.multiple(
-        'tradescope.exchange.okx.Okx',
+        'freqtrade.exchange.okx.Okx',
         exchange_has=MagicMock(return_value=True),
         load_leverage_tiers=MagicMock(return_value={
             'ETH/USDT:USDT': [
@@ -271,7 +271,7 @@ def test_additional_exchange_init_okx(default_conf, mocker):
 def test_load_leverage_tiers_okx(default_conf, mocker, markets, tmp_path, caplog, time_machine):
 
     default_conf['datadir'] = tmp_path
-    # fd_mock = mocker.patch('tradescope.exchange.exchange.file_dump_json')
+    # fd_mock = mocker.patch('freqtrade.exchange.exchange.file_dump_json')
     api_mock = MagicMock()
     type(api_mock).has = PropertyMock(return_value={
         'fetchLeverageTiers': False,

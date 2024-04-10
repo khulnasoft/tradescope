@@ -3,7 +3,7 @@
 This page explains the different parameters of the bot and how to run it.
 
 !!! Note
-    If you've used `setup.sh`, don't forget to activate your virtual environment (`source .venv/bin/activate`) before running tradescope commands.
+    If you've used `setup.sh`, don't forget to activate your virtual environment (`source .venv/bin/activate`) before running freqtrade commands.
 
 !!! Warning "Up-to-date clock"
     The clock on the system running the bot must be accurate, synchronized to a NTP server frequently enough to avoid problems with communication to the exchanges.
@@ -11,7 +11,7 @@ This page explains the different parameters of the bot and how to run it.
 ## Bot commands
 
 ```
-usage: tradescope [-h] [-V]
+usage: freqtrade [-h] [-V]
                  {trade,create-userdir,new-config,new-strategy,download-data,convert-data,convert-trade-data,list-data,backtesting,edge,hyperopt,hyperopt-list,hyperopt-show,list-exchanges,list-hyperopts,list-markets,list-pairs,list-strategies,list-timeframes,show-trades,test-pairlist,install-ui,plot-dataframe,plot-profit,webserver}
                  ...
 
@@ -41,7 +41,7 @@ positional arguments:
     list-timeframes     Print available timeframes for the exchange.
     show-trades         Show trades.
     test-pairlist       Test your pairlist configuration.
-    install-ui          Install TradeUI
+    install-ui          Install FreqUI
     plot-dataframe      Plot candles with indicators.
     plot-profit         Generate plot showing profits.
     webserver           Webserver module.
@@ -55,7 +55,7 @@ optional arguments:
 ### Bot trading commands
 
 ```
-usage: tradescope trade [-h] [-v] [--logfile FILE] [-V] [-c PATH] [-d PATH]
+usage: freqtrade trade [-h] [-v] [--logfile FILE] [-V] [-c PATH] [-d PATH]
                        [--userdir PATH] [-s NAME] [--strategy-path PATH]
                        [--db-url PATH] [--sd-notify] [--dry-run]
                        [--dry-run-wallet DRY_RUN_WALLET]
@@ -103,7 +103,7 @@ The bot allows you to select which configuration file you want to use by means o
 the `-c/--config` command line option:
 
 ```bash
-tradescope trade -c path/far/far/away/config.json
+freqtrade trade -c path/far/far/away/config.json
 ```
 
 Per default, the bot loads the `config.json` configuration file from the current
@@ -122,13 +122,13 @@ empty key and secret values while running in the Dry Mode (which does not actual
 require them):
 
 ```bash
-tradescope trade -c ./config.json
+freqtrade trade -c ./config.json
 ```
 
 and specify both configuration files when running in the normal Live Trade Mode:
 
 ```bash
-tradescope trade -c ./config.json -c path/to/secrets/keys.config.json
+freqtrade trade -c ./config.json -c path/to/secrets/keys.config.json
 ```
 
 This could help you hide your private Exchange key and Exchange secret on you local machine
@@ -141,7 +141,7 @@ See more details on this technique with examples in the documentation page on
 
 ### Where to store custom data
 
-Tradescope allows the creation of a user-data directory using `tradescope create-userdir --userdir someDirectory`.
+Freqtrade allows the creation of a user-data directory using `freqtrade create-userdir --userdir someDirectory`.
 This directory will look as follows:
 
 ```
@@ -177,7 +177,7 @@ In `user_data/strategies` you have a file `my_awesome_strategy.py` which has
 a strategy class called `AwesomeStrategy` to load it:
 
 ```bash
-tradescope trade --strategy AwesomeStrategy
+freqtrade trade --strategy AwesomeStrategy
 ```
 
 If the bot does not find your strategy file, it will display in an error
@@ -192,7 +192,7 @@ This parameter allows you to add an additional strategy lookup path, which gets
 checked before the default locations (The passed path must be a directory!):
 
 ```bash
-tradescope trade --strategy AwesomeStrategy --strategy-path /some/directory
+freqtrade trade --strategy AwesomeStrategy --strategy-path /some/directory
 ```
 
 #### How to install a strategy?
@@ -208,7 +208,7 @@ using `--db-url`. This can also be used to specify a custom database
 in production mode. Example command:
 
 ```bash
-tradescope trade -c config.json --db-url sqlite:///tradesv3.dry_run.sqlite
+freqtrade trade -c config.json --db-url sqlite:///tradesv3.dry_run.sqlite
 ```
 
 ## Next step

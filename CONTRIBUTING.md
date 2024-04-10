@@ -1,10 +1,10 @@
 # Contributing
 
-## Contribute to tradescope
+## Contribute to freqtrade
 
 Feel like our bot is missing a feature? We welcome your pull requests! 
 
-Issues labeled [good first issue](https://github.com/khulnasoft/tradescope/labels/good%20first%20issue) can be good first contributions, and will help get you familiar with the codebase.
+Issues labeled [good first issue](https://github.com/freqtrade/freqtrade/labels/good%20first%20issue) can be good first contributions, and will help get you familiar with the codebase.
 
 Few pointers for contributions:
 
@@ -12,11 +12,11 @@ Few pointers for contributions:
 - New features need to contain unit tests, must conform to PEP8 (max-line-length = 100) and should be documented with the introduction PR.
 - PR's can be declared as `[WIP]` - which signify Work in Progress Pull Requests (which are not finished).
 
-If you are unsure, discuss the feature on our [discord server](https://discord.gg/p7nuUNVfP7) or in a [issue](https://github.com/khulnasoft/tradescope/issues) before a Pull Request.
+If you are unsure, discuss the feature on our [discord server](https://discord.gg/p7nuUNVfP7) or in a [issue](https://github.com/freqtrade/freqtrade/issues) before a Pull Request.
 
 ## Getting started
 
-Best start by reading the [documentation](https://www.tradescope.io/) to get a feel for what is possible with the bot, or head straight to the [Developer-documentation](https://www.tradescope.io/en/latest/developer/) (WIP) which should help you getting started.
+Best start by reading the [documentation](https://www.freqtrade.io/) to get a feel for what is possible with the bot, or head straight to the [Developer-documentation](https://www.freqtrade.io/en/latest/developer/) (WIP) which should help you getting started.
 
 ## Before sending the PR
 
@@ -69,7 +69,7 @@ you can manually run pre-commit with `pre-commit run -a`.
 #### Run mypy
 
 ``` bash
-mypy tradescope
+mypy freqtrade
 ```
 
 ### 4. Ensure all imports are correct
@@ -125,11 +125,11 @@ Exceptions:
 
 Contributors may be given commit privileges. Preference will be given to those with:
 
-1. Past contributions to Tradescope and other related open-source projects. Contributions to Tradescope include both code (both accepted and pending) and friendly participation in the issue tracker and Pull request reviews. Both quantity and quality are considered.
+1. Past contributions to Freqtrade and other related open-source projects. Contributions to Freqtrade include both code (both accepted and pending) and friendly participation in the issue tracker and Pull request reviews. Both quantity and quality are considered.
 1. A coding style that the other core committers find simple, minimal, and clean.
 1. Access to resources for cross-platform development and testing.
 1. Time to devote to the project regularly.
 
-Being a Committer does not grant write permission on `develop` or `stable` for security reasons (Users trust Tradescope with their Exchange API keys).
+Being a Committer does not grant write permission on `develop` or `stable` for security reasons (Users trust Freqtrade with their Exchange API keys).
 
 After being Committer for some time, a Committer may be named Core Committer and given full repository access.

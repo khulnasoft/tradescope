@@ -1,6 +1,6 @@
 # How to update
 
-To update your tradescope installation, please use one of the below methods, corresponding to your installation method.
+To update your freqtrade installation, please use one of the below methods, corresponding to your installation method.
 
 !!! Note "Tracking changes"
     Breaking changes / changed behavior will be documented in the changelog that is posted alongside every release.
@@ -9,7 +9,7 @@ To update your tradescope installation, please use one of the below methods, cor
 ## Docker
 
 !!! Note "Legacy installations using the `master` image"
-    We're switching from master to stable for the release Images - please adjust your docker-file and replace `tradescopeorg/tradescope:master` with `tradescopeorg/tradescope:stable`
+    We're switching from master to stable for the release Images - please adjust your docker-file and replace `freqtradeorg/freqtrade:master` with `freqtradeorg/freqtrade:stable`
 
 ``` bash
 docker compose pull
@@ -34,8 +34,8 @@ git pull
 pip install -U -r requirements.txt
 pip install -e .
 
-# Ensure tradeUI is at the latest version
-tradescope install-ui 
+# Ensure freqUI is at the latest version
+freqtrade install-ui 
 ```
 
 ### Problems updating

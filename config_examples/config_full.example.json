@@ -172,7 +172,7 @@
         "enable_openapi": false,
         "jwt_secret_key": "somethingrandom",
         "CORS_origins": [],
-        "username": "tradescoper",
+        "username": "freqtrader",
         "password": "SuperSecurePassword",
         "ws_token": "secret_ws_t0ken."
     },
@@ -192,7 +192,7 @@
         "remove_entry_exit_signals": false,
         "message_size_limit": 8
     },
-    "bot_name": "tradescope",
+    "bot_name": "freqtrade",
     "db_url": "sqlite:///tradesv3.sqlite",
     "initial_state": "running",
     "force_entry_enable": false,

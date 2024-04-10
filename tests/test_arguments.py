@@ -5,8 +5,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from tradescope.commands import Arguments
-from tradescope.commands.cli_options import check_int_nonzero, check_int_positive
+from freqtrade.commands import Arguments
+from freqtrade.commands.cli_options import check_int_nonzero, check_int_positive
 from tests.conftest import CURRENT_TEST_STRATEGY
 
 

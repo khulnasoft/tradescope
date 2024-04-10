@@ -9,20 +9,20 @@ and are no longer supported. Please avoid their usage in your configuration.
 ### the `--refresh-pairs-cached` command line option
 
 `--refresh-pairs-cached` in the context of backtesting, hyperopt and edge allows to refresh candle data for backtesting.
-Since this leads to much confusion, and slows down backtesting (while not being part of backtesting) this has been singled out as a separate tradescope sub-command `tradescope download-data`.
+Since this leads to much confusion, and slows down backtesting (while not being part of backtesting) this has been singled out as a separate freqtrade sub-command `freqtrade download-data`.
 
 This command line option was deprecated in 2019.7-dev (develop branch) and removed in 2019.9.
 
 ### The **--dynamic-whitelist** command line option
 
-This command line option was deprecated in 2018 and removed tradescope 2019.6-dev (develop branch) and in tradescope 2019.7.
+This command line option was deprecated in 2018 and removed freqtrade 2019.6-dev (develop branch) and in freqtrade 2019.7.
 Please refer to [pairlists](plugins.md#pairlists-and-pairlist-handlers) instead.
 
 ### the `--live` command line option
 
 `--live` in the context of backtesting allowed to download the latest tick data for backtesting.
 Did only download the latest 500 candles, so was ineffective in getting good backtest data.
-Removed in 2019-7-dev (develop branch) and in tradescope 2019.8.
+Removed in 2019-7-dev (develop branch) and in freqtrade 2019.8.
 
 ### `ticker_interval` (now `timeframe`)
 
@@ -52,7 +52,7 @@ Please switch to the new [Parametrized Strategies](hyperopt.md) to benefit from 
 
 Isolated Futures / short trading was introduced in 2022.4. This required major changes to configuration settings, strategy interfaces, ...
 
-We have put a great effort into keeping compatibility with existing strategies, so if you just want to continue using tradescope in spot markets, there are no changes necessary.
+We have put a great effort into keeping compatibility with existing strategies, so if you just want to continue using freqtrade in spot markets, there are no changes necessary.
 While we may drop support for the current interface sometime in the future, we will announce this separately and have an appropriate transition period.
 
 Please follow the [Strategy migration](strategy_migration.md) guide to migrate your strategy to the new format to start using the new functionalities.
@@ -78,4 +78,4 @@ Webhook terminology changed from "sell" to "exit", and from "buy" to "entry", re
 
 ## Removal of `populate_any_indicators`
 
-version 2023.3 saw the removal of `populate_any_indicators` in favor of split methods for feature engineering and targets. Please read the [migration document](strategy_migration.md#tradeai-strategy) for full details.
+version 2023.3 saw the removal of `populate_any_indicators` in favor of split methods for feature engineering and targets. Please read the [migration document](strategy_migration.md#freqai-strategy) for full details.

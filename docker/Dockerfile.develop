@@ -1,7 +1,7 @@
-FROM tradescopeorg/tradescope:develop
+FROM freqtradeorg/freqtrade:develop
 
 # Install dependencies
-COPY requirements-dev.txt /tradescope/
+COPY requirements-dev.txt /freqtrade/
 
 RUN pip install numpy --user --no-cache-dir \
   && pip install -r requirements-dev.txt --user --no-cache-dir

@@ -5,11 +5,11 @@ from types import FunctionType
 import pytest
 from sqlalchemy import select
 
-from tradescope.constants import CUSTOM_TAG_MAX_LENGTH, DATETIME_PRINT_FORMAT
-from tradescope.enums import TradingMode
-from tradescope.exceptions import DependencyException
-from tradescope.persistence import LocalTrade, Order, Trade, init_db
-from tradescope.util import dt_now
+from freqtrade.constants import CUSTOM_TAG_MAX_LENGTH, DATETIME_PRINT_FORMAT
+from freqtrade.enums import TradingMode
+from freqtrade.exceptions import DependencyException
+from freqtrade.persistence import LocalTrade, Order, Trade, init_db
+from freqtrade.util import dt_now
 from tests.conftest import (create_mock_trades, create_mock_trades_usdt,
                             create_mock_trades_with_leverage, log_has, log_has_re)
 
@@ -1989,7 +1989,7 @@ def test_update_order_from_ccxt(caplog, time_machine):
     assert o.order_filled_date is None
 
     # Order is unfilled, "filled" not set
-    # https://github.com/khulnasoft/tradescope/issues/5404
+    # https://github.com/freqtrade/freqtrade/issues/5404
     ccxt_order.update({'filled': None, 'remaining': 20.0, 'status': 'canceled'})
     o.update_from_ccxt_object(ccxt_order)
 
@@ -2307,7 +2307,7 @@ def test_recalc_trade_from_orders(fee):
 
 @pytest.mark.usefixtures("init_persistence")
 def test_recalc_trade_from_orders_kucoin():
-    # Taken from https://github.com/khulnasoft/tradescope/issues/9346
+    # Taken from https://github.com/freqtrade/freqtrade/issues/9346
     o1_amount = 11511963.8634448908
     o2_amount = 11750101.7743937783
     o3_amount = 23262065.6378386617  # Exit amount - barely doesn't even out

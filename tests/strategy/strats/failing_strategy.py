@@ -2,7 +2,7 @@
 
 import nonexiting_module  # noqa
 
-from tradescope.strategy.interface import IStrategy
+from freqtrade.strategy.interface import IStrategy
 
 
 class TestStrategyLegacyV1(IStrategy):

@@ -2,8 +2,8 @@
 import talib.abstract as ta
 from pandas import DataFrame
 
-from tradescope.strategy import IStrategy
-from tradescope.strategy.parameters import CategoricalParameter
+from freqtrade.strategy import IStrategy
+from freqtrade.strategy.parameters import CategoricalParameter
 
 
 class strategy_test_v3_recursive_issue(IStrategy):

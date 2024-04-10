@@ -8,7 +8,7 @@ To learn how to get data for the pairs and exchange you're interested in, head o
 ## Backtesting command reference
 
 ```
-usage: tradescope backtesting [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade backtesting [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                              [-d PATH] [--userdir PATH] [-s NAME]
                              [--strategy-path PATH] [-i TIMEFRAME]
                              [--timerange TIMERANGE]
@@ -111,12 +111,12 @@ Now you have good Entry and exit strategies and some historic data, you want to 
 real data. This is what we call [backtesting](https://en.wikipedia.org/wiki/Backtesting).
 
 Backtesting will use the crypto-currencies (pairs) from your config file and load historical candle (OHLCV) data from `user_data/data/<exchange>` by default.
-If no data is available for the exchange / pair / timeframe combination, backtesting will ask you to download them first using `tradescope download-data`.
+If no data is available for the exchange / pair / timeframe combination, backtesting will ask you to download them first using `freqtrade download-data`.
 For details on downloading, please refer to the [Data Downloading](data-download.md) section in the documentation.
 
 The result of backtesting will confirm if your bot has better odds of making a profit than a loss.
 
-All profit calculations include fees, and tradescope will use the exchange's default fees for the calculation.
+All profit calculations include fees, and freqtrade will use the exchange's default fees for the calculation.
 
 !!! Warning "Using dynamic pairlists for backtesting"
     Using dynamic pairlists is possible (not all of the handlers are allowed to be used in backtest mode), however it relies on the current market conditions - which will not reflect the historic status of the pairlist.
@@ -126,8 +126,8 @@ All profit calculations include fees, and tradescope will use the exchange's def
     To achieve reproducible results, best generate a pairlist via the [`test-pairlist`](utils.md#test-pairlist) command and use that as static pairlist.
 
 !!! Note
-    By default, Tradescope will export backtesting results to `user_data/backtest_results`.
-    The exported trades can be used for [further analysis](#further-backtest-result-analysis) or can be used by the [plotting sub-command](plotting.md#plot-price-and-indicators) (`tradescope plot-dataframe`) in the scripts directory.
+    By default, Freqtrade will export backtesting results to `user_data/backtest_results`.
+    The exported trades can be used for [further analysis](#further-backtest-result-analysis) or can be used by the [plotting sub-command](plotting.md#plot-price-and-indicators) (`freqtrade plot-dataframe`) in the scripts directory.
 
 
 ### Starting balance
@@ -145,7 +145,7 @@ Profits from early trades will result in subsequent higher stake amounts, result
 With 5 min candle (OHLCV) data (per default)
 
 ```bash
-tradescope backtesting --strategy AwesomeStrategy
+freqtrade backtesting --strategy AwesomeStrategy
 ```
 
 Where `--strategy AwesomeStrategy` / `-s AwesomeStrategy` refers to the class name of the strategy, which is within a python file in the `user_data/strategies` directory.
@@ -155,7 +155,7 @@ Where `--strategy AwesomeStrategy` / `-s AwesomeStrategy` refers to the class na
 With 1 min candle (OHLCV) data
 
 ```bash
-tradescope backtesting --strategy AwesomeStrategy --timeframe 1m
+freqtrade backtesting --strategy AwesomeStrategy --timeframe 1m
 ```
 
 ---
@@ -163,7 +163,7 @@ tradescope backtesting --strategy AwesomeStrategy --timeframe 1m
 Providing a custom starting balance of 1000 (in stake currency)
 
 ```bash
-tradescope backtesting --strategy AwesomeStrategy --dry-run-wallet 1000
+freqtrade backtesting --strategy AwesomeStrategy --dry-run-wallet 1000
 ```
 
 ---
@@ -174,7 +174,7 @@ Assume you downloaded the history data from the Binance exchange and kept it in 
 You can then use this data for backtesting as follows:
 
 ```bash
-tradescope backtesting --strategy AwesomeStrategy --datadir user_data/data/binance-20180101 
+freqtrade backtesting --strategy AwesomeStrategy --datadir user_data/data/binance-20180101 
 ```
 
 ---
@@ -182,7 +182,7 @@ tradescope backtesting --strategy AwesomeStrategy --datadir user_data/data/binan
 Comparing multiple Strategies
 
 ```bash
-tradescope backtesting --strategy-list SampleStrategy1 AwesomeStrategy --timeframe 5m
+freqtrade backtesting --strategy-list SampleStrategy1 AwesomeStrategy --timeframe 5m
 ```
 
 Where `SampleStrategy1` and `AwesomeStrategy` refer to class names of strategies.
@@ -192,7 +192,7 @@ Where `SampleStrategy1` and `AwesomeStrategy` refer to class names of strategies
 Prevent exporting trades to file
 
 ```bash
-tradescope backtesting --strategy backtesting --export none --config config.json 
+freqtrade backtesting --strategy backtesting --export none --config config.json 
 ```
 
 Only use this if you're sure you'll not want to plot or analyze your results further.
@@ -202,7 +202,7 @@ Only use this if you're sure you'll not want to plot or analyze your results fur
 Exporting trades to file specifying a custom filename
 
 ```bash
-tradescope backtesting --strategy backtesting --export trades --export-filename=backtest_samplestrategy.json
+freqtrade backtesting --strategy backtesting --export trades --export-filename=backtest_samplestrategy.json
 ```
 
 Please also read about the [strategy startup period](strategy-customization.md#strategy-startup-period).
@@ -218,7 +218,7 @@ This fee must be a ratio, and will be applied twice (once for trade entry, and o
 For example, if the commission fee per order is 0.1% (i.e., 0.001 written as ratio), then you would run backtesting as the following:
 
 ```bash
-tradescope backtesting --fee 0.001
+freqtrade backtesting --fee 0.001
 ```
 
 !!! Note
@@ -233,7 +233,7 @@ Use the `--timerange` argument to change how much of the test-set you want to us
 For example, running backtesting with the `--timerange=20190501-` option will use all available data starting with May 1st, 2019 from your input data.
 
 ```bash
-tradescope backtesting --timerange=20190501-
+freqtrade backtesting --timerange=20190501-
 ```
 
 You can also specify particular date ranges.
@@ -494,7 +494,7 @@ You can get an overview over daily / weekly or monthly results by using the `--b
 To visualize daily and weekly breakdowns, you can use the following:
 
 ``` bash
-tradescope backtesting --strategy MyAwesomeStrategy --breakdown day week
+freqtrade backtesting --strategy MyAwesomeStrategy --breakdown day week
 ```
 
 ``` output
@@ -517,7 +517,7 @@ The output will show a table containing the realized absolute Profit (in stake c
 To save time, by default backtest will reuse a cached result from within the last day when the backtested strategy and config match that of a previous backtest. To force a new backtest despite existing result for an identical run specify `--cache none` parameter.
 
 !!! Warning
-    Caching is automatically disabled for open-ended timeranges (`--timerange 20210101-`), as tradescope cannot ensure reliably that the underlying data didn't change. It can also use cached results where it shouldn't if the original backtest had missing data at the end, which was fixed by downloading more data.
+    Caching is automatically disabled for open-ended timeranges (`--timerange 20210101-`), as freqtrade cannot ensure reliably that the underlying data didn't change. It can also use cached results where it shouldn't if the original backtest had missing data at the end, which was fixed by downloading more data.
     In this instance, please use `--cache none` once to force a fresh backtest.
 
 ### Further backtest-result analysis
@@ -566,7 +566,7 @@ Exchanges have certain trading limits, like minimum (and maximum) base currency,
 These limits are usually listed in the exchange documentation as "trading rules" or similar and can be quite different between different pairs.
 
 Backtesting (as well as live and dry-run) does honor these limits, and will ensure that a stoploss can be placed below this value - so the value will be slightly higher than what the exchange specifies.
-Tradescope has however no information about historic limits.
+Freqtrade has however no information about historic limits.
 
 This can lead to situations where trading-limits are inflated by using a historic price, resulting in minimum amounts > 50$.
 
@@ -591,12 +591,12 @@ One big limitation of backtesting is it's inability to know how prices moved int
 So assuming you run backtesting with a 1h timeframe, there will be 4 prices for that candle (Open, High, Low, Close).
 
 While backtesting does take some assumptions (read above) about this - this can never be perfect, and will always be biased in one way or the other.
-To mitigate this, tradescope can use a lower (faster) timeframe to simulate intra-candle movements.
+To mitigate this, freqtrade can use a lower (faster) timeframe to simulate intra-candle movements.
 
 To utilize this, you can append `--timeframe-detail 5m` to your regular backtesting command.
 
 ``` bash
-tradescope backtesting --strategy AwesomeStrategy --timeframe 1h --timeframe-detail 5m
+freqtrade backtesting --strategy AwesomeStrategy --timeframe 1h --timeframe-detail 5m
 ```
 
 This will load 1h data as well as 5m data for the timeframe. The strategy will be analyzed with the 1h timeframe, and Entry orders will only be placed at the main timeframe, however Order fills and exit signals will be evaluated at the 5m candle, simulating intra-candle movements.
@@ -621,7 +621,7 @@ strategies you'd like to compare, this will give a nice runtime boost.
 All listed Strategies need to be in the same directory, unless also `--recursive-strategy-search` is specified, where sub-directories within the strategy directory are also considered.
 
 ``` bash
-tradescope backtesting --timerange 20180401-20180410 --timeframe 5m --strategy-list Strategy001 Strategy002 --export trades
+freqtrade backtesting --timerange 20180401-20180410 --timeframe 5m --strategy-list Strategy001 Strategy002 --export trades
 ```
 
 This will save the results to `user_data/backtest_results/backtest-result-<datetime>.json`, including results for both `Strategy001` and `Strategy002`.

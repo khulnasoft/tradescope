@@ -52,8 +52,8 @@ function updateenv() {
     ${PYTHON} -m pip install --upgrade pip wheel setuptools
     REQUIREMENTS_HYPEROPT=""
     REQUIREMENTS_PLOT=""
-    REQUIREMENTS_TRADEAI=""
-    REQUIREMENTS_TRADEAI_RL=""
+    REQUIREMENTS_FREQAI=""
+    REQUIREMENTS_FREQAI_RL=""
     REQUIREMENTS=requirements.txt
 
     read -p "Do you want to install dependencies for development (Performs a full install with all dependencies) [y/N]? "
@@ -80,32 +80,32 @@ function updateenv() {
             fi
         fi
 
-        read -p "Do you want to install dependencies for tradeai [y/N]? "
+        read -p "Do you want to install dependencies for freqai [y/N]? "
         if [[ $REPLY =~ ^[Yy]$ ]]
         then
-            REQUIREMENTS_TRADEAI="-r requirements-tradeai.txt --use-pep517"
-            read -p "Do you also want dependencies for tradeai-rl or PyTorch (~700mb additional space required) [y/N]? "
+            REQUIREMENTS_FREQAI="-r requirements-freqai.txt --use-pep517"
+            read -p "Do you also want dependencies for freqai-rl or PyTorch (~700mb additional space required) [y/N]? "
             if [[ $REPLY =~ ^[Yy]$ ]]
             then
-                REQUIREMENTS_TRADEAI="-r requirements-tradeai-rl.txt"
+                REQUIREMENTS_FREQAI="-r requirements-freqai-rl.txt"
             fi
         fi
     fi
     install_talib
 
-    ${PYTHON} -m pip install --upgrade -r ${REQUIREMENTS} ${REQUIREMENTS_HYPEROPT} ${REQUIREMENTS_PLOT} ${REQUIREMENTS_TRADEAI} ${REQUIREMENTS_TRADEAI_RL}
+    ${PYTHON} -m pip install --upgrade -r ${REQUIREMENTS} ${REQUIREMENTS_HYPEROPT} ${REQUIREMENTS_PLOT} ${REQUIREMENTS_FREQAI} ${REQUIREMENTS_FREQAI_RL}
     if [ $? -ne 0 ]; then
         echo "Failed installing dependencies"
         exit 1
     fi
     ${PYTHON} -m pip install -e .
     if [ $? -ne 0 ]; then
-        echo "Failed installing Tradescope"
+        echo "Failed installing Freqtrade"
         exit 1
     fi
 
-    echo "Installing tradeUI"
-    tradescope install-ui
+    echo "Installing freqUI"
+    freqtrade install-ui
 
     echo "pip install completed"
     echo
@@ -259,7 +259,7 @@ function reset() {
 }
 
 function config() {
-    echo_block "Please use 'tradescope new-config -c user_data/config.json' to generate a new configuration file."
+    echo_block "Please use 'freqtrade new-config -c user_data/config.json' to generate a new configuration file."
 }
 
 function install() {
@@ -285,9 +285,9 @@ function install() {
     reset
     config
     echo_block "Run the bot !"
-    echo "You can now use the bot by executing 'source .venv/bin/activate; tradescope <subcommand>'."
-    echo "You can see the list of available bot sub-commands by executing 'source .venv/bin/activate; tradescope --help'."
-    echo "You verify that tradescope is installed successfully by running 'source .venv/bin/activate; tradescope --version'."
+    echo "You can now use the bot by executing 'source .venv/bin/activate; freqtrade <subcommand>'."
+    echo "You can see the list of available bot sub-commands by executing 'source .venv/bin/activate; freqtrade --help'."
+    echo "You verify that freqtrade is installed successfully by running 'source .venv/bin/activate; freqtrade --version'."
 }
 
 function plot() {
@@ -297,7 +297,7 @@ function plot() {
 
 function help() {
     echo "usage:"
-    echo "	-i,--install    Install tradescope from scratch"
+    echo "	-i,--install    Install freqtrade from scratch"
     echo "	-u,--update     Command git pull to update."
     echo "	-r,--reset      Hard reset your develop/stable branch."
     echo "	-c,--config     Easy config generator (Will override your existing file)."

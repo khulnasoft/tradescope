@@ -7,8 +7,8 @@ from datetime import datetime
 
 from pandas import DataFrame
 
-from tradescope.persistence.trade_model import Order
-from tradescope.strategy.interface import IStrategy
+from freqtrade.persistence.trade_model import Order
+from freqtrade.strategy.interface import IStrategy
 
 
 class TestStrategyNoImplements(IStrategy):

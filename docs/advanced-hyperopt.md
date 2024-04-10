@@ -9,7 +9,7 @@ class.
 To use a custom loss function class, make sure that the function `hyperopt_loss_function` is defined in your custom hyperopt loss class.
 For the sample below, you then need to add the command line parameter `--hyperopt-loss SuperDuperHyperOptLoss` to your hyperopt call so this function is being used.
 
-A sample of this can be found below, which is identical to the Default Hyperopt loss implementation. A full sample can be found in [userdata/hyperopts](https://github.com/khulnasoft/tradescope/blob/develop/tradescope/templates/sample_hyperopt_loss.py).
+A sample of this can be found below, which is identical to the Default Hyperopt loss implementation. A full sample can be found in [userdata/hyperopts](https://github.com/freqtrade/freqtrade/blob/develop/freqtrade/templates/sample_hyperopt_loss.py).
 
 ``` python
 from datetime import datetime
@@ -17,8 +17,8 @@ from typing import Any, Dict
 
 from pandas import DataFrame
 
-from tradescope.constants import Config
-from tradescope.optimize.hyperopt import IHyperOptLoss
+from freqtrade.constants import Config
+from freqtrade.optimize.hyperopt import IHyperOptLoss
 
 TARGET_TRADES = 600
 EXPECTED_MAX_PROFIT = 3.0
@@ -37,7 +37,7 @@ class SuperDuperHyperOptLoss(IHyperOptLoss):
                                *args, **kwargs) -> float:
         """
         Objective function, returns smaller number for better results
-        This is the legacy algorithm (used until now in tradescope).
+        This is the legacy algorithm (used until now in freqtrade).
         Weights are distributed as follows:
         * 0.4 to trade duration
         * 0.25: Avoiding trade loss
@@ -78,7 +78,7 @@ This function needs to return a floating point number (`float`). Smaller numbers
 To override a pre-defined space (`roi_space`, `generate_roi_table`, `stoploss_space`, `trailing_space`, `max_open_trades_space`), define a nested class called Hyperopt and define the required spaces as follows:
 
 ```python
-from tradescope.optimize.space import Categorical, Dimension, Integer, SKDecimal
+from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
 
 class MyAwesomeStrategy(IStrategy):
     class HyperOpt:
@@ -206,17 +206,17 @@ class MyAwesomeStrategy(IStrategy):
 
 ## Space options
 
-For the additional spaces, scikit-optimize (in combination with Tradescope) provides the following space types:
+For the additional spaces, scikit-optimize (in combination with Freqtrade) provides the following space types:
 
 * `Categorical` - Pick from a list of categories (e.g. `Categorical(['a', 'b', 'c'], name="cat")`)
 * `Integer` - Pick from a range of whole numbers (e.g. `Integer(1, 10, name='rsi')`)
-* `SKDecimal` - Pick from a range of decimal numbers with limited precision (e.g. `SKDecimal(0.1, 0.5, decimals=3, name='adx')`). *Available only with tradescope*.
+* `SKDecimal` - Pick from a range of decimal numbers with limited precision (e.g. `SKDecimal(0.1, 0.5, decimals=3, name='adx')`). *Available only with freqtrade*.
 * `Real` - Pick from a range of decimal numbers with full precision (e.g. `Real(0.1, 0.5, name='adx')`
 
-You can import all of these from `tradescope.optimize.space`, although `Categorical`, `Integer` and `Real` are only aliases for their corresponding scikit-optimize Spaces. `SKDecimal` is provided by tradescope for faster optimizations.
+You can import all of these from `freqtrade.optimize.space`, although `Categorical`, `Integer` and `Real` are only aliases for their corresponding scikit-optimize Spaces. `SKDecimal` is provided by freqtrade for faster optimizations.
 
 ``` python
-from tradescope.optimize.space import Categorical, Dimension, Integer, SKDecimal, Real  # noqa
+from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal, Real  # noqa
 ```
 
 !!! Hint "SKDecimal vs. Real"

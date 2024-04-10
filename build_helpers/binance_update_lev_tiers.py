@@ -6,8 +6,8 @@ from pathlib import Path
 import ccxt
 
 
-key = os.environ.get('TRADESCOPE__EXCHANGE__KEY')
-secret = os.environ.get('TRADESCOPE__EXCHANGE__SECRET')
+key = os.environ.get('FREQTRADE__EXCHANGE__KEY')
+secret = os.environ.get('FREQTRADE__EXCHANGE__SECRET')
 
 proxy = os.environ.get('CI_WEB_PROXY')
 
@@ -22,5 +22,5 @@ _ = exchange.load_markets()
 lev_tiers = exchange.fetch_leverage_tiers()
 
 # Assumes this is running in the root of the repository.
-file = Path('tradescope/exchange/binance_leverage_tiers.json')
+file = Path('freqtrade/exchange/binance_leverage_tiers.json')
 json.dump(dict(sorted(lev_tiers.items())), file.open('w'), indent=2)

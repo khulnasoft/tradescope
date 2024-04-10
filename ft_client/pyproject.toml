@@ -3,15 +3,15 @@ requires = ["setuptools >= 64.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tradescope-client"
+name = "freqtrade-client"
 dynamic = ["version"]
 
 authors = [
-  {name = "Tradescope Team"},
-  {name = "Tradescope Team", email = "tradescope@protonmail.com"},
+  {name = "Freqtrade Team"},
+  {name = "Freqtrade Team", email = "freqtrade@protonmail.com"},
 ]
 
-description = "Tradescope - Client scripts"
+description = "Freqtrade - Client scripts"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "GPLv3"}
@@ -36,19 +36,19 @@ dependencies = [
 
 
 [project.urls]
-Homepage = "https://github.com/khulnasoft/tradescope"
-Documentation = "https://tradescope.io"
-"Bug Tracker" = "https://github.com/khulnasoft/tradescope/issues"
+Homepage = "https://github.com/freqtrade/freqtrade"
+Documentation = "https://freqtrade.io"
+"Bug Tracker" = "https://github.com/freqtrade/freqtrade/issues"
 
 
 [project.scripts]
-tradescope-client = "tradescope_client.ft_client:main"
+freqtrade-client = "freqtrade_client.ft_client:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["tradescope_client*"]
+include = ["freqtrade_client*"]
 exclude = ["tests", "tests.*"]
 namespaces = true
 
 [tool.setuptools.dynamic]
-version = {attr = "tradescope_client.__version__"}
+version = {attr = "freqtrade_client.__version__"}

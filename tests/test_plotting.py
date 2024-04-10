@@ -6,17 +6,17 @@ import plotly.graph_objects as go
 import pytest
 from plotly.subplots import make_subplots
 
-from tradescope.commands import start_plot_dataframe, start_plot_profit
-from tradescope.configuration import TimeRange
-from tradescope.data import history
-from tradescope.data.btanalysis import load_backtest_data
-from tradescope.data.metrics import create_cum_profit
-from tradescope.exceptions import OperationalException
-from tradescope.plot.plotting import (add_areas, add_indicators, add_profit, create_plotconfig,
+from freqtrade.commands import start_plot_dataframe, start_plot_profit
+from freqtrade.configuration import TimeRange
+from freqtrade.data import history
+from freqtrade.data.btanalysis import load_backtest_data
+from freqtrade.data.metrics import create_cum_profit
+from freqtrade.exceptions import OperationalException
+from freqtrade.plot.plotting import (add_areas, add_indicators, add_profit, create_plotconfig,
                                      generate_candlestick_graph, generate_plot_filename,
                                      generate_profit_graph, init_plotscript, load_and_plot_trades,
                                      plot_profit, plot_trades, store_plot_file)
-from tradescope.resolvers import StrategyResolver
+from freqtrade.resolvers import StrategyResolver
 from tests.conftest import get_args, log_has, log_has_re, patch_exchange
 
 
@@ -190,9 +190,9 @@ def test_plot_trades(testdatadir, caplog):
 
 
 def test_generate_candlestick_graph_no_signals_no_trades(default_conf, mocker, testdatadir, caplog):
-    row_mock = mocker.patch('tradescope.plot.plotting.add_indicators',
+    row_mock = mocker.patch('freqtrade.plot.plotting.add_indicators',
                             MagicMock(side_effect=fig_generating_mock))
-    trades_mock = mocker.patch('tradescope.plot.plotting.plot_trades',
+    trades_mock = mocker.patch('freqtrade.plot.plotting.plot_trades',
                                MagicMock(side_effect=fig_generating_mock))
 
     pair = "UNITTEST/BTC"
@@ -230,9 +230,9 @@ def test_generate_candlestick_graph_no_signals_no_trades(default_conf, mocker, t
 
 
 def test_generate_candlestick_graph_no_trades(default_conf, mocker, testdatadir):
-    row_mock = mocker.patch('tradescope.plot.plotting.add_indicators',
+    row_mock = mocker.patch('freqtrade.plot.plotting.add_indicators',
                             MagicMock(side_effect=fig_generating_mock))
-    trades_mock = mocker.patch('tradescope.plot.plotting.plot_trades',
+    trades_mock = mocker.patch('freqtrade.plot.plotting.plot_trades',
                                MagicMock(side_effect=fig_generating_mock))
     pair = 'UNITTEST/BTC'
     timerange = TimeRange(None, 'line', 0, -1000)
@@ -278,16 +278,16 @@ def test_generate_candlestick_graph_no_trades(default_conf, mocker, testdatadir)
 
 def test_generate_Plot_filename():
     fn = generate_plot_filename("UNITTEST/BTC", "5m")
-    assert fn == "tradescope-plot-UNITTEST_BTC-5m.html"
+    assert fn == "freqtrade-plot-UNITTEST_BTC-5m.html"
 
 
 def test_generate_plot_file(mocker, caplog, user_dir):
     fig = generate_empty_figure()
-    plot_mock = mocker.patch("tradescope.plot.plotting.plot", MagicMock())
-    store_plot_file(fig, filename="tradescope-plot-UNITTEST_BTC-5m.html",
+    plot_mock = mocker.patch("freqtrade.plot.plotting.plot", MagicMock())
+    store_plot_file(fig, filename="freqtrade-plot-UNITTEST_BTC-5m.html",
                     directory=user_dir / "plot")
 
-    expected_fn = str(user_dir / "plot/tradescope-plot-UNITTEST_BTC-5m.html")
+    expected_fn = str(user_dir / "plot/freqtrade-plot-UNITTEST_BTC-5m.html")
     assert plot_mock.call_count == 1
     assert plot_mock.call_args[0][0] == fig
     assert (plot_mock.call_args_list[0][1]['filename']
@@ -339,7 +339,7 @@ def test_generate_profit_graph(testdatadir):
         starting_balance=0)
     assert isinstance(fig, go.Figure)
 
-    assert fig.layout.title.text == "Tradescope Profit plot"
+    assert fig.layout.title.text == "Freqtrade Profit plot"
     assert fig.layout.yaxis.title.text == "Price"
     assert fig.layout.yaxis2.title.text == "Profit BTC"
     assert fig.layout.yaxis3.title.text == "Profit BTC"
@@ -374,7 +374,7 @@ def test_generate_profit_graph(testdatadir):
 
 
 def test_start_plot_dataframe(mocker):
-    aup = mocker.patch("tradescope.plot.plotting.load_and_plot_trades", MagicMock())
+    aup = mocker.patch("freqtrade.plot.plotting.load_and_plot_trades", MagicMock())
     args = [
         "plot-dataframe",
         "--config", "tests/testdata/testconfigs/main_test_config.json",
@@ -400,7 +400,7 @@ def test_load_and_plot_trades(default_conf, mocker, caplog, testdatadir):
     candle_mock = MagicMock()
     store_mock = MagicMock()
     mocker.patch.multiple(
-        "tradescope.plot.plotting",
+        "freqtrade.plot.plotting",
         generate_candlestick_graph=candle_mock,
         store_plot_file=store_mock
     )
@@ -417,7 +417,7 @@ def test_load_and_plot_trades(default_conf, mocker, caplog, testdatadir):
 
 
 def test_start_plot_profit(mocker):
-    aup = mocker.patch("tradescope.plot.plotting.plot_profit", MagicMock())
+    aup = mocker.patch("freqtrade.plot.plotting.plot_profit", MagicMock())
     args = [
         "plot-profit",
         "--config", "tests/testdata/testconfigs/main_test_config.json",
@@ -454,7 +454,7 @@ def test_plot_profit(default_conf, mocker, testdatadir):
     profit_mock = MagicMock()
     store_mock = MagicMock()
     mocker.patch.multiple(
-        "tradescope.plot.plotting",
+        "freqtrade.plot.plotting",
         generate_profit_graph=profit_mock,
         store_plot_file=store_mock
     )

@@ -1,16 +1,16 @@
-# Tradescope FAQ
+# Freqtrade FAQ
 
 ## Supported Markets
 
-Tradescope supports spot trading, as well as (isolated) futures trading for some selected exchanges. Please refer to the [documentation start page](index.md#supported-futures-exchanges-experimental) for an uptodate list of supported exchanges.
+Freqtrade supports spot trading, as well as (isolated) futures trading for some selected exchanges. Please refer to the [documentation start page](index.md#supported-futures-exchanges-experimental) for an uptodate list of supported exchanges.
 
 ### Can my bot open short positions?
 
-Tradescope can open short positions in futures markets.
+Freqtrade can open short positions in futures markets.
 This requires the strategy to be made for this - and `"trading_mode": "futures"` in the configuration.
 Please make sure to read the [relevant documentation page](leverage.md) first.
 
-In spot markets, you can in some cases use leveraged spot tokens, which reflect an inverted pair (eg. BTCUP/USD, BTCDOWN/USD, ETHBULL/USD, ETHBEAR/USD,...) which can be traded with Tradescope.
+In spot markets, you can in some cases use leveraged spot tokens, which reflect an inverted pair (eg. BTCUP/USD, BTCDOWN/USD, ETHBULL/USD, ETHBEAR/USD,...) which can be traded with Freqtrade.
 
 ### Can my bot trade options or futures?
 
@@ -18,20 +18,20 @@ Futures trading is supported for selected exchanges. Please refer to the [docume
 
 ## Beginner Tips & Tricks
 
-* When you work with your strategy & hyperopt file you should use a proper code editor like VSCode or PyCharm. A good code editor will provide syntax highlighting as well as line numbers, making it easy to find syntax errors (most likely pointed out by Tradescope during startup).
+* When you work with your strategy & hyperopt file you should use a proper code editor like VSCode or PyCharm. A good code editor will provide syntax highlighting as well as line numbers, making it easy to find syntax errors (most likely pointed out by Freqtrade during startup).
 
-## Tradescope common questions
+## Freqtrade common questions
 
-### Can tradescope open multiple positions on the same pair in parallel?
+### Can freqtrade open multiple positions on the same pair in parallel?
 
-No. Tradescope will only open one position per pair at a time.
+No. Freqtrade will only open one position per pair at a time.
 You can however use the [`adjust_trade_position()` callback](strategy-callbacks.md#adjust-trade-position) to adjust an open position.
 
 Backtesting provides an option for this in `--eps` - however this is only there to highlight "hidden" signals, and will not work in live.
 
 ### The bot does not start
 
-Running the bot with `tradescope trade --config config.json` shows the output `tradescope: command not found`.
+Running the bot with `freqtrade trade --config config.json` shows the output `freqtrade: command not found`.
 
 This could be caused by the following reasons:
 
@@ -71,16 +71,16 @@ As COIN is trading in full lot sizes (1COIN steps), you cannot sell 0.9 COIN (or
 
 This is not a bot-problem, but will also happen while manual trading.
 
-While tradescope can handle this (it'll sell 99 COIN), fees are often below the minimum tradable lot-size (you can only trade full COIN, not 0.9 COIN).
-Leaving the dust (0.9 COIN) on the exchange makes usually sense, as the next time tradescope buys COIN, it'll eat into the remaining small balance, this time selling everything it bought, and therefore slowly declining the dust balance (although it most likely will never reach exactly 0).
+While freqtrade can handle this (it'll sell 99 COIN), fees are often below the minimum tradable lot-size (you can only trade full COIN, not 0.9 COIN).
+Leaving the dust (0.9 COIN) on the exchange makes usually sense, as the next time freqtrade buys COIN, it'll eat into the remaining small balance, this time selling everything it bought, and therefore slowly declining the dust balance (although it most likely will never reach exactly 0).
 
 Where possible (e.g. on binance), the use of the exchange's dedicated fee currency will fix this.
-On binance, it's sufficient to have BNB in your account, and have "Pay fees in BNB" enabled in your profile. Your BNB balance will slowly decline (as it's used to pay fees) - but you'll no longer encounter dust (Tradescope will include the fees in the profit calculations).
+On binance, it's sufficient to have BNB in your account, and have "Pay fees in BNB" enabled in your profile. Your BNB balance will slowly decline (as it's used to pay fees) - but you'll no longer encounter dust (Freqtrade will include the fees in the profit calculations).
 Other exchanges don't offer such possibilities, where it's simply something you'll have to accept or move to a different exchange.
 
 ### I deposited more funds to the exchange, but my bot doesn't recognize this
 
-Tradescope will update the exchange balance when necessary (Before placing an order).
+Freqtrade will update the exchange balance when necessary (Before placing an order).
 RPC calls (Telegram's `/balance`, API calls to `/balance`) can trigger an update at max. once per hour.
 
 If `adjust_trade_position` is enabled (and the bot has open trades eligible for position adjustments) - then the wallets will be refreshed once per hour.
@@ -88,7 +88,7 @@ To force an immediate update, you can use `/reload_config` - which will restart 
 
 ### I want to use incomplete candles
 
-Tradescope will not provide incomplete candles to strategies. Using incomplete candles will lead to repainting and consequently to strategies with "ghost" buys, which are impossible to both backtest, and verify after they happened.
+Freqtrade will not provide incomplete candles to strategies. Using incomplete candles will lead to repainting and consequently to strategies with "ghost" buys, which are impossible to both backtest, and verify after they happened.
 
 You can use "current" market data by using the [dataprovider](strategy-customization.md#orderbookpair-maximum)'s orderbook or ticker methods - which however cannot be used during backtesting.
 
@@ -98,7 +98,7 @@ You can use the `/stopentry` command in Telegram to prevent future trade entry, 
 
 ### I want to run multiple bots on the same machine
 
-Please look at the [advanced setup documentation Page](advanced-setup.md#running-multiple-instances-of-tradescope).
+Please look at the [advanced setup documentation Page](advanced-setup.md#running-multiple-instances-of-freqtrade).
 
 ### I'm getting "Missing data fillup" messages in the log
 
@@ -108,7 +108,7 @@ On low volume pairs, this is a rather common occurrence.
 
 If this happens for all pairs in the pairlist, this might indicate a recent exchange downtime. Please check your exchange's public channels for details.
 
-Irrespectively of the reason, Tradescope will fill up these candles with "empty" candles, where open, high, low and close are set to the previous candle close - and volume is empty. In a chart, this will look like a `_` - and is aligned with how exchanges usually represent 0 volume candles.
+Irrespectively of the reason, Freqtrade will fill up these candles with "empty" candles, where open, high, low and close are set to the previous candle close - and volume is empty. In a chart, this will look like a `_` - and is aligned with how exchanges usually represent 0 volume candles.
 
 ### I'm getting "Price jump between 2 candles detected"
 
@@ -119,7 +119,7 @@ This message is often accompanied by ["Missing data fillup"](#im-getting-missing
 ### I'm getting "Outdated history for pair xxx" in the log
 
 The bot is trying to tell you that it got an outdated last candle (not the last complete candle).
-As a consequence, Tradescope will not enter a trade for this pair - as trading on old information is usually not what is desired.
+As a consequence, Freqtrade will not enter a trade for this pair - as trading on old information is usually not what is desired.
 
 This warning can point to one of the below problems:
 
@@ -153,26 +153,26 @@ Futures will usually have to be enabled specifically.
 
 ### How do I search the bot logs for something?
 
-By default, the bot writes its log into stderr stream. This is implemented this way so that you can easily separate the bot's diagnostics messages from Backtesting, Edge and Hyperopt results, output from other various Tradescope utility sub-commands, as well as from the output of your custom `print()`'s you may have inserted into your strategy. So if you need to search the log messages with the grep utility, you need to redirect stderr to stdout and disregard stdout.
+By default, the bot writes its log into stderr stream. This is implemented this way so that you can easily separate the bot's diagnostics messages from Backtesting, Edge and Hyperopt results, output from other various Freqtrade utility sub-commands, as well as from the output of your custom `print()`'s you may have inserted into your strategy. So if you need to search the log messages with the grep utility, you need to redirect stderr to stdout and disregard stdout.
 
 * In unix shells, this normally can be done as simple as:
 ```shell
-$ tradescope --some-options 2>&1 >/dev/null | grep 'something'
+$ freqtrade --some-options 2>&1 >/dev/null | grep 'something'
 ```
 (note, `2>&1` and `>/dev/null` should be written in this order)
 
 * Bash interpreter also supports so called process substitution syntax, you can grep the log for a string with it as:
 ```shell
-$ tradescope --some-options 2> >(grep 'something') >/dev/null
+$ freqtrade --some-options 2> >(grep 'something') >/dev/null
 ```
 or
 ```shell
-$ tradescope --some-options 2> >(grep -v 'something' 1>&2)
+$ freqtrade --some-options 2> >(grep -v 'something' 1>&2)
 ```
 
-* You can also write the copy of Tradescope log messages to a file with the `--logfile` option:
+* You can also write the copy of Freqtrade log messages to a file with the `--logfile` option:
 ```shell
-$ tradescope --logfile /path/to/mylogfile.log --some-options
+$ freqtrade --logfile /path/to/mylogfile.log --some-options
 ```
 and then grep it as:
 ```shell
@@ -184,19 +184,19 @@ $ tail -f /path/to/mylogfile.log | grep 'something'
 ```
 from a separate terminal window.
 
-On Windows, the `--logfile` option is also supported by Tradescope and you can use the `findstr` command to search the log for the string of interest:
+On Windows, the `--logfile` option is also supported by Freqtrade and you can use the `findstr` command to search the log for the string of interest:
 ```
 > type \path\to\mylogfile.log | findstr "something"
 ```
 
 ## Hyperopt module
 
-### Why does tradescope not have GPU support?
+### Why does freqtrade not have GPU support?
 
 First of all, most indicator libraries don't have GPU support - as such, there would be little benefit for indicator calculations.
 The GPU improvements would only apply to pandas-native calculations - or ones written by yourself.
 
-For hyperopt, tradescope is using scikit-optimize, which is built on top of scikit-learn.
+For hyperopt, freqtrade is using scikit-optimize, which is built on top of scikit-learn.
 Their statement about GPU support is [pretty clear](https://scikit-learn.org/stable/faq.html#will-you-add-gpu-support).
 
 GPU's also are only good at crunching numbers (floating point operations).
@@ -220,12 +220,12 @@ Since hyperopt uses Bayesian search, running for too many epochs may not produce
 It's therefore recommended to run between 500-1000 epochs over and over until you hit at least 10000 epochs in total (or are satisfied with the result). You can best judge by looking at the results - if the bot keeps discovering better strategies, it's best to keep on going.
 
 ```bash
-tradescope hyperopt --hyperopt-loss SharpeHyperOptLossDaily --strategy SampleStrategy -e 1000
+freqtrade hyperopt --hyperopt-loss SharpeHyperOptLossDaily --strategy SampleStrategy -e 1000
 ```
 
 ### Why does it take a long time to run hyperopt?
 
-* Discovering a great strategy with Hyperopt takes time. Study www.tradescope.io, the Tradescope Documentation page, join the Tradescope [discord community](https://discord.gg/p7nuUNVfP7). While you patiently wait for the most advanced, free crypto bot in the world, to hand you a possible golden strategy specially designed just for you.
+* Discovering a great strategy with Hyperopt takes time. Study www.freqtrade.io, the Freqtrade Documentation page, join the Freqtrade [discord community](https://discord.gg/p7nuUNVfP7). While you patiently wait for the most advanced, free crypto bot in the world, to hand you a possible golden strategy specially designed just for you.
 
 * If you wonder why it can take from 20 minutes to days to do 1000 epochs here are some answers:
 
@@ -246,13 +246,13 @@ of the search space, assuming that the bot never tests the same parameters more 
 Example: 4% profit 650 times vs 0,3% profit a trade 10000 times in a year. If we assume you set the --timerange to 365 days.
 
 Example:
-`tradescope --config config.json --strategy SampleStrategy --hyperopt SampleHyperopt -e 1000 --timerange 20190601-20200601`
+`freqtrade --config config.json --strategy SampleStrategy --hyperopt SampleHyperopt -e 1000 --timerange 20190601-20200601`
 
 ## Edge module
 
 ### Edge implements interesting approach for controlling position size, is there any theory behind it?
 
-The Edge module is mostly a result of brainstorming of [@mishaker](https://github.com/mishaker) and [@creslinux](https://github.com/creslinux) tradescope team members.
+The Edge module is mostly a result of brainstorming of [@mishaker](https://github.com/mishaker) and [@creslinux](https://github.com/creslinux) freqtrade team members.
 
 You can find further info on expectancy, win rate, risk management and position size in the following sources:
 
@@ -264,19 +264,19 @@ You can find further info on expectancy, win rate, risk management and position 
 
 ## Official channels
 
-Tradescope is using exclusively the following official channels:
+Freqtrade is using exclusively the following official channels:
 
-* [Tradescope discord server](https://discord.gg/p7nuUNVfP7)
-* [Tradescope documentation (https://tradescope.io)](https://tradescope.io)
-* [Tradescope github organization](https://github.com/tradescope)
+* [Freqtrade discord server](https://discord.gg/p7nuUNVfP7)
+* [Freqtrade documentation (https://freqtrade.io)](https://freqtrade.io)
+* [Freqtrade github organization](https://github.com/freqtrade)
 
-Nobody affiliated with the tradescope project will ask you about your exchange keys or anything else exposing your funds to exploitation.
+Nobody affiliated with the freqtrade project will ask you about your exchange keys or anything else exposing your funds to exploitation.
 Should you be asked to expose your exchange keys or send funds to some random wallet, then please don't follow these instructions.
 
-Failing to follow these guidelines will not be responsibility of tradescope.
+Failing to follow these guidelines will not be responsibility of freqtrade.
 
-## "Tradescope token"
+## "Freqtrade token"
 
-Tradescope does not have a Crypto token offering.
+Freqtrade does not have a Crypto token offering.
 
-Token offerings you find on the internet referring Tradescope, TradeAI or tradeUI must be considered to be a scam, trying to exploit tradescope's popularity for their own, nefarious gains.
+Token offerings you find on the internet referring Freqtrade, FreqAI or freqUI must be considered to be a scam, trying to exploit freqtrade's popularity for their own, nefarious gains.

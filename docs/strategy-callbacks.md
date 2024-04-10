@@ -104,7 +104,7 @@ class AwesomeStrategy(IStrategy):
         return proposed_stake
 ```
 
-Tradescope will fall back to the `proposed_stake` value should your code raise an exception. The exception itself will be logged.
+Freqtrade will fall back to the `proposed_stake` value should your code raise an exception. The exception itself will be logged.
 
 !!! Tip
     You do not _have_ to ensure that `min_stake <= returned_value <= max_stake`. Trades will succeed as the returned value will be clamped to supported range and this action will be logged.
@@ -167,7 +167,7 @@ During backtesting, `current_rate` (and `current_profit`) are provided against t
 The absolute value of the return value is used (the sign is ignored), so returning `0.05` or `-0.05` have the same result, a stoploss 5% below the current price.
 Returning None will be interpreted as "no desire to change", and is the only safe way to return when you'd like to not modify the stoploss.
 
-Stoploss on exchange works similar to `trailing_stop`, and the stoploss on exchange is updated as configured in `stoploss_on_exchange_interval` ([More details about stoploss on exchange](stoploss.md#stop-loss-on-exchange-tradescope)).
+Stoploss on exchange works similar to `trailing_stop`, and the stoploss on exchange is updated as configured in `stoploss_on_exchange_interval` ([More details about stoploss on exchange](stoploss.md#stop-loss-on-exchange-freqtrade)).
 
 !!! Note "Use of dates"
     All time-based calculations should be done based on `current_time` - using `datetime.now()` or `datetime.utcnow()` is discouraged, as this will break backtesting support.
@@ -178,7 +178,7 @@ Stoploss on exchange works similar to `trailing_stop`, and the stoploss on excha
 ### Adjust stoploss after position adjustments
 
 Depending on your strategy, you may encounter the need to adjust the stoploss in both directions after a [position adjustment](#adjust-trade-position).
-For this, tradescope will make an additional call with `after_fill=True` after an order fills, which will allow the strategy to move the stoploss in any direction (also widening the gap between stoploss and current price, which is otherwise forbidden).
+For this, freqtrade will make an additional call with `after_fill=True` after an order fills, which will allow the strategy to move the stoploss in any direction (also widening the gap between stoploss and current price, which is otherwise forbidden).
 
 !!! Note "backwards compatibility"
     This call will only be made if the `after_fill` parameter is part of the function definition of your `custom_stoploss` function.
@@ -196,7 +196,7 @@ To simulate a regular trailing stoploss of 4% (trailing 4% behind the maximum re
 ``` python
 # additional imports required
 from datetime import datetime
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 class AwesomeStrategy(IStrategy):
 
@@ -212,7 +212,7 @@ class AwesomeStrategy(IStrategy):
         e.g. returning -0.05 would create a stoploss 5% below current_rate.
         The custom stoploss can never be below self.stoploss, which serves as a hard maximum loss.
 
-        For full documentation please go to https://www.tradescope.io/en/latest/strategy-advanced/
+        For full documentation please go to https://www.freqtrade.io/en/latest/strategy-advanced/
 
         When not implemented by a strategy, returns the initial stoploss value.
         Only called when use_custom_stoploss is set to True.
@@ -235,7 +235,7 @@ Use the initial stoploss for the first 60 minutes, after this change to 10% trai
 
 ``` python
 from datetime import datetime, timedelta
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 class AwesomeStrategy(IStrategy):
 
@@ -262,7 +262,7 @@ If an additional order fills, set stoploss to -10% below the new `open_rate` ([A
 
 ``` python
 from datetime import datetime, timedelta
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 class AwesomeStrategy(IStrategy):
 
@@ -292,7 +292,7 @@ In this example, we'll trail the highest price with 10% trailing stoploss for `E
 
 ``` python
 from datetime import datetime
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 class AwesomeStrategy(IStrategy):
 
@@ -319,7 +319,7 @@ Please note that the stoploss can only increase, values lower than the current s
 
 ``` python
 from datetime import datetime, timedelta
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 class AwesomeStrategy(IStrategy):
 
@@ -352,8 +352,8 @@ Instead of continuously trailing behind the current price, this example sets fix
 
 ``` python
 from datetime import datetime
-from tradescope.persistence import Trade
-from tradescope.strategy import stoploss_from_open
+from freqtrade.persistence import Trade
+from freqtrade.strategy import stoploss_from_open
 
 class AwesomeStrategy(IStrategy):
 
@@ -429,8 +429,8 @@ Stoploss values returned from `custom_stoploss()` must specify a percentage rela
     ``` python
 
     from datetime import datetime
-    from tradescope.persistence import Trade
-    from tradescope.strategy import IStrategy, stoploss_from_open
+    from freqtrade.persistence import Trade
+    from freqtrade.strategy import IStrategy, stoploss_from_open
 
     class AwesomeStrategy(IStrategy):
 
@@ -473,8 +473,8 @@ The helper function `stoploss_from_absolute()` can be used to convert from an ab
     ``` python
 
     from datetime import datetime
-    from tradescope.persistence import Trade
-    from tradescope.strategy import IStrategy, stoploss_from_absolute, timeframe_to_prev_date
+    from freqtrade.persistence import Trade
+    from freqtrade.strategy import IStrategy, stoploss_from_absolute, timeframe_to_prev_date
 
     class AwesomeStrategy(IStrategy):
 
@@ -502,7 +502,7 @@ The helper function `stoploss_from_absolute()` can be used to convert from an ab
 
 ## Custom order price rules
 
-By default, tradescope use the orderbook to automatically set an order price([Relevant documentation](configuration.md#prices-used-for-orders)), you also have the option to create custom order prices based on your strategy.
+By default, freqtrade use the orderbook to automatically set an order price([Relevant documentation](configuration.md#prices-used-for-orders)), you also have the option to create custom order prices based on your strategy.
 
 You can use this feature by creating a `custom_entry_price()` function in your strategy file to customize entry prices and `custom_exit_price()` for exits.
 
@@ -518,7 +518,7 @@ Each of these methods are called right before placing an order on the exchange.
 
 ``` python
 from datetime import datetime, timedelta, timezone
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 class AwesomeStrategy(IStrategy):
 
@@ -559,7 +559,7 @@ class AwesomeStrategy(IStrategy):
 
 Simple, time-based order-timeouts can be configured either via strategy or in the configuration in the `unfilledtimeout` section.
 
-However, tradescope also offers a custom callback for both order types, which allows you to decide based on custom criteria if an order did time out or not.
+However, freqtrade also offers a custom callback for both order types, which allows you to decide based on custom criteria if an order did time out or not.
 
 !!! Note
     Backtesting fills orders if their price falls within the candle's low/high range.
@@ -577,7 +577,7 @@ The function must return either `True` (cancel order) or `False` (keep order ali
 
 ``` python
 from datetime import datetime, timedelta
-from tradescope.persistence import Trade, Order
+from freqtrade.persistence import Trade, Order
 
 class AwesomeStrategy(IStrategy):
 
@@ -618,7 +618,7 @@ class AwesomeStrategy(IStrategy):
 
 ``` python
 from datetime import datetime
-from tradescope.persistence import Trade, Order
+from freqtrade.persistence import Trade, Order
 
 class AwesomeStrategy(IStrategy):
 
@@ -674,7 +674,7 @@ class AwesomeStrategy(IStrategy):
         Timing for this function is critical, so avoid doing heavy computations or
         network requests in this method.
 
-        For full documentation please go to https://www.tradescope.io/en/latest/strategy-advanced/
+        For full documentation please go to https://www.freqtrade.io/en/latest/strategy-advanced/
 
         When not implemented by a strategy, returns True (always confirming).
 
@@ -708,7 +708,7 @@ The exit-reasons (if applicable) will be in the following sequence:
 * `trailing_stop_loss`
 
 ``` python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 
 
 class AwesomeStrategy(IStrategy):
@@ -723,7 +723,7 @@ class AwesomeStrategy(IStrategy):
         Timing for this function is critical, so avoid doing heavy computations or
         network requests in this method.
 
-        For full documentation please go to https://www.tradescope.io/en/latest/strategy-advanced/
+        For full documentation please go to https://www.freqtrade.io/en/latest/strategy-advanced/
 
         When not implemented by a strategy, returns True (always confirming).
 
@@ -758,7 +758,7 @@ class AwesomeStrategy(IStrategy):
 ## Adjust trade position
 
 The `position_adjustment_enable` strategy property enables the usage of `adjust_trade_position()` callback in the strategy.
-For performance reasons, it's disabled by default and tradescope will show a warning message on startup if enabled.
+For performance reasons, it's disabled by default and freqtrade will show a warning message on startup if enabled.
 `adjust_trade_position()` can be used to perform additional orders, for example to manage risk with DCA (Dollar Cost Averaging) or to increase or decrease positions.
 
 Additional orders also result in additional fees and those orders don't count towards `max_open_trades`.
@@ -808,7 +808,8 @@ Returning a value more than the above (so remaining stake_amount would become ne
     Trades with long duration and 10s or even 100ds of position adjustments are therefore not recommended, and should be closed at regular intervals to not affect performance.
 
 ``` python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
+from typing import Optional, Tuple, Union
 
 
 class DigDeeperStrategy(IStrategy):
@@ -848,7 +849,7 @@ class DigDeeperStrategy(IStrategy):
         This means extra entry or exit orders with additional fees.
         Only called when `position_adjustment_enable` is set to True.
 
-        For full documentation please go to https://www.tradescope.io/en/latest/strategy-advanced/
+        For full documentation please go to https://www.freqtrade.io/en/latest/strategy-advanced/
 
         When not implemented by a strategy, returns None
 
@@ -947,8 +948,8 @@ If the cancellation of the original order fails, then the order will not be repl
     Entry Orders that are cancelled via the above methods will not have this callback called. Be sure to update timeout values to match your expectations.
 
 ```python
-from tradescope.persistence import Trade
-from datetime import timedelta
+from freqtrade.persistence import Trade
+from datetime import timedelta, datetime
 
 class AwesomeStrategy(IStrategy):
 

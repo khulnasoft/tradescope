@@ -10,7 +10,7 @@ hyperopt = [
     'filelock',
 ]
 
-tradeai = [
+freqai = [
     'scikit-learn',
     'joblib',
     'catboost; platform_machine != "aarch64"',
@@ -20,7 +20,7 @@ tradeai = [
     'datasieve>=0.1.5'
 ]
 
-tradeai_rl = [
+freqai_rl = [
     'torch',
     'gymnasium',
     'stable-baselines3',
@@ -59,7 +59,7 @@ jupyter = [
     'nbconvert',
 ]
 
-all_extra = plot + develop + jupyter + hyperopt + hdf5 + tradeai + tradeai_rl
+all_extra = plot + develop + jupyter + hyperopt + hdf5 + freqai + freqai_rl
 
 setup(
     tests_require=[
@@ -112,7 +112,7 @@ setup(
         'python-dateutil',
         'pytz',
         'packaging',
-        'tradescope-client',
+        'freqtrade-client',
     ],
     extras_require={
         'dev': all_extra,
@@ -120,9 +120,9 @@ setup(
         'jupyter': jupyter,
         'hyperopt': hyperopt,
         'hdf5': hdf5,
-        'tradeai': tradeai,
-        'tradeai_rl': tradeai_rl,
+        'freqai': freqai,
+        'freqai_rl': freqai_rl,
         'all': all_extra,
     },
-    url="https://github.com/khulnasoft/tradescope",
+    url="https://github.com/freqtrade/freqtrade",
 )

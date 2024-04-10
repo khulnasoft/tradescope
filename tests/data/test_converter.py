@@ -7,17 +7,17 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from tradescope.configuration.timerange import TimeRange
-from tradescope.data.converter import (convert_ohlcv_format, convert_trades_format,
+from freqtrade.configuration.timerange import TimeRange
+from freqtrade.data.converter import (convert_ohlcv_format, convert_trades_format,
                                       convert_trades_to_ohlcv, ohlcv_fill_up_missing_data,
                                       ohlcv_to_dataframe, reduce_dataframe_footprint,
                                       trades_df_remove_duplicates, trades_dict_to_list,
                                       trades_to_ohlcv, trim_dataframe)
-from tradescope.data.history import (get_timerange, load_data, load_pair_history,
+from freqtrade.data.history import (get_timerange, load_data, load_pair_history,
                                     validate_backtest_data)
-from tradescope.data.history.datahandlers import IDataHandler
-from tradescope.enums import CandleType
-from tradescope.exchange import timeframe_to_minutes, timeframe_to_seconds
+from freqtrade.data.history.datahandlers import IDataHandler
+from freqtrade.enums import CandleType
+from freqtrade.exchange import timeframe_to_minutes, timeframe_to_seconds
 from tests.conftest import generate_test_data, generate_trades_history, log_has, log_has_re
 from tests.data.test_history import _clean_test_file
 

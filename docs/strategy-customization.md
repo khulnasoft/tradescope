@@ -2,24 +2,24 @@
 
 This page explains how to customize your strategies, add new indicators and set up trading rules.
 
-Please familiarize yourself with [Tradescope basics](bot-basics.md) first, which provides overall info on how the bot operates.
+Please familiarize yourself with [Freqtrade basics](bot-basics.md) first, which provides overall info on how the bot operates.
 
 ## Develop your own strategy
 
 The bot includes a default strategy file.
-Also, several other strategies are available in the [strategy repository](https://github.com/khulnasoft/tradescope-strategies).
+Also, several other strategies are available in the [strategy repository](https://github.com/freqtrade/freqtrade-strategies).
 
 You will however most likely have your own idea for a strategy.
 This document intends to help you convert your strategy idea into your own strategy.
 
-To get started, use `tradescope new-strategy --strategy AwesomeStrategy` (you can obviously use your own naming for your strategy).
+To get started, use `freqtrade new-strategy --strategy AwesomeStrategy` (you can obviously use your own naming for your strategy).
 This will create a new strategy file from a template, which will be located under `user_data/strategies/AwesomeStrategy.py`.
 
 !!! Note
     This is just a template file, which will most likely not be profitable out of the box.
 
 ??? Hint "Different template levels"
-    `tradescope new-strategy` has an additional parameter, `--template`, which controls the amount of pre-build information you get in the created strategy. Use `--template minimal` to get an empty strategy without any indicator examples, or `--template advanced` to get a template with most callbacks defined.
+    `freqtrade new-strategy` has an additional parameter, `--template`, which controls the amount of pre-build information you get in the created strategy. Use `--template minimal` to get an empty strategy without any indicator examples, or `--template advanced` to get a template with most callbacks defined.
 
 ### Anatomy of a strategy
 
@@ -40,10 +40,10 @@ The current version is 3 - which is also the default when it's not set explicitl
 Future versions will require this to be set.
 
 ```bash
-tradescope trade --strategy AwesomeStrategy
+freqtrade trade --strategy AwesomeStrategy
 ```
 
-**For the following section we will use the [user_data/strategies/sample_strategy.py](https://github.com/khulnasoft/tradescope/blob/develop/tradescope/templates/sample_strategy.py)
+**For the following section we will use the [user_data/strategies/sample_strategy.py](https://github.com/freqtrade/freqtrade/blob/develop/freqtrade/templates/sample_strategy.py)
 file as reference.**
 
 !!! Note "Strategies and Backtesting"
@@ -59,7 +59,7 @@ file as reference.**
 
 ### Dataframe
 
-Tradescope uses [pandas](https://pandas.pydata.org/) to store/provide the candlestick (OHLCV) data.
+Freqtrade uses [pandas](https://pandas.pydata.org/) to store/provide the candlestick (OHLCV) data.
 Pandas is a great library developed for processing large amounts of data.
 
 Each row in a dataframe corresponds to one candle on a chart, with the latest candle always being the last in the dataframe (sorted by date).
@@ -149,22 +149,22 @@ def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame
 ```
 
 !!! Note "Want more indicator examples?"
-    Look into the [user_data/strategies/sample_strategy.py](https://github.com/khulnasoft/tradescope/blob/develop/tradescope/templates/sample_strategy.py).
+    Look into the [user_data/strategies/sample_strategy.py](https://github.com/freqtrade/freqtrade/blob/develop/freqtrade/templates/sample_strategy.py).
     Then uncomment indicators you need.
 
 #### Indicator libraries
 
-Out of the box, tradescope installs the following technical libraries:
+Out of the box, freqtrade installs the following technical libraries:
 
 - [ta-lib](https://ta-lib.github.io/ta-lib-python/)
 - [pandas-ta](https://twopirllc.github.io/pandas-ta/)
-- [technical](https://github.com/tradescope/technical/)
+- [technical](https://github.com/freqtrade/technical/)
 
 Additional technical libraries can be installed as necessary, or custom indicators may be written / invented by the strategy author.
 
 ### Strategy startup period
 
-Most indicators have an instable startup period, in which they are either not available (NaN), or the calculation is incorrect. This can lead to inconsistencies, since Tradescope does not know how long this instable period should be.
+Most indicators have an instable startup period, in which they are either not available (NaN), or the calculation is incorrect. This can lead to inconsistencies, since Freqtrade does not know how long this instable period should be.
 To account for this, the strategy can be assigned the `startup_candle_count` attribute.
 This should be set to the maximum number of candles that the strategy requires to calculate stable indicators. In the case where a user includes higher timeframes with informative pairs, the `startup_candle_count` does not necessarily change. The value is the maximum period (in candles) that any of the informatives timeframes need to compute stable indicators.
 
@@ -180,9 +180,9 @@ By letting the bot know how much history is needed, backtest trades can start at
 
 !!! Warning "Using x calls to get OHLCV"
     If you receive a warning like `WARNING - Using 3 calls to get OHLCV. This can result in slower operations for the bot. Please check if you really need 1500 candles for your strategy` - you should consider if you really need this much historic data for your signals.
-    Having this will cause Tradescope to make multiple calls for the same pair, which will obviously be slower than one network request.
-    As a consequence, Tradescope will take longer to refresh candles - and should therefore be avoided if possible.
-    This is capped to 5 total calls to avoid overloading the exchange, or make tradescope too slow.
+    Having this will cause Freqtrade to make multiple calls for the same pair, which will obviously be slower than one network request.
+    As a consequence, Freqtrade will take longer to refresh candles - and should therefore be avoided if possible.
+    This is capped to 5 total calls to avoid overloading the exchange, or make freqtrade too slow.
 
 !!! Warning
     `startup_candle_count` should be below `ohlcv_candle_limit * 5` (which is 500 * 5 for most exchanges) - since only this amount of candles will be available during Dry-Run/Live Trade operations.
@@ -192,7 +192,7 @@ By letting the bot know how much history is needed, backtest trades can start at
 Let's try to backtest 1 month (January 2019) of 5m candles using an example strategy with EMA100, as above.
 
 ``` bash
-tradescope backtesting --timerange 20190101-20190201 --timeframe 5m
+freqtrade backtesting --timerange 20190101-20190201 --timeframe 5m
 ```
 
 Assuming `startup_candle_count` is set to 400, backtesting knows it needs 400 candles to generate valid buy signals. It will load data from `20190101 - (400 * 5m)` - which is ~2018-12-30 11:40:00.
@@ -354,7 +354,7 @@ To use times based on candle duration (timeframe), the following snippet can be 
 This will allow you to change the timeframe for the strategy, and ROI times will still be set as candles (e.g. after 3 candles ...)
 
 ``` python
-from tradescope.exchange import timeframe_to_minutes
+from freqtrade.exchange import timeframe_to_minutes
 
 class AwesomeStrategy(IStrategy):
 
@@ -409,12 +409,12 @@ Instead, have a look at the [Storing information](strategy-advanced.md#Storing-i
 
 ## Strategy file loading
 
-By default, tradescope will attempt to load strategies from all `.py` files within `user_data/strategies`.
+By default, freqtrade will attempt to load strategies from all `.py` files within `user_data/strategies`.
 
-Assuming your strategy is called `AwesomeStrategy`, stored in the file `user_data/strategies/AwesomeStrategy.py`, then you can start tradescope with `tradescope trade --strategy AwesomeStrategy`.
+Assuming your strategy is called `AwesomeStrategy`, stored in the file `user_data/strategies/AwesomeStrategy.py`, then you can start freqtrade with `freqtrade trade --strategy AwesomeStrategy`.
 Note that we're using the class-name, not the file name.
 
-You can use `tradescope list-strategies` to see a list of all strategies Tradescope is able to load (all strategies in the correct folder).
+You can use `freqtrade list-strategies` to see a list of all strategies Freqtrade is able to load (all strategies in the correct folder).
 It will also include a "status" field, highlighting potential problems.
 
 ??? Hint "Customize strategy directory"
@@ -517,8 +517,8 @@ for more information.
     ``` python
 
     from datetime import datetime
-    from tradescope.persistence import Trade
-    from tradescope.strategy import IStrategy, informative
+    from freqtrade.persistence import Trade
+    from freqtrade.strategy import IStrategy, informative
 
     class AwesomeStrategy(IStrategy):
         
@@ -653,7 +653,7 @@ All columns of the informative dataframe will be available on the returning data
 
 !!! Warning "Informative timeframe < timeframe"
     Using informative timeframes smaller than the dataframe timeframe is not recommended with this method, as it will not use any of the additional information this would provide.
-    To use the more detailed information properly, more advanced methods should be applied (which are out of scope for tradescope documentation, as it'll depend on the respective need).
+    To use the more detailed information properly, more advanced methods should be applied (which are out of scope for freqtrade documentation, as it'll depend on the respective need).
 
 ## Additional data (DataProvider)
 
@@ -732,7 +732,7 @@ informative = self.dp.get_pair_dataframe(pair=inf_pair,
 
 ### *get_analyzed_dataframe(pair, timeframe)*
 
-This method is used by tradescope internally to determine the last signal.
+This method is used by freqtrade internally to determine the last signal.
 It can also be used in specific callbacks to get the signal that caused the action (see [Advanced Strategy Documentation](strategy-advanced.md) for more details on available callbacks).
 
 ``` python
@@ -817,7 +817,7 @@ Notifications will only be sent in trading modes (Live/Dry-run) - so this method
 ### Complete Data-provider sample
 
 ```python
-from tradescope.strategy import IStrategy, merge_informative_pair
+from freqtrade.strategy import IStrategy, merge_informative_pair
 from pandas import DataFrame
 
 class SampleStrategy(IStrategy):
@@ -912,7 +912,7 @@ A history of Trades can be retrieved in the strategy by querying the database.
 At the top of the file, import Trade.
 
 ```python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 ```
 
 The following example queries for the current pair and trades from today, however other filters can easily be added.
@@ -933,7 +933,7 @@ For a full list of available methods, please consult the [Trade object](trade-ob
 
 ## Prevent trades from happening for a specific pair
 
-Tradescope locks pairs automatically for the current candle (until that candle is over) when a pair is sold, preventing an immediate re-buy of that pair.
+Freqtrade locks pairs automatically for the current candle (until that candle is over) when a pair is sold, preventing an immediate re-buy of that pair.
 
 Locked pairs will show the message `Pair <pair> is currently locked.`.
 
@@ -941,7 +941,7 @@ Locked pairs will show the message `Pair <pair> is currently locked.`.
 
 Sometimes it may be desired to lock a pair after certain events happen (e.g. multiple losing trades in a row).
 
-Tradescope has an easy method to do this from within the strategy, by calling `self.lock_pair(pair, until, [reason])`.
+Freqtrade has an easy method to do this from within the strategy, by calling `self.lock_pair(pair, until, [reason])`.
 `until` must be a datetime object in the future, after which trading will be re-enabled for that pair, while `reason` is an optional string detailing why the pair was locked.
 
 Locks can also be lifted manually, by calling `self.unlock_pair(pair)` or `self.unlock_reason(<reason>)` - providing reason the pair was locked with.
@@ -958,7 +958,7 @@ To verify if a pair is currently locked, use `self.is_pair_locked(pair)`.
 #### Pair locking example
 
 ``` python
-from tradescope.persistence import Trade
+from freqtrade.persistence import Trade
 from datetime import timedelta, datetime, timezone
 # Put the above lines a the top of the strategy file, next to all the other imports
 # --------
@@ -1020,7 +1020,7 @@ The following lists some common patterns which should be avoided to prevent frus
 
 ### Colliding signals
 
-When conflicting signals collide (e.g. both `'enter_long'` and `'exit_long'` are 1), tradescope will do nothing and ignore the entry signal. This will avoid trades that enter, and exit immediately. Obviously, this can potentially lead to missed entries.
+When conflicting signals collide (e.g. both `'enter_long'` and `'exit_long'` are 1), freqtrade will do nothing and ignore the entry signal. This will avoid trades that enter, and exit immediately. Obviously, this can potentially lead to missed entries.
 
 The following rules apply, and entry signals will be ignored if more than one of the 3 signals is set:
 
@@ -1029,7 +1029,7 @@ The following rules apply, and entry signals will be ignored if more than one of
 
 ## Further strategy ideas
 
-To get additional Ideas for strategies, head over to the [strategy repository](https://github.com/khulnasoft/tradescope-strategies). Feel free to use them as they are - but results will depend on the current market situation, pairs used etc. - therefore please backtest the strategy for your exchange/desired pairs first, evaluate carefully, use at your own risk.
+To get additional Ideas for strategies, head over to the [strategy repository](https://github.com/freqtrade/freqtrade-strategies). Feel free to use them as they are - but results will depend on the current market situation, pairs used etc. - therefore please backtest the strategy for your exchange/desired pairs first, evaluate carefully, use at your own risk.
 Feel free to use any of them as inspiration for your own strategies.
 We're happy to accept Pull Requests containing new Strategies to that repo.
 

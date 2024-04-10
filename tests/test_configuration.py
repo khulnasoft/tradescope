@@ -8,20 +8,20 @@ from unittest.mock import MagicMock
 import pytest
 from jsonschema import ValidationError
 
-from tradescope.commands import Arguments
-from tradescope.configuration import Configuration, validate_config_consistency
-from tradescope.configuration.config_secrets import sanitize_config
-from tradescope.configuration.config_validation import validate_config_schema
-from tradescope.configuration.deprecated_settings import (check_conflicting_settings,
+from freqtrade.commands import Arguments
+from freqtrade.configuration import Configuration, validate_config_consistency
+from freqtrade.configuration.config_secrets import sanitize_config
+from freqtrade.configuration.config_validation import validate_config_schema
+from freqtrade.configuration.deprecated_settings import (check_conflicting_settings,
                                                          process_deprecated_setting,
                                                          process_removed_setting,
                                                          process_temporary_deprecated_settings)
-from tradescope.configuration.environment_vars import _flat_vars_to_nested_dict
-from tradescope.configuration.load_config import (load_config_file, load_file, load_from_files,
+from freqtrade.configuration.environment_vars import _flat_vars_to_nested_dict
+from freqtrade.configuration.load_config import (load_config_file, load_file, load_from_files,
                                                  log_config_error_range)
-from tradescope.constants import DEFAULT_DB_DRYRUN_URL, DEFAULT_DB_PROD_URL, ENV_VAR_PREFIX
-from tradescope.enums import RunMode
-from tradescope.exceptions import OperationalException
+from freqtrade.constants import DEFAULT_DB_DRYRUN_URL, DEFAULT_DB_PROD_URL, ENV_VAR_PREFIX
+from freqtrade.enums import RunMode
+from freqtrade.exceptions import OperationalException
 from tests.conftest import (CURRENT_TEST_STRATEGY, log_has, log_has_re,
                             patched_configuration_load_config_file)
 
@@ -57,7 +57,7 @@ def test_load_config_incorrect_stake_amount(default_conf) -> None:
 def test_load_config_file(default_conf, mocker, caplog) -> None:
     del default_conf['user_data_dir']
     default_conf['datadir'] = str(default_conf['datadir'])
-    file_mock = mocker.patch('tradescope.configuration.load_config.Path.open', mocker.mock_open(
+    file_mock = mocker.patch('freqtrade.configuration.load_config.Path.open', mocker.mock_open(
         read_data=json.dumps(default_conf)
     ))
 
@@ -71,7 +71,7 @@ def test_load_config_file_error(default_conf, mocker, caplog) -> None:
     default_conf['datadir'] = str(default_conf['datadir'])
     filedata = json.dumps(default_conf).replace(
         '"stake_amount": 0.001,', '"stake_amount": .001,')
-    mocker.patch('tradescope.configuration.load_config.Path.open',
+    mocker.patch('freqtrade.configuration.load_config.Path.open',
                  mocker.mock_open(read_data=filedata))
     mocker.patch.object(Path, "read_text", MagicMock(return_value=filedata))
 
@@ -163,7 +163,7 @@ def test_load_config_combine_dicts(default_conf, mocker, caplog) -> None:
 
     configsmock = MagicMock(side_effect=config_files)
     mocker.patch(
-        'tradescope.configuration.load_config.load_config_file',
+        'freqtrade.configuration.load_config.load_config_file',
         configsmock
     )
 
@@ -191,10 +191,10 @@ def test_from_config(default_conf, mocker, caplog) -> None:
     conf2['exchange']['pair_whitelist'] += ['NANO/BTC']
     conf2['fiat_display_currency'] = "EUR"
     config_files = [conf1, conf2]
-    mocker.patch('tradescope.configuration.configuration.create_datadir', lambda c, x: x)
+    mocker.patch('freqtrade.configuration.configuration.create_datadir', lambda c, x: x)
 
     configsmock = MagicMock(side_effect=config_files)
-    mocker.patch('tradescope.configuration.load_config.load_config_file', configsmock)
+    mocker.patch('freqtrade.configuration.load_config.load_config_file', configsmock)
 
     validated_conf = Configuration.from_files(['test_conf.json', 'test2_conf.json'])
 
@@ -244,8 +244,8 @@ def test_print_config(default_conf, mocker, caplog) -> None:
     config_files = [conf1]
 
     configsmock = MagicMock(side_effect=config_files)
-    mocker.patch('tradescope.configuration.configuration.create_datadir', lambda c, x: x)
-    mocker.patch('tradescope.configuration.configuration.load_from_files', configsmock)
+    mocker.patch('freqtrade.configuration.configuration.create_datadir', lambda c, x: x)
+    mocker.patch('freqtrade.configuration.configuration.load_from_files', configsmock)
 
     validated_conf = Configuration.from_files(['test_conf.json'])
 
@@ -271,7 +271,7 @@ def test_load_config_max_open_trades_minus_one(default_conf, mocker, caplog) -> 
 
 def test_load_config_file_exception(mocker) -> None:
     mocker.patch(
-        'tradescope.configuration.configuration.Path.open',
+        'freqtrade.configuration.configuration.Path.open',
         MagicMock(side_effect=FileNotFoundError('File not found'))
     )
 
@@ -462,11 +462,11 @@ def test_setup_configuration_without_arguments(mocker, default_conf, caplog) -> 
 def test_setup_configuration_with_arguments(mocker, default_conf, caplog) -> None:
     patched_configuration_load_config_file(mocker, default_conf)
     mocker.patch(
-        'tradescope.configuration.configuration.create_datadir',
+        'freqtrade.configuration.configuration.create_datadir',
         lambda c, x: x
     )
     mocker.patch(
-        'tradescope.configuration.configuration.create_userdata_dir',
+        'freqtrade.configuration.configuration.create_userdata_dir',
         lambda x, *args, **kwargs: Path(x)
     )
     arglist = [
@@ -474,7 +474,7 @@ def test_setup_configuration_with_arguments(mocker, default_conf, caplog) -> Non
         '--config', 'config.json',
         '--strategy', CURRENT_TEST_STRATEGY,
         '--datadir', '/foo/bar',
-        '--userdir', "/tmp/tradescope",
+        '--userdir', "/tmp/freqtrade",
         '--timeframe', '1m',
         '--enable-position-stacking',
         '--disable-max-market-positions',
@@ -494,7 +494,7 @@ def test_setup_configuration_with_arguments(mocker, default_conf, caplog) -> Non
     assert 'pair_whitelist' in config['exchange']
     assert 'datadir' in config
     assert log_has('Using data directory: {} ...'.format("/foo/bar"), caplog)
-    assert log_has('Using user-data directory: {} ...'.format(Path("/tmp/tradescope")), caplog)
+    assert log_has('Using user-data directory: {} ...'.format(Path("/tmp/freqtrade")), caplog)
     assert 'user_data_dir' in config
 
     assert 'timeframe' in config
@@ -591,7 +591,7 @@ def test_cli_verbose_with_params(default_conf, mocker, caplog) -> None:
     patched_configuration_load_config_file(mocker, default_conf)
 
     # Prevent setting loggers
-    mocker.patch('tradescope.loggers.set_loggers', MagicMock)
+    mocker.patch('freqtrade.loggers.set_loggers', MagicMock)
     arglist = ['trade', '-vvv']
     args = Arguments(arglist).get_parsed_arg()
 
@@ -911,10 +911,10 @@ def test__validate_pricing_rules(default_conf, caplog) -> None:
         validate_config_consistency(conf)
 
 
-def test__validate_tradeai_include_timeframes(default_conf, caplog) -> None:
+def test__validate_freqai_include_timeframes(default_conf, caplog) -> None:
     conf = deepcopy(default_conf)
     conf.update({
-            "tradeai": {
+            "freqai": {
                 "enabled": True,
                 "feature_parameters": {
                     "include_timeframes": ["1m", "5m"],
@@ -931,13 +931,13 @@ def test__validate_tradeai_include_timeframes(default_conf, caplog) -> None:
     validate_config_consistency(conf)
 
     # Ensure base timeframe is in include_timeframes
-    conf['tradeai']['feature_parameters']['include_timeframes'] = ["5m", "15m"]
+    conf['freqai']['feature_parameters']['include_timeframes'] = ["5m", "15m"]
     validate_config_consistency(conf)
-    assert conf['tradeai']['feature_parameters']['include_timeframes'] == ["1m", "5m", "15m"]
+    assert conf['freqai']['feature_parameters']['include_timeframes'] == ["1m", "5m", "15m"]
 
     conf.update({'analyze_per_epoch': True})
     with pytest.raises(OperationalException,
-                       match=r"Using analyze-per-epoch .* not supported with a TradeAI strategy."):
+                       match=r"Using analyze-per-epoch .* not supported with a FreqAI strategy."):
         validate_config_consistency(conf)
 
 
@@ -1149,7 +1149,7 @@ def test_pairlist_resolving_with_config_pl_not_exists(mocker, default_conf):
 def test_pairlist_resolving_fallback(mocker, tmp_path):
     mocker.patch.object(Path, "exists", MagicMock(return_value=True))
     mocker.patch.object(Path, "open", MagicMock(return_value=MagicMock()))
-    mocker.patch("tradescope.configuration.configuration.load_file",
+    mocker.patch("freqtrade.configuration.configuration.load_file",
                  MagicMock(return_value=['XRP/BTC', 'ETH/BTC']))
     arglist = [
         'download-data',
@@ -1394,13 +1394,13 @@ def test_process_deprecated_protections(default_conf, caplog):
 def test_flat_vars_to_nested_dict(caplog):
 
     test_args = {
-        'TRADESCOPE__EXCHANGE__SOME_SETTING': 'true',
-        'TRADESCOPE__EXCHANGE__SOME_FALSE_SETTING': 'false',
-        'TRADESCOPE__EXCHANGE__CONFIG__whatever': 'sometime',
-        'TRADESCOPE__EXIT_PRICING__PRICE_SIDE': 'bid',
-        'TRADESCOPE__EXIT_PRICING__cccc': '500',
-        'TRADESCOPE__STAKE_AMOUNT': '200.05',
-        'TRADESCOPE__TELEGRAM__CHAT_ID': '2151',
+        'FREQTRADE__EXCHANGE__SOME_SETTING': 'true',
+        'FREQTRADE__EXCHANGE__SOME_FALSE_SETTING': 'false',
+        'FREQTRADE__EXCHANGE__CONFIG__whatever': 'sometime',
+        'FREQTRADE__EXIT_PRICING__PRICE_SIDE': 'bid',
+        'FREQTRADE__EXIT_PRICING__cccc': '500',
+        'FREQTRADE__STAKE_AMOUNT': '200.05',
+        'FREQTRADE__TELEGRAM__CHAT_ID': '2151',
         'NOT_RELEVANT': '200.0',  # Will be ignored
     }
     expected = {
@@ -1423,18 +1423,18 @@ def test_flat_vars_to_nested_dict(caplog):
     res = _flat_vars_to_nested_dict(test_args, ENV_VAR_PREFIX)
     assert res == expected
 
-    assert log_has("Loading variable 'TRADESCOPE__EXCHANGE__SOME_SETTING'", caplog)
+    assert log_has("Loading variable 'FREQTRADE__EXCHANGE__SOME_SETTING'", caplog)
     assert not log_has("Loading variable 'NOT_RELEVANT'", caplog)
 
 
-def test_setup_hyperopt_tradeai(mocker, default_conf) -> None:
+def test_setup_hyperopt_freqai(mocker, default_conf) -> None:
     patched_configuration_load_config_file(mocker, default_conf)
     mocker.patch(
-        'tradescope.configuration.configuration.create_datadir',
+        'freqtrade.configuration.configuration.create_datadir',
         lambda c, x: x
     )
     mocker.patch(
-        'tradescope.configuration.configuration.create_userdata_dir',
+        'freqtrade.configuration.configuration.create_userdata_dir',
         lambda x, *args, **kwargs: Path(x)
     )
     arglist = [
@@ -1442,7 +1442,7 @@ def test_setup_hyperopt_tradeai(mocker, default_conf) -> None:
         '--config', 'config.json',
         '--strategy', CURRENT_TEST_STRATEGY,
         '--timerange', '20220801-20220805',
-        "--tradeaimodel",
+        "--freqaimodel",
         "LightGBMRegressorMultiTarget",
         "--analyze-per-epoch"
     ]
@@ -1451,7 +1451,7 @@ def test_setup_hyperopt_tradeai(mocker, default_conf) -> None:
 
     configuration = Configuration(args)
     config = configuration.get_config()
-    config['tradeai'] = {
+    config['freqai'] = {
         "enabled": True
     }
     with pytest.raises(
@@ -1460,14 +1460,14 @@ def test_setup_hyperopt_tradeai(mocker, default_conf) -> None:
         validate_config_consistency(config)
 
 
-def test_setup_tradeai_backtesting(mocker, default_conf) -> None:
+def test_setup_freqai_backtesting(mocker, default_conf) -> None:
     patched_configuration_load_config_file(mocker, default_conf)
     mocker.patch(
-        'tradescope.configuration.configuration.create_datadir',
+        'freqtrade.configuration.configuration.create_datadir',
         lambda c, x: x
     )
     mocker.patch(
-        'tradescope.configuration.configuration.create_userdata_dir',
+        'freqtrade.configuration.configuration.create_userdata_dir',
         lambda x, *args, **kwargs: Path(x)
     )
     arglist = [
@@ -1475,9 +1475,9 @@ def test_setup_tradeai_backtesting(mocker, default_conf) -> None:
         '--config', 'config.json',
         '--strategy', CURRENT_TEST_STRATEGY,
         '--timerange', '20220801-20220805',
-        "--tradeaimodel",
+        "--freqaimodel",
         "LightGBMRegressorMultiTarget",
-        "--tradeai-backtest-live-models"
+        "--freqai-backtest-live-models"
     ]
 
     args = Arguments(arglist).get_parsed_arg()
@@ -1487,12 +1487,12 @@ def test_setup_tradeai_backtesting(mocker, default_conf) -> None:
     config['runmode'] = RunMode.BACKTEST
 
     with pytest.raises(
-        OperationalException, match=r".*--tradeai-backtest-live-models parameter is only.*"
+        OperationalException, match=r".*--freqai-backtest-live-models parameter is only.*"
     ):
         validate_config_consistency(config)
 
     conf = deepcopy(config)
-    conf['tradeai'] = {
+    conf['freqai'] = {
         "enabled": True
     }
     with pytest.raises(
@@ -1501,10 +1501,10 @@ def test_setup_tradeai_backtesting(mocker, default_conf) -> None:
         validate_config_consistency(conf)
 
     conf['timerange'] = None
-    conf['tradeai_backtest_live_models'] = False
+    conf['freqai_backtest_live_models'] = False
 
     with pytest.raises(
-        OperationalException, match=r".* pass --timerange if you intend to use TradeAI .*"
+        OperationalException, match=r".* pass --timerange if you intend to use FreqAI .*"
     ):
         validate_config_consistency(conf)
 

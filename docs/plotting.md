@@ -12,7 +12,7 @@ pip install -U -r requirements-plot.txt
 
 ## Plot price and indicators
 
-The `tradescope plot-dataframe` subcommand shows an interactive graph with three subplots:
+The `freqtrade plot-dataframe` subcommand shows an interactive graph with three subplots:
 
 * Main plot with candlesticks and indicators following price (sma/ema)
 * Volume bars
@@ -23,7 +23,7 @@ The `tradescope plot-dataframe` subcommand shows an interactive graph with three
 Possible arguments:
 
 ```
-usage: tradescope plot-dataframe [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade plot-dataframe [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                                 [-d PATH] [--userdir PATH] [-s NAME]
                                 [--strategy-path PATH] [-p PAIRS [PAIRS ...]]
                                 [--indicators1 INDICATORS1 [INDICATORS1 ...]]
@@ -96,19 +96,19 @@ Strategy arguments:
 Example:
 
 ``` bash
-tradescope plot-dataframe -p BTC/ETH --strategy AwesomeStrategy
+freqtrade plot-dataframe -p BTC/ETH --strategy AwesomeStrategy
 ```
 
 The `-p/--pairs` argument can be used to specify pairs you would like to plot.
 
 !!! Note
-    The `tradescope plot-dataframe` subcommand generates one plot-file per pair.
+    The `freqtrade plot-dataframe` subcommand generates one plot-file per pair.
 
 Specify custom indicators.
 Use `--indicators1` for the main plot and `--indicators2` for the subplot below (if values are in a different range than prices).
 
 ``` bash
-tradescope plot-dataframe --strategy AwesomeStrategy -p BTC/ETH --indicators1 sma ema --indicators2 macd
+freqtrade plot-dataframe --strategy AwesomeStrategy -p BTC/ETH --indicators1 sma ema --indicators2 macd
 ```
 
 ### Further usage examples
@@ -116,25 +116,25 @@ tradescope plot-dataframe --strategy AwesomeStrategy -p BTC/ETH --indicators1 sm
 To plot multiple pairs, separate them with a space:
 
 ``` bash
-tradescope plot-dataframe --strategy AwesomeStrategy -p BTC/ETH XRP/ETH
+freqtrade plot-dataframe --strategy AwesomeStrategy -p BTC/ETH XRP/ETH
 ```
 
 To plot a timerange (to zoom in)
 
 ``` bash
-tradescope plot-dataframe --strategy AwesomeStrategy -p BTC/ETH --timerange=20180801-20180805
+freqtrade plot-dataframe --strategy AwesomeStrategy -p BTC/ETH --timerange=20180801-20180805
 ```
 
 To plot trades stored in a database use `--db-url` in combination with `--trade-source DB`:
 
 ``` bash
-tradescope plot-dataframe --strategy AwesomeStrategy --db-url sqlite:///tradesv3.dry_run.sqlite -p BTC/ETH --trade-source DB
+freqtrade plot-dataframe --strategy AwesomeStrategy --db-url sqlite:///tradesv3.dry_run.sqlite -p BTC/ETH --trade-source DB
 ```
 
 To plot trades from a backtesting result, use `--export-filename <filename>`
 
 ``` bash
-tradescope plot-dataframe --strategy AwesomeStrategy --export-filename user_data/backtest_results/backtest-result.json -p BTC/ETH
+freqtrade plot-dataframe --strategy AwesomeStrategy --export-filename user_data/backtest_results/backtest-result.json -p BTC/ETH
 ```
 
 ### Plot dataframe basics
@@ -296,10 +296,10 @@ The third graph can be useful to spot outliers, events in pairs that cause profi
 
 The forth graph can help you analyze trade parallelism, showing how often max_open_trades have been maxed out.
 
-Possible options for the `tradescope plot-profit` subcommand:
+Possible options for the `freqtrade plot-profit` subcommand:
 
 ```
-usage: tradescope plot-profit [-h] [-v] [--logfile FILE] [-V] [-c PATH]
+usage: freqtrade plot-profit [-h] [-v] [--logfile FILE] [-V] [-c PATH]
                              [-d PATH] [--userdir PATH] [-s NAME]
                              [--strategy-path PATH] [-p PAIRS [PAIRS ...]]
                              [--timerange TIMERANGE] [--export EXPORT]
@@ -362,15 +362,15 @@ Examples:
 Use custom backtest-export file
 
 ``` bash
-tradescope plot-profit  -p LTC/BTC --export-filename user_data/backtest_results/backtest-result.json
+freqtrade plot-profit  -p LTC/BTC --export-filename user_data/backtest_results/backtest-result.json
 ```
 
 Use custom database
 
 ``` bash
-tradescope plot-profit  -p LTC/BTC --db-url sqlite:///tradesv3.sqlite --trade-source DB
+freqtrade plot-profit  -p LTC/BTC --db-url sqlite:///tradesv3.sqlite --trade-source DB
 ```
 
 ``` bash
-tradescope --datadir user_data/data/binance_save/ plot-profit -p LTC/BTC
+freqtrade --datadir user_data/data/binance_save/ plot-profit -p LTC/BTC
 ```

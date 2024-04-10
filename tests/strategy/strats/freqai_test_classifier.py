@@ -6,15 +6,15 @@ import numpy as np
 import talib.abstract as ta
 from pandas import DataFrame
 
-from tradescope.strategy import DecimalParameter, IntParameter, IStrategy
+from freqtrade.strategy import DecimalParameter, IntParameter, IStrategy
 
 
 logger = logging.getLogger(__name__)
 
 
-class tradeai_test_classifier(IStrategy):
+class freqai_test_classifier(IStrategy):
     """
-    Test strategy - used for testing tradeAI functionalities.
+    Test strategy - used for testing freqAI functionalities.
     DO not use in production.
     """
 
@@ -46,9 +46,9 @@ class tradeai_test_classifier(IStrategy):
 
     def informative_pairs(self):
         whitelist_pairs = self.dp.current_whitelist()
-        corr_pairs = self.config["tradeai"]["feature_parameters"]["include_corr_pairlist"]
+        corr_pairs = self.config["freqai"]["feature_parameters"]["include_corr_pairlist"]
         informative_pairs = []
-        for tf in self.config["tradeai"]["feature_parameters"]["include_timeframes"]:
+        for tf in self.config["freqai"]["feature_parameters"]["include_timeframes"]:
             for pair in whitelist_pairs:
                 informative_pairs.append((pair, tf))
             for pair in corr_pairs:
@@ -81,8 +81,8 @@ class tradeai_test_classifier(IStrategy):
 
         return dataframe
 
-    def set_tradeai_targets(self, dataframe: DataFrame, metadata: Dict, **kwargs):
-        self.tradeai.class_names = ["down", "up"]
+    def set_freqai_targets(self, dataframe: DataFrame, metadata: Dict, **kwargs):
+        self.freqai.class_names = ["down", "up"]
         dataframe['&s-up_or_down'] = np.where(dataframe["close"].shift(-100) >
                                               dataframe["close"], 'up', 'down')
 
@@ -90,9 +90,9 @@ class tradeai_test_classifier(IStrategy):
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
-        self.tradeai_info = self.config["tradeai"]
+        self.freqai_info = self.config["freqai"]
 
-        dataframe = self.tradeai.start(dataframe, metadata, self)
+        dataframe = self.freqai.start(dataframe, metadata, self)
 
         return dataframe
 

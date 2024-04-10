@@ -4,9 +4,9 @@ from typing import Tuple
 
 import pytest
 
-from tradescope.constants import Config
-from tradescope.exchange.exchange import Exchange
-from tradescope.resolvers.exchange_resolver import ExchangeResolver
+from freqtrade.constants import Config
+from freqtrade.exchange.exchange import Exchange
+from freqtrade.resolvers.exchange_resolver import ExchangeResolver
 from tests.conftest import EXMS, get_default_conf_usdt
 
 
@@ -319,11 +319,11 @@ def get_futures_exchange(exchange_name, exchange_conf, class_mocker):
         exchange_conf['margin_mode'] = 'isolated'
 
         class_mocker.patch(
-            'tradescope.exchange.binance.Binance.fill_leverage_tiers')
+            'freqtrade.exchange.binance.Binance.fill_leverage_tiers')
         class_mocker.patch(f'{EXMS}.fetch_trading_fees')
-        class_mocker.patch('tradescope.exchange.okx.Okx.additional_exchange_init')
-        class_mocker.patch('tradescope.exchange.binance.Binance.additional_exchange_init')
-        class_mocker.patch('tradescope.exchange.bybit.Bybit.additional_exchange_init')
+        class_mocker.patch('freqtrade.exchange.okx.Okx.additional_exchange_init')
+        class_mocker.patch('freqtrade.exchange.binance.Binance.additional_exchange_init')
+        class_mocker.patch('freqtrade.exchange.bybit.Bybit.additional_exchange_init')
         class_mocker.patch(f'{EXMS}.load_cached_leverage_tiers', return_value=None)
         class_mocker.patch(f'{EXMS}.cache_leverage_tiers')
 
@@ -332,7 +332,7 @@ def get_futures_exchange(exchange_name, exchange_conf, class_mocker):
 
 @pytest.fixture(params=EXCHANGES, scope="class")
 def exchange(request, exchange_conf, class_mocker):
-    class_mocker.patch('tradescope.exchange.bybit.Bybit.additional_exchange_init')
+    class_mocker.patch('freqtrade.exchange.bybit.Bybit.additional_exchange_init')
     yield from get_exchange(request.param, exchange_conf)
 
 

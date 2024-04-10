@@ -7,14 +7,14 @@ import joblib
 import pandas as pd
 import pytest
 
-from tradescope.configuration import TimeRange
-from tradescope.constants import BACKTEST_BREAKDOWNS, DATETIME_PRINT_FORMAT, LAST_BT_RESULT_FN
-from tradescope.data import history
-from tradescope.data.btanalysis import (get_latest_backtest_filename, load_backtest_data,
+from freqtrade.configuration import TimeRange
+from freqtrade.constants import BACKTEST_BREAKDOWNS, DATETIME_PRINT_FORMAT, LAST_BT_RESULT_FN
+from freqtrade.data import history
+from freqtrade.data.btanalysis import (get_latest_backtest_filename, load_backtest_data,
                                        load_backtest_stats)
-from tradescope.edge import PairInfo
-from tradescope.enums import ExitType
-from tradescope.optimize.optimize_reports import (generate_backtest_stats, generate_daily_stats,
+from freqtrade.edge import PairInfo
+from freqtrade.enums import ExitType
+from freqtrade.optimize.optimize_reports import (generate_backtest_stats, generate_daily_stats,
                                                  generate_edge_table, generate_pair_metrics,
                                                  generate_periodic_breakdown_stats,
                                                  generate_strategy_comparison,
@@ -22,12 +22,12 @@ from tradescope.optimize.optimize_reports import (generate_backtest_stats, gener
                                                  store_backtest_analysis_results,
                                                  store_backtest_stats, text_table_bt_results,
                                                  text_table_strategy)
-from tradescope.optimize.optimize_reports.bt_output import text_table_tags
-from tradescope.optimize.optimize_reports.optimize_reports import (_get_resample_from_period,
+from freqtrade.optimize.optimize_reports.bt_output import text_table_tags
+from freqtrade.optimize.optimize_reports.optimize_reports import (_get_resample_from_period,
                                                                   calc_streak, generate_tag_metrics)
-from tradescope.resolvers.strategy_resolver import StrategyResolver
-from tradescope.util import dt_ts
-from tradescope.util.datetime_helpers import dt_from_ts, dt_utc
+from freqtrade.resolvers.strategy_resolver import StrategyResolver
+from freqtrade.util import dt_ts
+from freqtrade.util.datetime_helpers import dt_from_ts, dt_utc
 from tests.conftest import CURRENT_TEST_STRATEGY
 from tests.data.test_history import _clean_test_file
 
@@ -211,7 +211,7 @@ def test_generate_backtest_stats(default_conf, testdatadir, tmp_path):
 
 def test_store_backtest_stats(testdatadir, mocker):
 
-    dump_mock = mocker.patch('tradescope.optimize.optimize_reports.bt_storage.file_dump_json')
+    dump_mock = mocker.patch('freqtrade.optimize.optimize_reports.bt_storage.file_dump_json')
 
     data = {'metadata': {}, 'strategy': {}, 'strategy_comparison': []}
     store_backtest_stats(testdatadir, data, '2022_01_01_15_05_13')
@@ -232,7 +232,7 @@ def test_store_backtest_stats(testdatadir, mocker):
 def test_store_backtest_candles(testdatadir, mocker):
 
     dump_mock = mocker.patch(
-        'tradescope.optimize.optimize_reports.bt_storage.file_dump_joblib')
+        'freqtrade.optimize.optimize_reports.bt_storage.file_dump_joblib')
 
     candle_dict = {'DefStrat': {'UNITTEST/BTC': pd.DataFrame()}}
 
