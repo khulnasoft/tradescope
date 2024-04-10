@@ -294,7 +294,7 @@ def test_advise_all_indicators(default_conf, testdatadir) -> None:
 
 def test_tradeai_not_initialized(default_conf) -> None:
     strategy = StrategyResolver.load_strategy(default_conf)
-    strategy.ft_bot_start()
+    strategy.ts_bot_start()
     with pytest.raises(OperationalException, match=r'tradeAI is not enabled\.'):
         strategy.tradeai.start()
 
@@ -441,7 +441,7 @@ def test_min_roi_reached3(default_conf, fee) -> None:
         (0.05, 0.9, ExitType.NONE, None, False, True, 0.09, 0.9, ExitType.NONE,
          lambda **kwargs: None),
     ])
-def test_ft_stoploss_reached(default_conf, fee, profit, adjusted, expected, liq, trailing, custom,
+def test_ts_stoploss_reached(default_conf, fee, profit, adjusted, expected, liq, trailing, custom,
                              profit2, adjusted2, expected2, custom_stop) -> None:
 
     strategy = StrategyResolver.load_strategy(default_conf)
@@ -466,7 +466,7 @@ def test_ft_stoploss_reached(default_conf, fee, profit, adjusted, expected, liq,
 
     now = dt_now()
     current_rate = trade.open_rate * (1 + profit)
-    sl_flag = strategy.ft_stoploss_reached(current_rate=current_rate, trade=trade,
+    sl_flag = strategy.ts_stoploss_reached(current_rate=current_rate, trade=trade,
                                            current_time=now, current_profit=profit,
                                            force_stoploss=0, high=None)
     assert isinstance(sl_flag, ExitCheckTuple)
@@ -478,7 +478,7 @@ def test_ft_stoploss_reached(default_conf, fee, profit, adjusted, expected, liq,
     assert round(trade.stop_loss, 2) == adjusted
     current_rate2 = trade.open_rate * (1 + profit2)
 
-    sl_flag = strategy.ft_stoploss_reached(current_rate=current_rate2, trade=trade,
+    sl_flag = strategy.ts_stoploss_reached(current_rate=current_rate2, trade=trade,
                                            current_time=now, current_profit=profit2,
                                            force_stoploss=0, high=None)
     assert sl_flag.exit_type == expected2
@@ -570,7 +570,7 @@ def test_should_sell(default_conf, fee) -> None:
     assert res == [ExitCheckTuple(exit_type=ExitType.ROI)]
 
     strategy.min_roi_reached = MagicMock(return_value=True)
-    strategy.ft_stoploss_reached = MagicMock(
+    strategy.ts_stoploss_reached = MagicMock(
         return_value=ExitCheckTuple(exit_type=ExitType.STOP_LOSS))
 
     res = strategy.should_exit(trade, 1, now,
@@ -594,7 +594,7 @@ def test_should_sell(default_conf, fee) -> None:
         ExitCheckTuple(exit_type=ExitType.ROI),
         ]
 
-    strategy.ft_stoploss_reached = MagicMock(
+    strategy.ts_stoploss_reached = MagicMock(
             return_value=ExitCheckTuple(exit_type=ExitType.TRAILING_STOP_LOSS))
     # Regular exit signal
     res = strategy.should_exit(trade, 1, now,
@@ -939,7 +939,7 @@ def test_auto_hyperopt_interface(default_conf):
     default_conf.update({'strategy': 'HyperoptableStrategyV2'})
     PairLocks.timeframe = default_conf['timeframe']
     strategy = StrategyResolver.load_strategy(default_conf)
-    strategy.ft_bot_start()
+    strategy.ts_bot_start()
     with pytest.raises(OperationalException):
         next(strategy.enumerate_parameters('deadBeef'))
 

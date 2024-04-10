@@ -29,10 +29,10 @@ class _CustomData(ModelBase):
 
     # Uniqueness should be ensured over pair, order_id
     # its likely that order_id is unique per Pair on some exchanges.
-    __table_args__ = (UniqueConstraint('ft_trade_id', 'cd_key', name="_trade_id_cd_key"),)
+    __table_args__ = (UniqueConstraint('ts_trade_id', 'cd_key', name="_trade_id_cd_key"),)
 
     id = mapped_column(Integer, primary_key=True)
-    ft_trade_id = mapped_column(Integer, ForeignKey('trades.id'), index=True)
+    ts_trade_id = mapped_column(Integer, ForeignKey('trades.id'), index=True)
 
     trade = relationship("Trade", back_populates="custom_data")
 
@@ -51,7 +51,7 @@ class _CustomData(ModelBase):
         update_time = (self.updated_at.strftime(DATETIME_PRINT_FORMAT)
                        if self.updated_at is not None else None)
         return (f'CustomData(id={self.id}, key={self.cd_key}, type={self.cd_type}, ' +
-                f'value={self.cd_value}, trade_id={self.ft_trade_id}, created={create_time}, ' +
+                f'value={self.cd_value}, trade_id={self.ts_trade_id}, created={create_time}, ' +
                 f'updated={update_time})')
 
     @classmethod
@@ -64,7 +64,7 @@ class _CustomData(ModelBase):
         """
         filters = []
         if trade_id is not None:
-            filters.append(_CustomData.ft_trade_id == trade_id)
+            filters.append(_CustomData.ts_trade_id == trade_id)
         if key is not None:
             filters.append(_CustomData.cd_key.ilike(key))
 
@@ -106,7 +106,7 @@ class CustomDataWrapper:
 
     @staticmethod
     def delete_custom_data(trade_id: int) -> None:
-        _CustomData.session.query(_CustomData).filter(_CustomData.ft_trade_id == trade_id).delete()
+        _CustomData.session.query(_CustomData).filter(_CustomData.ts_trade_id == trade_id).delete()
         _CustomData.session.commit()
 
     @staticmethod
@@ -114,7 +114,7 @@ class CustomDataWrapper:
 
         if CustomDataWrapper.use_db:
             filters = [
-                _CustomData.ft_trade_id == trade_id,
+                _CustomData.ts_trade_id == trade_id,
             ]
             if key is not None:
                 filters.append(_CustomData.cd_key.ilike(key))
@@ -124,7 +124,7 @@ class CustomDataWrapper:
         else:
             filtered_custom_data = [
                 data_entry for data_entry in CustomDataWrapper.custom_data
-                if (data_entry.ft_trade_id == trade_id)
+                if (data_entry.ts_trade_id == trade_id)
             ]
             if key is not None:
                 filtered_custom_data = [
@@ -157,7 +157,7 @@ class CustomDataWrapper:
             data_entry.updated_at = dt_now()
         else:
             data_entry = _CustomData(
-                ft_trade_id=trade_id,
+                ts_trade_id=trade_id,
                 cd_key=key,
                 cd_type=value_type,
                 cd_value=value_db,

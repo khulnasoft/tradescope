@@ -78,11 +78,11 @@ class ITradeaiModel(ABC):
         self.current_candle: datetime = datetime.fromtimestamp(637887600, tz=timezone.utc)
         self.dd.current_candle = self.current_candle
         self.scanning = False
-        self.ft_params = self.tradeai_info["feature_parameters"]
-        self.corr_pairlist: List[str] = self.ft_params.get("include_corr_pairlist", [])
+        self.ts_params = self.tradeai_info["feature_parameters"]
+        self.corr_pairlist: List[str] = self.ts_params.get("include_corr_pairlist", [])
         self.keras: bool = self.tradeai_info.get("keras", False)
-        if self.keras and self.ft_params.get("DI_threshold", 0):
-            self.ft_params["DI_threshold"] = 0
+        if self.keras and self.ts_params.get("DI_threshold", 0):
+            self.ts_params["DI_threshold"] = 0
             logger.warning("DI threshold is not configured for Keras models yet. Deactivating.")
 
         self.CONV_WIDTH = self.tradeai_info.get('conv_width', 1)
@@ -97,7 +97,7 @@ class ITradeaiModel(ABC):
         self.begin_time_train: float = 0
         self.base_tf_seconds = timeframe_to_seconds(self.config['timeframe'])
         self.continual_learning = self.tradeai_info.get('continual_learning', False)
-        self.plot_features = self.ft_params.get("plot_feature_importances", 0)
+        self.plot_features = self.ts_params.get("plot_feature_importances", 0)
         self.corr_dataframes: Dict[str, DataFrame] = {}
         # get_corr_dataframes is controlling the caching of corr_dataframes
         # for improved performance. Careful with this boolean.
@@ -109,8 +109,8 @@ class ITradeaiModel(ABC):
         self.max_system_threads = max(int(psutil.cpu_count() * 2 - 2), 1)
         self.can_short = True  # overridden in start() with strategy.can_short
         self.model: Any = None
-        if self.ft_params.get('principal_component_analysis', False) and self.continual_learning:
-            self.ft_params.update({'principal_component_analysis': False})
+        if self.ts_params.get('principal_component_analysis', False) and self.continual_learning:
+            self.ts_params.update({'principal_component_analysis': False})
             logger.warning('User tried to use PCA with continual learning. Deactivating PCA.')
         self.activate_tensorboard: bool = self.tradeai_info.get('activate_tensorboard', True)
 
@@ -510,27 +510,27 @@ class ITradeaiModel(ABC):
             )
 
     def define_data_pipeline(self, threads=-1) -> Pipeline:
-        ft_params = self.tradeai_info["feature_parameters"]
+        ts_params = self.tradeai_info["feature_parameters"]
         pipe_steps = [
             ('const', ds.VarianceThreshold(threshold=0)),
             ('scaler', SKLearnWrapper(MinMaxScaler(feature_range=(-1, 1))))
             ]
 
-        if ft_params.get("principal_component_analysis", False):
+        if ts_params.get("principal_component_analysis", False):
             pipe_steps.append(('pca', ds.PCA(n_components=0.999)))
             pipe_steps.append(('post-pca-scaler',
                                SKLearnWrapper(MinMaxScaler(feature_range=(-1, 1)))))
 
-        if ft_params.get("use_SVM_to_remove_outliers", False):
-            svm_params = ft_params.get(
+        if ts_params.get("use_SVM_to_remove_outliers", False):
+            svm_params = ts_params.get(
                 "svm_params", {"shuffle": False, "nu": 0.01})
             pipe_steps.append(('svm', ds.SVMOutlierExtractor(**svm_params)))
 
-        di = ft_params.get("DI_threshold", 0)
+        di = ts_params.get("DI_threshold", 0)
         if di:
             pipe_steps.append(('di', ds.DissimilarityIndex(di_threshold=di, n_jobs=threads)))
 
-        if ft_params.get("use_DBSCAN_to_remove_outliers", False):
+        if ts_params.get("use_DBSCAN_to_remove_outliers", False):
             pipe_steps.append(('dbscan', ds.DBSCAN(n_jobs=threads)))
 
         sigma = self.tradeai_info["feature_parameters"].get('noise_standard_deviation', 0)

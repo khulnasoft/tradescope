@@ -1,21 +1,21 @@
 import pytest
 
-from tradescope.persistence import FtNoDBContext, PairLocks, Trade
+from tradescope.persistence import PairLocks, Trade, TsNoDBContext
 
 
 @pytest.mark.parametrize('timeframe', ['', '5m', '1d'])
-def test_FtNoDBContext(timeframe):
+def test_TsNoDBContext(timeframe):
     PairLocks.timeframe = ''
     assert Trade.use_db is True
     assert PairLocks.use_db is True
     assert PairLocks.timeframe == ''
 
-    with FtNoDBContext(timeframe):
+    with TsNoDBContext(timeframe):
         assert Trade.use_db is False
         assert PairLocks.use_db is False
         assert PairLocks.timeframe == timeframe
 
-    with FtNoDBContext():
+    with TsNoDBContext():
         assert Trade.use_db is False
         assert PairLocks.use_db is False
         assert PairLocks.timeframe == ''

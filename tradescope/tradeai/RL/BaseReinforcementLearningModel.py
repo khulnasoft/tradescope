@@ -77,14 +77,14 @@ class BaseReinforcementLearningModel(ITradeaiModel):
         If user has activated any function that may remove training points, this
         function will set them to false and warn them
         """
-        if self.ft_params.get('use_SVM_to_remove_outliers', False):
-            self.ft_params.update({'use_SVM_to_remove_outliers': False})
+        if self.ts_params.get('use_SVM_to_remove_outliers', False):
+            self.ts_params.update({'use_SVM_to_remove_outliers': False})
             logger.warning('User tried to use SVM with RL. Deactivating SVM.')
-        if self.ft_params.get('use_DBSCAN_to_remove_outliers', False):
-            self.ft_params.update({'use_DBSCAN_to_remove_outliers': False})
+        if self.ts_params.get('use_DBSCAN_to_remove_outliers', False):
+            self.ts_params.update({'use_DBSCAN_to_remove_outliers': False})
             logger.warning('User tried to use DBSCAN with RL. Deactivating DBSCAN.')
-        if self.ft_params.get('DI_threshold', False):
-            self.ft_params.update({'DI_threshold': False})
+        if self.ts_params.get('DI_threshold', False):
+            self.ts_params.update({'DI_threshold': False})
             logger.warning('User tried to use DI_threshold with RL. Deactivating DI_threshold.')
         if self.tradeai_info['data_split_parameters'].get('shuffle', False):
             self.tradeai_info['data_split_parameters'].update({'shuffle': False})

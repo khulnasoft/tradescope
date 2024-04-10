@@ -7,7 +7,7 @@ from fastapi.exceptions import HTTPException
 from tradescope.constants import Config
 from tradescope.enums import CandleType
 from tradescope.exceptions import OperationalException
-from tradescope.persistence import FtNoDBContext
+from tradescope.persistence import TsNoDBContext
 from tradescope.rpc.api_server.api_schemas import (BackgroundTaskStatus, BgJobStarted,
                                                    ExchangeModePayloadMixin, PairListsPayload,
                                                    PairListsResponse, WhitelistEvaluateResponse)
@@ -58,7 +58,7 @@ def __run_pairlist(job_id: str, config_loc: Config):
 
         ApiBG.jobs[job_id]['is_running'] = True
         from tradescope.plugins.pairlistmanager import PairListManager
-        with FtNoDBContext():
+        with TsNoDBContext():
             exchange = get_exchange(config_loc)
             pairlists = PairListManager(exchange, config_loc)
             pairlists.refresh_pairlist()

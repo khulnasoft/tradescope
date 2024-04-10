@@ -255,13 +255,13 @@ class OrderSchema(BaseModel):
     safe_price: float
     cost: float
     filled: Optional[float] = None
-    ft_order_side: str
+    ts_order_side: str
     order_type: str
     is_open: bool
     order_timestamp: Optional[int] = None
     order_filled_timestamp: Optional[int] = None
-    ft_fee_base: Optional[float] = None
-    ft_order_tag: Optional[str] = None
+    ts_fee_base: Optional[float] = None
+    ts_order_tag: Optional[str] = None
 
 
 class TradeSchema(BaseModel):

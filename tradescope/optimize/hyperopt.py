@@ -21,7 +21,7 @@ from pandas import DataFrame
 from rich.progress import (BarColumn, MofNCompleteColumn, Progress, TaskProgressColumn, TextColumn,
                            TimeElapsedColumn, TimeRemainingColumn)
 
-from tradescope.constants import (DATETIME_PRINT_FORMAT, FTHYPT_FILEVERSION, LAST_BT_RESULT_FN,
+from tradescope.constants import (DATETIME_PRINT_FORMAT, LAST_BT_RESULT_FN, TSHYPT_FILEVERSION,
                                   Config)
 from tradescope.data.converter import trim_dataframes
 from tradescope.data.history import get_timerange
@@ -103,7 +103,7 @@ class Hyperopt:
         time_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         strategy = str(self.config['strategy'])
         self.results_file: Path = (self.config['user_data_dir'] / 'hyperopt_results' /
-                                   f'strategy_{strategy}_{time_now}.fthypt')
+                                   f'strategy_{strategy}_{time_now}.tshypt')
         self.data_pickle_file = (self.config['user_data_dir'] /
                                  'hyperopt_results' / 'hyperopt_tickerdata.pkl')
         self.total_epochs = config.get('epochs', 0)
@@ -175,7 +175,7 @@ class Hyperopt:
         While not a valid json object - this allows appending easily.
         :param epoch: result dictionary for this epoch.
         """
-        epoch[FTHYPT_FILEVERSION] = 2
+        epoch[TSHYPT_FILEVERSION] = 2
         with self.results_file.open('a') as f:
             rapidjson.dump(epoch, f, default=hyperopt_serializer,
                            number_mode=rapidjson.NM_NATIVE | rapidjson.NM_NAN)

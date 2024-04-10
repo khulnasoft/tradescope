@@ -350,7 +350,7 @@ def generate_strategy_stats(pairlist: List[str],
                                              results=results, skip_nan=False)
     exit_reason_stats = generate_tag_metrics('exit_reason', starting_balance=start_balance,
                                              results=results, skip_nan=False)
-    left_open_results = generate_pair_metrics(
+    lets_open_results = generate_pair_metrics(
         pairlist, stake_currency=stake_currency, starting_balance=start_balance,
         results=results.loc[results['exit_reason'] == 'force_exit'], skip_nan=True)
 
@@ -379,7 +379,7 @@ def generate_strategy_stats(pairlist: List[str],
         'results_per_pair': pair_results,
         'results_per_enter_tag': enter_tag_results,
         'exit_reason_summary': exit_reason_stats,
-        'left_open_trades': left_open_results,
+        'lets_open_trades': lets_open_results,
 
         'total_trades': len(results),
         'trade_count_long': len(results.loc[~results['is_short']]),

@@ -41,7 +41,7 @@ def _migrate_binance_futures_db(config: Config):
         trade.pair = new_pair
 
         for order in trade.orders:
-            order.ft_pair = new_pair
+            order.ts_pair = new_pair
             # Should symbol be migrated too?
             # order.symbol = new_pair
     Trade.commit()

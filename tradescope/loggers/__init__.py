@@ -4,16 +4,16 @@ from logging.handlers import RotatingFileHandler, SysLogHandler
 
 from tradescope.constants import Config
 from tradescope.exceptions import OperationalException
-from tradescope.loggers.buffering_handler import FTBufferingHandler
+from tradescope.loggers.buffering_handler import TSBufferingHandler
 from tradescope.loggers.set_log_levels import set_loggers
-from tradescope.loggers.std_err_stream_handler import FTStdErrStreamHandler
+from tradescope.loggers.std_err_stream_handler import TSStdErrStreamHandler
 
 
 logger = logging.getLogger(__name__)
 LOGFORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
 # Initialize bufferhandler - will be used for /log endpoints
-bufferHandler = FTBufferingHandler(1000)
+bufferHandler = TSBufferingHandler(1000)
 bufferHandler.setFormatter(Formatter(LOGFORMAT))
 
 
@@ -35,7 +35,7 @@ def setup_logging_pre() -> None:
     logging.basicConfig(
         level=logging.INFO,
         format=LOGFORMAT,
-        handlers=[FTStdErrStreamHandler(), bufferHandler]
+        handlers=[TSStdErrStreamHandler(), bufferHandler]
     )
 
 

@@ -32,7 +32,7 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/khulnasoft/tradescope"
-Documentation = "https://freqtrade.io"
+Documentation = "https://tscope-ui.vercel.app"
 "Bug Tracker" = "https://github.com/khulnasoft/tradescope/issues"
 
 

@@ -60,9 +60,9 @@ class Exchange:
     _ccxt_params: Dict = {}
 
     # Dict to specify which options each exchange implements
-    # This defines defaults, which can be selectively overridden by subclasses using _ft_has
+    # This defines defaults, which can be selectively overridden by subclasses using _ts_has
     # or by specifying them in the configuration.
-    _ft_has_default: Dict = {
+    _ts_has_default: Dict = {
         "stoploss_on_exchange": False,
         "stop_price_param": "stopLossPrice",  # Used for stoploss_on_exchange request
         "stop_price_prop": "stopLossPrice",  # Used for stoploss_on_exchange response parsing
@@ -92,8 +92,8 @@ class Exchange:
         "exchange_has_overrides": {},  # Dictionary overriding ccxt's "has".
         # Expected to be in the format {"fetchOHLCV": True} or {"fetchOHLCV": False}
     }
-    _ft_has: Dict = {}
-    _ft_has_futures: Dict = {}
+    _ts_has: Dict = {}
+    _ts_has_futures: Dict = {}
 
     _supported_trading_mode_margin_pairs: List[Tuple[TradingMode, MarginMode]] = [
         # TradingMode.SPOT always supported and not required in this list
@@ -157,20 +157,20 @@ class Exchange:
         )
         self.liquidation_buffer = config.get('liquidation_buffer', 0.05)
 
-        # Deep merge ft_has with default ft_has options
-        self._ft_has = deep_merge_dicts(self._ft_has, deepcopy(self._ft_has_default))
+        # Deep merge ts_has with default ts_has options
+        self._ts_has = deep_merge_dicts(self._ts_has, deepcopy(self._ts_has_default))
         if self.trading_mode == TradingMode.FUTURES:
-            self._ft_has = deep_merge_dicts(self._ft_has_futures, self._ft_has)
-        if exchange_conf.get('_ft_has_params'):
-            self._ft_has = deep_merge_dicts(exchange_conf.get('_ft_has_params'),
-                                            self._ft_has)
-            logger.info("Overriding exchange._ft_has with config params, result: %s", self._ft_has)
+            self._ts_has = deep_merge_dicts(self._ts_has_futures, self._ts_has)
+        if exchange_conf.get('_ts_has_params'):
+            self._ts_has = deep_merge_dicts(exchange_conf.get('_ts_has_params'),
+                                            self._ts_has)
+            logger.info("Overriding exchange._ts_has with config params, result: %s", self._ts_has)
 
         # Assign this directly for easy access
-        self._ohlcv_partial_candle = self._ft_has['ohlcv_partial_candle']
+        self._ohlcv_partial_candle = self._ts_has['ohlcv_partial_candle']
 
-        self._trades_pagination = self._ft_has['trades_pagination']
-        self._trades_pagination_arg = self._ft_has['trades_pagination_arg']
+        self._trades_pagination = self._ts_has['trades_pagination']
+        self._trades_pagination_arg = self._ts_has['trades_pagination_arg']
 
         # Initialize ccxt objects
         ccxt_config = self._ccxt_config
@@ -286,7 +286,7 @@ class Exchange:
         elif self.trading_mode == TradingMode.FUTURES:
             return {
                 "options": {
-                    "defaultType": self._ft_has["ccxt_futures_name"]
+                    "defaultType": self._ts_has["ccxt_futures_name"]
                 }
             }
         else:
@@ -345,8 +345,8 @@ class Exchange:
         :param since_ms: Starting timestamp
         :return: Candle limit as integer
         """
-        return int(self._ft_has.get('ohlcv_candle_limit_per_timeframe', {}).get(
-            timeframe, self._ft_has.get('ohlcv_candle_limit')))
+        return int(self._ts_has.get('ohlcv_candle_limit_per_timeframe', {}).get(
+            timeframe, self._ts_has.get('ohlcv_candle_limit')))
 
     def get_markets(self, base_currencies: List[str] = [], quote_currencies: List[str] = [],
                     spot_only: bool = False, margin_only: bool = False, futures_only: bool = False,
@@ -393,7 +393,7 @@ class Exchange:
 
     def market_is_future(self, market: Dict[str, Any]) -> bool:
         return (
-            market.get(self._ft_has["ccxt_futures_name"], False) is True and
+            market.get(self._ts_has["ccxt_futures_name"], False) is True and
             market.get('linear', False) is True
         )
 
@@ -450,7 +450,7 @@ class Exchange:
         if 'symbol' in order and order['symbol'] is not None:
             contract_size = self.get_contract_size(order['symbol'])
             if contract_size != 1:
-                for prop in self._ft_has.get('order_props_in_contracts', []):
+                for prop in self._ts_has.get('order_props_in_contracts', []):
                     if prop in order and order[prop] is not None:
                         order[prop] = order[prop] * contract_size
         return order
@@ -490,7 +490,7 @@ class Exchange:
             self._markets = self._api.load_markets(params={})
             self._load_async_markets()
             self._last_markets_refresh = dt_ts()
-            if self._ft_has['needs_trading_fees']:
+            if self._ts_has['needs_trading_fees']:
                 self._trading_fees = self.fetch_trading_fees()
 
         except ccxt.BaseError:
@@ -623,12 +623,12 @@ class Exchange:
         Validate stoploss order types
         """
         if (order_types.get("stoploss_on_exchange")
-                and not self._ft_has.get("stoploss_on_exchange", False)):
+                and not self._ts_has.get("stoploss_on_exchange", False)):
             raise ConfigurationError(
                 f'On exchange stoploss is not supported for {self.name}.'
             )
         if self.trading_mode == TradingMode.FUTURES:
-            price_mapping = self._ft_has.get('stop_price_type_value_mapping', {}).keys()
+            price_mapping = self._ts_has.get('stop_price_type_value_mapping', {}).keys()
             if (
                 order_types.get("stoploss_on_exchange", False) is True
                 and 'stoploss_price_type' in order_types
@@ -643,14 +643,14 @@ class Exchange:
             raise ConfigurationError(f'Orderbook not available for {self.name}.')
         if (not pricing.get('use_order_book', False) and (
                 not self.exchange_has('fetchTicker')
-                or not self._ft_has['tickers_have_price'])):
+                or not self._ts_has['tickers_have_price'])):
             raise ConfigurationError(f'Ticker pricing not available for {self.name}.')
 
     def validate_order_time_in_force(self, order_time_in_force: Dict) -> None:
         """
         Checks if order time in force configured in strategy/config are supported
         """
-        if any(v.upper() not in self._ft_has["order_time_in_force"]
+        if any(v.upper() not in self._ts_has["order_time_in_force"]
                for k, v in order_time_in_force.items()):
             raise ConfigurationError(
                 f'Time in force policies are not supported for {self.name} yet.')
@@ -670,7 +670,7 @@ class Exchange:
         # Allow 5 calls to the exchange per pair
         required_candle_call_count = int(
             (candle_count / candle_limit) + (0 if candle_count % candle_limit == 0 else 1))
-        if self._ft_has['ohlcv_has_history']:
+        if self._ts_has['ohlcv_has_history']:
 
             if required_candle_call_count > 5:
                 # Only allow 5 calls per pair to somewhat limit the impact
@@ -709,9 +709,9 @@ class Exchange:
 
     def get_option(self, param: str, default: Optional[Any] = None) -> Any:
         """
-        Get parameter value from _ft_has
+        Get parameter value from _ts_has
         """
-        return self._ft_has.get(param, default)
+        return self._ts_has.get(param, default)
 
     def exchange_has(self, endpoint: str) -> bool:
         """
@@ -720,8 +720,8 @@ class Exchange:
         :param endpoint: Name of endpoint (e.g. 'fetchOHLCV', 'fetchTickers')
         :return: bool
         """
-        if endpoint in self._ft_has.get('exchange_has_overrides', {}):
-            return self._ft_has['exchange_has_overrides'][endpoint]
+        if endpoint in self._ts_has.get('exchange_has_overrides', {}):
+            return self._ts_has['exchange_has_overrides'][endpoint]
         return endpoint in self._api.has and self._api.has[endpoint]
 
     def get_precision_amount(self, pair: str) -> Optional[float]:
@@ -875,9 +875,9 @@ class Exchange:
         }
         if stop_loss:
             dry_order["info"] = {"stopPrice": dry_order["price"]}
-            dry_order[self._ft_has['stop_price_prop']] = dry_order["price"]
+            dry_order[self._ts_has['stop_price_prop']] = dry_order["price"]
             # Workaround to avoid filling stoploss orders immediately
-            dry_order["ft_order_type"] = "stoploss"
+            dry_order["ts_order_type"] = "stoploss"
         orderbook: Optional[OrderBook] = None
         if self.exchange_has('fetchL2OrderBook'):
             orderbook = self.fetch_l2_order_book(pair, 20)
@@ -890,7 +890,7 @@ class Exchange:
                     f"by more than {allowed_diff:.2%}.")
                 dry_order["type"] = "market"
 
-        if dry_order["type"] == "market" and not dry_order.get("ft_order_type"):
+        if dry_order["type"] == "market" and not dry_order.get("ts_order_type"):
             # Update market order pricing
             average = self.get_dry_market_fill_price(pair, side, amount, rate, orderbook)
             dry_order.update({
@@ -997,7 +997,7 @@ class Exchange:
         """
         if (order['status'] != "closed"
                 and order['type'] in ["limit"]
-                and not order.get('ft_order_type')):
+                and not order.get('ts_order_type')):
             pair = order['symbol']
             if self._dry_is_price_crossed(pair, order['side'], order['price'], orderbook):
                 order.update({
@@ -1027,7 +1027,7 @@ class Exchange:
             from tradescope.persistence import Order
             order = Order.order_by_id(order_id)
             if order:
-                ccxt_order = order.to_ccxt_object(self._ft_has['stop_price_prop'])
+                ccxt_order = order.to_ccxt_object(self._ts_has['stop_price_prop'])
                 self._dry_run_open_orders[order_id] = ccxt_order
                 return ccxt_order
             # Gracefully handle errors with dry-run orders.
@@ -1060,7 +1060,7 @@ class Exchange:
         return (
             ordertype != 'market'
             or self._api.options.get("createMarketBuyOrderRequiresPrice", False)
-            or self._ft_has.get('marketOrderRequiresPrice', False)
+            or self._ts_has.get('marketOrderRequiresPrice', False)
         )
 
     def create_order(
@@ -1133,9 +1133,9 @@ class Exchange:
         Verify stop_loss against stoploss-order value (limit or price)
         Returns True if adjustment is necessary.
         """
-        if not self._ft_has.get('stoploss_on_exchange'):
+        if not self._ts_has.get('stoploss_on_exchange'):
             raise OperationalException(f"stoploss is not implemented for {self.name}.")
-        price_param = self._ft_has['stop_price_prop']
+        price_param = self._ts_has['stop_price_prop']
         return (
             order.get(price_param, None) is None
             or ((side == "sell" and stop_loss > float(order[price_param])) or
@@ -1144,7 +1144,7 @@ class Exchange:
 
     def _get_stop_order_type(self, user_order_type) -> Tuple[str, str]:
 
-        available_order_Types: Dict[str, str] = self._ft_has["stoploss_order_types"]
+        available_order_Types: Dict[str, str] = self._ts_has["stoploss_order_types"]
 
         if user_order_type in available_order_Types.keys():
             ordertype = available_order_Types[user_order_type]
@@ -1180,7 +1180,7 @@ class Exchange:
     def _get_stop_params(self, side: BuySell, ordertype: str, stop_price: float) -> Dict:
         params = self._params.copy()
         # Verify if stopPrice works for your exchange, else configure stop_price_param
-        params.update({self._ft_has['stop_price_param']: stop_price})
+        params.update({self._ts_has['stop_price_param']: stop_price})
         return params
 
     @retrier(retries=0)
@@ -1188,7 +1188,7 @@ class Exchange:
                         side: BuySell, leverage: float) -> Dict:
         """
         creates a stoploss order.
-        requires `_ft_has['stoploss_order_types']` to be set as a dict mapping limit and market
+        requires `_ts_has['stoploss_order_types']` to be set as a dict mapping limit and market
             to the corresponding exchange type.
 
         The precise ordertype is determined by the order_types dict or exchange default.
@@ -1201,7 +1201,7 @@ class Exchange:
         WARNING: setting `stoploss_on_exchange` to True will NOT auto-enable stoploss on exchange.
             `stoploss_adjust` must still be implemented for this to work.
         """
-        if not self._ft_has['stoploss_on_exchange']:
+        if not self._ts_has['stoploss_on_exchange']:
             raise OperationalException(f"stoploss is not implemented for {self.name}.")
 
         user_order_type = order_types.get('stoploss', 'market')
@@ -1230,10 +1230,10 @@ class Exchange:
                                            stop_price=stop_price_norm)
             if self.trading_mode == TradingMode.FUTURES:
                 params['reduceOnly'] = True
-                if 'stoploss_price_type' in order_types and 'stop_price_type_field' in self._ft_has:
-                    price_type = self._ft_has['stop_price_type_value_mapping'][
+                if 'stoploss_price_type' in order_types and 'stop_price_type_field' in self._ts_has:
+                    price_type = self._ts_has['stop_price_type_value_mapping'][
                         order_types.get('stoploss_price_type', PriceType.LAST)]
-                    params[self._ft_has['stop_price_type_field']] = price_type
+                    params[self._ts_has['stop_price_type_field']] = price_type
 
             amount = self.amount_to_precision(pair, self._amount_to_contracts(pair, amount))
 
@@ -1654,8 +1654,8 @@ class Exchange:
         Returns a dict in the format
         {'asks': [price, volume], 'bids': [price, volume]}
         """
-        limit1 = self.get_next_limit_in_list(limit, self._ft_has['l2_limit_range'],
-                                             self._ft_has['l2_limit_range_required'])
+        limit1 = self.get_next_limit_in_list(limit, self._ts_has['l2_limit_range'],
+                                             self._ts_has['l2_limit_range_required'])
         try:
 
             return self._api.fetch_l2_order_book(pair, limit1)
@@ -2043,7 +2043,7 @@ class Exchange:
                     f"Time jump detected. Evicting cache for {pair}, {timeframe}, {candle_type}")
                 del self._klines[(pair, timeframe, candle_type)]
 
-        if (not since_ms and (self._ft_has["ohlcv_require_since"] or not_all_data)):
+        if (not since_ms and (self._ts_has["ohlcv_require_since"] or not_all_data)):
             # Multiple calls for one pair - to get more history
             one_call = timeframe_to_msecs(timeframe) * self.ohlcv_candle_limit(
                 timeframe, candle_type, since_ms)
@@ -2225,7 +2225,7 @@ class Exchange:
                 "Fetching pair %s, %s, interval %s, since %s %s...",
                 pair, candle_type, timeframe, since_ms, s
             )
-            params = deepcopy(self._ft_has.get('ohlcv_params', {}))
+            params = deepcopy(self._ts_has.get('ohlcv_params', {}))
             candle_limit = self.ohlcv_candle_limit(
                 timeframe, candle_type=candle_type, since_ms=since_ms)
 
@@ -2364,7 +2364,7 @@ class Exchange:
         trades: List[List] = []
         # DEFAULT_TRADES_COLUMNS: 0 -> timestamp
         # DEFAULT_TRADES_COLUMNS: 1 -> id
-        has_overlap = self._ft_has.get('trades_pagination_overlap', True)
+        has_overlap = self._ts_has.get('trades_pagination_overlap', True)
         # Skip last trade by default since its the key for the next call
         x = slice(None, -1) if has_overlap else slice(None)
 
@@ -2750,7 +2750,7 @@ class Exchange:
         if self._config['dry_run'] or not self.exchange_has("setLeverage"):
             # Some exchanges only support one margin_mode type
             return
-        if self._ft_has.get('floor_leverage', False) is True:
+        if self._ts_has.get('floor_leverage', False) is True:
             # Rounding for binance ...
             leverage = floor(leverage)
         try:
@@ -2833,9 +2833,9 @@ class Exchange:
             # Shift back to 1h candle to avoid missing funding fees
             # Only really relevant for trades very close to the full hour
             open_date = timeframe_to_prev_date('1h', open_date)
-        timeframe = self._ft_has['mark_ohlcv_timeframe']
-        timeframe_ff = self._ft_has['funding_fee_timeframe']
-        mark_price_type = CandleType.from_string(self._ft_has["mark_ohlcv_price"])
+        timeframe = self._ts_has['mark_ohlcv_timeframe']
+        timeframe_ff = self._ts_has['funding_fee_timeframe']
+        mark_price_type = CandleType.from_string(self._ts_has["mark_ohlcv_price"])
 
         if not close_date:
             close_date = datetime.now(timezone.utc)

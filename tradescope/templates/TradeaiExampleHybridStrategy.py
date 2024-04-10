@@ -112,9 +112,9 @@ class TradeaiExampleHybridStrategy(IStrategy):
         More details on how these config defined parameters accelerate feature engineering
         in the documentation at:
 
-        https://www.freqtrade.io/en/latest/tradeai-parameter-table/#feature-parameters
+        https://www.tscope-ui.vercel.app/en/latest/tradeai-parameter-table/#feature-parameters
 
-        https://www.freqtrade.io/en/latest/tradeai-feature-engineering/#defining-the-features
+        https://www.tscope-ui.vercel.app/en/latest/tradeai-feature-engineering/#defining-the-features
 
         :param dataframe: strategy dataframe which will receive the features
         :param period: period of the indicator - usage example:
@@ -170,9 +170,9 @@ class TradeaiExampleHybridStrategy(IStrategy):
         More details on how these config defined parameters accelerate feature engineering
         in the documentation at:
 
-        https://www.freqtrade.io/en/latest/tradeai-parameter-table/#feature-parameters
+        https://www.tscope-ui.vercel.app/en/latest/tradeai-parameter-table/#feature-parameters
 
-        https://www.freqtrade.io/en/latest/tradeai-feature-engineering/#defining-the-features
+        https://www.tscope-ui.vercel.app/en/latest/tradeai-feature-engineering/#defining-the-features
 
         :param dataframe: strategy dataframe which will receive the features
         :param metadata: metadata of current pair
@@ -201,7 +201,7 @@ class TradeaiExampleHybridStrategy(IStrategy):
 
         More details about feature engineering available:
 
-        https://www.freqtrade.io/en/latest/tradeai-feature-engineering
+        https://www.tscope-ui.vercel.app/en/latest/tradeai-feature-engineering
 
         :param dataframe: strategy dataframe which will receive the features
         :param metadata: metadata of current pair
@@ -219,7 +219,7 @@ class TradeaiExampleHybridStrategy(IStrategy):
 
         More details about feature engineering available:
 
-        https://www.freqtrade.io/en/latest/tradeai-feature-engineering
+        https://www.tscope-ui.vercel.app/en/latest/tradeai-feature-engineering
 
         :param dataframe: strategy dataframe which will receive the targets
         :param metadata: metadata of current pair

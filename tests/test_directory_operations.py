@@ -44,10 +44,10 @@ def test_create_userdata_dir_and_chown(mocker, tmp_path, caplog) -> None:
     assert path.is_dir()
     assert (path / 'data').is_dir()
 
-    os.environ['FT_APP_ENV'] = 'docker'
+    os.environ['TS_APP_ENV'] = 'docker'
     chown_user_directory(path / 'data')
     assert sp_mock.call_count == 1
-    del os.environ['FT_APP_ENV']
+    del os.environ['TS_APP_ENV']
 
 
 def test_create_userdata_dir_exists(mocker, default_conf, caplog) -> None:

@@ -18,6 +18,6 @@ class Bitvavo(Exchange):
     may still not work as expected.
     """
 
-    _ft_has: Dict = {
+    _ts_has: Dict = {
         "ohlcv_candle_limit": 1440,
     }

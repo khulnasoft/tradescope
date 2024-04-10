@@ -173,7 +173,7 @@ def test_handle_stoploss_on_exchange(mocker, default_conf_usdt, fee, caplog, is_
     # Sixth case: Closed Trade
     # Should not create new order
     trade.is_open = False
-    trade.open_sl_orders[-1].ft_is_open = False
+    trade.open_sl_orders[-1].ts_is_open = False
     stoploss.reset_mock()
     mocker.patch(f'{EXMS}.fetch_order')
     mocker.patch(f'{EXMS}.create_stoploss', stoploss)
@@ -232,11 +232,11 @@ def test_handle_stoploss_on_exchange_emergency(mocker, default_conf_usdt, fee, i
     trade.exit_reason = None
     trade.orders.append(
         Order(
-            ft_order_side='stoploss',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=trade.stop_loss,
+            ts_order_side='stoploss',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=trade.stop_loss,
             order_id='107',
             status='open',
         )
@@ -421,11 +421,11 @@ def test_handle_sle_cancel_cant_recreate(mocker, default_conf_usdt, fee, caplog,
     trade.is_open = True
     trade.orders.append(
         Order(
-            ft_order_side='stoploss',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=trade.stop_loss,
+            ts_order_side='stoploss',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=trade.stop_loss,
             order_id='100',
             status='open',
         )
@@ -601,11 +601,11 @@ def test_handle_stoploss_on_exchange_trailing(
     trade.stoploss_last_update = dt_now() - timedelta(minutes=20)
     trade.orders.append(
         Order(
-            ft_order_side='stoploss',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=trade.stop_loss,
+            ts_order_side='stoploss',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=trade.stop_loss,
             order_id='100',
             order_date=dt_now() - timedelta(minutes=20),
         )
@@ -756,11 +756,11 @@ def test_handle_stoploss_on_exchange_trailing_error(
     }
     trade.orders.append(
         Order(
-            ft_order_side='stoploss',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=3,
+            ts_order_side='stoploss',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=3,
             order_id='abcd',
             order_date=dt_now(),
         )
@@ -868,11 +868,11 @@ def test_handle_stoploss_on_exchange_custom_stop(
     trade.is_open = True
     trade.orders.append(
         Order(
-            ft_order_side='stoploss',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=trade.stop_loss,
+            ts_order_side='stoploss',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=trade.stop_loss,
             order_date=dt_now() - timedelta(minutes=601),
             order_id='100',
         )
@@ -1015,11 +1015,11 @@ def test_tsl_on_exchange_compatible_with_edge(mocker, edge_conf, fee, limit_orde
     trade.stoploss_last_update = dt_now()
     trade.orders.append(
         Order(
-            ft_order_side='stoploss',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=trade.stop_loss,
+            ts_order_side='stoploss',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=trade.stop_loss,
             order_id='100',
         )
     )
@@ -1185,11 +1185,11 @@ def test_execute_trade_exit_sloe_cancel_exception(
     tradescope.config['dry_run'] = False
     trade.orders.append(
         Order(
-            ft_order_side='stoploss',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=trade.stop_loss,
+            ts_order_side='stoploss',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=trade.stop_loss,
             order_id='abcd',
             status='open',
         )

@@ -179,7 +179,7 @@ class RPC:
                 oo_details_lst = [
                     f'({oo.order_type} {oo.side} rem={oo.safe_remaining:.8f})'
                     for oo in trade.open_orders
-                    if oo.ft_order_side not in ['stoploss']
+                    if oo.ts_order_side not in ['stoploss']
                 ]
                 oo_details = ', '.join(oo_details_lst)
 
@@ -297,7 +297,7 @@ class RPC:
                         else fiat_profit_sum + trade_profit
 
                 active_attempt_side_symbols = [
-                    '*' if (oo and oo.ft_order_side == trade.entry_side) else '**'
+                    '*' if (oo and oo.ts_order_side == trade.entry_side) else '**'
                     for oo in trade.open_orders
                 ]
 
@@ -1022,7 +1022,7 @@ class RPC:
         return [
             {
                 'id': data_entry.id,
-                'ft_trade_id': data_entry.ft_trade_id,
+                'ts_trade_id': data_entry.ts_trade_id,
                 'cd_key': data_entry.cd_key,
                 'cd_type': data_entry.cd_type,
                 'cd_value': data_entry.cd_value,
@@ -1343,7 +1343,7 @@ class RPC:
                 f"No data for {pair}, {timeframe} in {config.get('timerange')} found.")
 
         strategy.dp = DataProvider(config, exchange=exchange, pairlists=None)
-        strategy.ft_bot_start()
+        strategy.ts_bot_start()
 
         df_analyzed = strategy.analyze_ticker(_data[pair], {'pair': pair})
         df_analyzed = trim_dataframe(df_analyzed, timerange_parsed, startup_candles=startup_candles)

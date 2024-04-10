@@ -9,11 +9,11 @@
         8080
     ],
     "mounts": [
-        "source=tradescope-bashhistory,target=/home/ftuser/commandhistory,type=volume"
+        "source=tradescope-bashhistory,target=/home/tsuser/commandhistory,type=volume"
     ],
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/tradescope,type=bind,consistency=cached",
     // Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
-    "remoteUser": "ftuser",
+    "remoteUser": "tsuser",
 
     "onCreateCommand": "pip install --user -e .",
     "postCreateCommand": "tradescope create-userdir --userdir user_data/",

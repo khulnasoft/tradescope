@@ -20,7 +20,7 @@ from tradescope.rpc.rpc_types import RPCSendMsg
 logger = logging.getLogger(__name__)
 
 
-class FTJSONResponse(JSONResponse):
+class TSJSONResponse(JSONResponse):
     media_type = "application/json"
 
     def render(self, content: Any) -> bytes:
@@ -66,7 +66,7 @@ class ApiServer(RPCHandler):
         self.app = FastAPI(title="Tradescope API",
                            docs_url='/docs' if api_config.get('enable_openapi', False) else None,
                            redoc_url=None,
-                           default_response_class=FTJSONResponse,
+                           default_response_class=TSJSONResponse,
                            )
         self.configure_app(self.app, self._config)
         self.start_api()

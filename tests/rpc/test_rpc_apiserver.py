@@ -212,7 +212,7 @@ def test_api_unauthorized(botclient):
     assert rc.json() == {'detail': 'Unauthorized'}
 
     # Change only username
-    tsbot.config['api_server']['username'] = 'Ftrader'
+    tsbot.config['api_server']['username'] = 'Tsrader'
     rc = client_get(client, f"{BASE_URI}/version")
     assert_response(rc, 401)
     assert rc.json() == {'detail': 'Unauthorized'}
@@ -224,7 +224,7 @@ def test_api_unauthorized(botclient):
     assert_response(rc, 401)
     assert rc.json() == {'detail': 'Unauthorized'}
 
-    tsbot.config['api_server']['username'] = 'Ftrader'
+    tsbot.config['api_server']['username'] = 'Tsrader'
     tsbot.config['api_server']['password'] = 'WrongPassword'
 
     rc = client_get(client, f"{BASE_URI}/version")

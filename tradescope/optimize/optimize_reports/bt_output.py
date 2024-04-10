@@ -289,7 +289,7 @@ def show_backtest_result(strategy: str, results: Dict[str, Any], stake_currency:
         print(' BACKTESTING REPORT '.center(len(table.splitlines()[0]), '='))
     print(table)
 
-    table = text_table_bt_results(results['left_open_trades'], stake_currency=stake_currency)
+    table = text_table_bt_results(results['lets_open_trades'], stake_currency=stake_currency)
     if isinstance(table, str) and len(table) > 0:
         print(' LEFT OPEN TRADES REPORT '.center(len(table.splitlines()[0]), '='))
     print(table)

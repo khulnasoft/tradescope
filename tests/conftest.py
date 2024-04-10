@@ -2698,11 +2698,11 @@ def open_trade():
     )
     trade.orders = [
         Order(
-            ft_order_side='buy',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=trade.open_rate,
+            ts_order_side='buy',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=trade.open_rate,
             order_id='123456789',
             status="closed",
             symbol=trade.pair,
@@ -2735,11 +2735,11 @@ def open_trade_usdt():
     )
     trade.orders = [
         Order(
-            ft_order_side='buy',
-            ft_pair=trade.pair,
-            ft_is_open=False,
-            ft_amount=trade.amount,
-            ft_price=trade.open_rate,
+            ts_order_side='buy',
+            ts_pair=trade.pair,
+            ts_is_open=False,
+            ts_amount=trade.amount,
+            ts_price=trade.open_rate,
             order_id='123456789',
             status="closed",
             symbol=trade.pair,
@@ -2754,11 +2754,11 @@ def open_trade_usdt():
             order_filled_date=trade.open_date,
         ),
         Order(
-            ft_order_side='exit',
-            ft_pair=trade.pair,
-            ft_is_open=True,
-            ft_amount=trade.amount,
-            ft_price=trade.open_rate,
+            ts_order_side='exit',
+            ts_pair=trade.pair,
+            ts_is_open=True,
+            ts_amount=trade.amount,
+            ts_price=trade.open_rate,
             order_id='123456789_exit',
             status="open",
             symbol=trade.pair,

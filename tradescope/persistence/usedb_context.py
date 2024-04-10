@@ -25,7 +25,7 @@ def enable_database_use() -> None:
     CustomDataWrapper.use_db = True
 
 
-class FtNoDBContext:
+class TsNoDBContext:
     def __init__(self, timeframe: str = ''):
         self.timeframe = timeframe
 

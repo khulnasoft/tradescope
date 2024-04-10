@@ -8,7 +8,7 @@ import pytest
 import rapidjson
 
 from tests.conftest import CURRENT_TEST_STRATEGY, log_has, log_has_re
-from tradescope.constants import FTHYPT_FILEVERSION
+from tradescope.constants import TSHYPT_FILEVERSION
 from tradescope.exceptions import OperationalException
 from tradescope.optimize.hyperopt_tools import HyperoptTools, hyperopt_serializer
 
@@ -21,7 +21,7 @@ def create_results() -> List[Dict]:
 
 def test_save_results_saves_epochs(hyperopt, tmp_path, caplog) -> None:
 
-    hyperopt.results_file = tmp_path / 'ut_results.fthypt'
+    hyperopt.results_file = tmp_path / 'ut_results.tshypt'
 
     hyperopt_epochs = HyperoptTools.load_filtered_results(hyperopt.results_file, {})
     assert log_has_re("Hyperopt file .* not found.", caplog)
@@ -261,7 +261,7 @@ def test_try_export_params(default_conf, tmp_path, caplog, mocker):
                 "trailing_only_offset_is_reached": True
             },
         },
-        FTHYPT_FILEVERSION: 2,
+        TSHYPT_FILEVERSION: 2,
 
     }
     HyperoptTools.try_export_params(default_conf, "StrategyTestVXXX", params)

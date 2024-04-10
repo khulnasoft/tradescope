@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class Kraken(Exchange):
 
     _params: Dict = {"trading_agreement": "agree"}
-    _ft_has: Dict = {
+    _ts_has: Dict = {
         "stoploss_on_exchange": True,
         "stop_price_param": "stopLossPrice",
         "stop_price_prop": "stopLossPrice",

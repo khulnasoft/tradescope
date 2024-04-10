@@ -5,18 +5,18 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER 1
-ENV PATH=/home/ftuser/.local/bin:$PATH
-ENV FT_APP_ENV="docker"
+ENV PATH=/home/tsuser/.local/bin:$PATH
+ENV TS_APP_ENV="docker"
 
 # Prepare environment
 RUN mkdir /tradescope \
   && apt-get update \
   && apt-get -y install sudo libatlas3-base curl sqlite3 libhdf5-serial-dev libgomp1 \
   && apt-get clean \
-  && useradd -u 1000 -G sudo -U -m -s /bin/bash ftuser \
-  && chown ftuser:ftuser /tradescope \
+  && useradd -u 1000 -G sudo -U -m -s /bin/bash tsuser \
+  && chown tsuser:tsuser /tradescope \
   # Allow sudoers
-  && echo "ftuser ALL=(ALL) NOPASSWD: /bin/chown" >> /etc/sudoers
+  && echo "tsuser ALL=(ALL) NOPASSWD: /bin/chown" >> /etc/sudoers
 
 WORKDIR /tradescope
 
@@ -33,8 +33,8 @@ RUN cd /tmp && /tmp/install_ta-lib.sh && rm -r /tmp/*ta-lib*
 ENV LD_LIBRARY_PATH /usr/local/lib
 
 # Install dependencies
-COPY --chown=ftuser:ftuser requirements.txt requirements-hyperopt.txt /tradescope/
-USER ftuser
+COPY --chown=tsuser:tsuser requirements.txt requirements-hyperopt.txt /tradescope/
+USER tsuser
 RUN  pip install --user --no-cache-dir numpy \
   && pip install --user --no-cache-dir -r requirements-hyperopt.txt
 
@@ -43,11 +43,11 @@ FROM base as runtime-image
 COPY --from=python-deps /usr/local/lib /usr/local/lib
 ENV LD_LIBRARY_PATH /usr/local/lib
 
-COPY --from=python-deps --chown=ftuser:ftuser /home/ftuser/.local /home/ftuser/.local
+COPY --from=python-deps --chown=tsuser:tsuser /home/tsuser/.local /home/tsuser/.local
 
-USER ftuser
+USER tsuser
 # Install and execute
-COPY --chown=ftuser:ftuser . /tradescope/
+COPY --chown=tsuser:tsuser . /tradescope/
 
 RUN pip install -e . --user --no-cache-dir --no-build-isolation \
   && mkdir /tradescope/user_data/ \

@@ -15,7 +15,7 @@ def start_test_pairlist(args: Dict[str, Any]) -> None:
     """
     Test Pairlist configuration
     """
-    from tradescope.persistence import FtNoDBContext
+    from tradescope.persistence import TsNoDBContext
     from tradescope.plugins.pairlistmanager import PairListManager
     config = setup_utils_configuration(args, RunMode.UTIL_EXCHANGE)
 
@@ -25,7 +25,7 @@ def start_test_pairlist(args: Dict[str, Any]) -> None:
     if not quote_currencies:
         quote_currencies = [config.get('stake_currency')]
     results = {}
-    with FtNoDBContext():
+    with TsNoDBContext():
         for curr in quote_currencies:
             config['stake_currency'] = curr
             pairlists = PairListManager(exchange, config)

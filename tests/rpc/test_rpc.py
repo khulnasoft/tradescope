@@ -95,12 +95,12 @@ def test_rpc_trade_status(default_conf, ticker, fee, mocker) -> None:
         'has_open_orders': False,
         'orders': [{
             'amount': 91.07468123, 'average': 1.098e-05, 'safe_price': 1.098e-05,
-            'cost': 0.0009999999999054, 'filled': 91.07468123, 'ft_order_side': 'buy',
+            'cost': 0.0009999999999054, 'filled': 91.07468123, 'ts_order_side': 'buy',
             'order_date': ANY, 'order_timestamp': ANY, 'order_filled_date': ANY,
             'order_filled_timestamp': ANY, 'order_type': 'limit', 'price': 1.098e-05,
             'is_open': False, 'pair': 'ETH/BTC', 'order_id': ANY,
-            'remaining': ANY, 'status': ANY, 'ft_is_entry': True, 'ft_fee_base': None,
-            'funding_fee': ANY, 'ft_order_tag': None,
+            'remaining': ANY, 'status': ANY, 'ts_is_entry': True, 'ts_fee_base': None,
+            'funding_fee': ANY, 'ts_order_tag': None,
         }],
     }
     mocker.patch('tradescope.rpc.telegram.Telegram', MagicMock())
@@ -358,11 +358,11 @@ def test_rpc_delete_trade(mocker, default_conf, fee, markets, caplog, is_short):
     trades = Trade.session.scalars(select(Trade)).all()
     trades[2].orders.append(
         Order(
-            ft_order_side='stoploss',
-            ft_pair=trades[2].pair,
-            ft_is_open=True,
-            ft_amount=trades[2].amount,
-            ft_price=trades[2].stop_loss,
+            ts_order_side='stoploss',
+            ts_pair=trades[2].pair,
+            ts_is_open=True,
+            ts_amount=trades[2].amount,
+            ts_price=trades[2].stop_loss,
             order_id='102',
             status='open',
         )

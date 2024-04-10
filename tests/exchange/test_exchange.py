@@ -283,7 +283,7 @@ def test_validate_order_time_in_force(default_conf, mocker, caplog):
         "sell": "ioc",
     }
     # Patch to see if this will pass if the values are in the ft dict
-    ex._ft_has.update({"order_time_in_force": ["GTC", "FOK", "IOC"]})
+    ex._ts_has.update({"order_time_in_force": ["GTC", "FOK", "IOC"]})
     ex.validate_order_time_in_force(tif2)
 
 
@@ -1046,7 +1046,7 @@ def test_validate_required_startup_candles(default_conf, mocker, caplog):
         Exchange(default_conf)
 
     # Emulate kraken mode
-    ex._ft_has['ohlcv_has_history'] = False
+    ex._ts_has['ohlcv_has_history'] = False
     with pytest.raises(OperationalException,
                        match=r'This strategy requires 2500.*, '
                              r'which is more than the amount.*'):
@@ -1066,7 +1066,7 @@ def test_exchange_has(default_conf, mocker):
     exchange = get_patched_exchange(mocker, default_conf, api_mock)
     assert not exchange.exchange_has("deadbeef")
 
-    exchange._ft_has['exchange_has_overrides'] = {'deadbeef': True}
+    exchange._ts_has['exchange_has_overrides'] = {'deadbeef': True}
     assert exchange.exchange_has("deadbeef")
 
 
@@ -3050,7 +3050,7 @@ async def test__async_get_trade_history_id(default_conf, mocker, exchange_name,
     # 2nd call
     assert fetch_trades_cal[1][0][0] == pair
     assert 'params' in fetch_trades_cal[1][1]
-    assert exchange._ft_has['trades_pagination_arg'] in fetch_trades_cal[1][1]['params']
+    assert exchange._ts_has['trades_pagination_arg'] in fetch_trades_cal[1][1]['params']
 
 
 @pytest.mark.parametrize('trade_id, expected', [
@@ -3658,7 +3658,7 @@ def test__get_stop_limit_rate(default_conf_usdt, mocker, side, ratio, expected):
         assert exchange._get_stop_limit_rate(100, order_types, side) == expected
 
 
-def test_merge_ft_has_dict(default_conf, mocker):
+def test_merge_ts_has_dict(default_conf, mocker):
     mocker.patch.multiple(EXMS,
                           _init_ccxt=MagicMock(return_value=MagicMock()),
                           _load_async_markets=MagicMock(),
@@ -3668,29 +3668,29 @@ def test_merge_ft_has_dict(default_conf, mocker):
                           validate_pricing=MagicMock(),
                           )
     ex = Exchange(default_conf)
-    assert ex._ft_has == Exchange._ft_has_default
+    assert ex._ts_has == Exchange._ts_has_default
 
     ex = Kraken(default_conf)
-    assert ex._ft_has != Exchange._ft_has_default
+    assert ex._ts_has != Exchange._ts_has_default
     assert ex.get_option('trades_pagination') == 'id'
     assert ex.get_option('trades_pagination_arg') == 'since'
 
     # Binance defines different values
     ex = Binance(default_conf)
-    assert ex._ft_has != Exchange._ft_has_default
+    assert ex._ts_has != Exchange._ts_has_default
     assert ex.get_option('stoploss_on_exchange')
     assert ex.get_option('order_time_in_force') == ['GTC', 'FOK', 'IOC', 'PO']
     assert ex.get_option('trades_pagination') == 'id'
     assert ex.get_option('trades_pagination_arg') == 'fromId'
 
     conf = copy.deepcopy(default_conf)
-    conf['exchange']['_ft_has_params'] = {"DeadBeef": 20,
+    conf['exchange']['_ts_has_params'] = {"DeadBeef": 20,
                                           "stoploss_on_exchange": False}
     # Use settings from configuration (overriding stoploss_on_exchange)
     ex = Binance(conf)
-    assert ex._ft_has != Exchange._ft_has_default
-    assert not ex._ft_has['stoploss_on_exchange']
-    assert ex._ft_has['DeadBeef'] == 20
+    assert ex._ts_has != Exchange._ts_has_default
+    assert not ex._ts_has['stoploss_on_exchange']
+    assert ex._ts_has['DeadBeef'] == 20
 
 
 def test_get_valid_pair_combination(default_conf, mocker, markets):
@@ -3816,10 +3816,10 @@ def test_ohlcv_candle_limit(default_conf, mocker, exchange_name):
         pytest.skip("Tested separately for okx")
     exchange = get_patched_exchange(mocker, default_conf, id=exchange_name)
     timeframes = ('1m', '5m', '1h')
-    expected = exchange._ft_has['ohlcv_candle_limit']
+    expected = exchange._ts_has['ohlcv_candle_limit']
     for timeframe in timeframes:
-        # if 'ohlcv_candle_limit_per_timeframe' in exchange._ft_has:
-        # expected = exchange._ft_has['ohlcv_candle_limit_per_timeframe'][timeframe]
+        # if 'ohlcv_candle_limit_per_timeframe' in exchange._ts_has:
+        # expected = exchange._ts_has['ohlcv_candle_limit_per_timeframe'][timeframe]
         # This should only run for bittrex
         # assert exchange_name == 'bittrex'
         assert exchange.ohlcv_candle_limit(timeframe, CandleType.SPOT) == expected

@@ -48,7 +48,7 @@ class StrategyResolver(IResolver):
         strategy: IStrategy = StrategyResolver._load_strategy(
             strategy_name, config=config,
             extra_dir=config.get('strategy_path'))
-        strategy.ft_load_params_from_file()
+        strategy.ts_load_params_from_file()
         # Set attributes
         # Check if we need to override configuration
         #             (Attribute name,                    default,     subkey)
@@ -222,7 +222,7 @@ class StrategyResolver(IResolver):
         has_after_fill = ('after_fill' in getfullargspec(strategy.custom_stoploss).args
                           and check_override(strategy, IStrategy, 'custom_stoploss'))
         if has_after_fill:
-            strategy._ft_stop_uses_after_fill = True
+            strategy._ts_stop_uses_after_fill = True
 
         return strategy
 

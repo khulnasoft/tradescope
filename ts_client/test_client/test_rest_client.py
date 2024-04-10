@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from requests.exceptions import ConnectionError
-from tradescope_client import FtRestClient
+from tradescope_client import TsRestClient
 from tradescope_client.ts_client import add_arguments, main_exec
 
 
@@ -13,15 +13,15 @@ def log_has_re(line, logs):
 
 
 def get_rest_client():
-    client = FtRestClient('http://localhost:8080', 'tradescoper', 'password')
+    client = TsRestClient('http://localhost:8080', 'tradescoper', 'password')
     client._session = MagicMock()
     request_mock = MagicMock()
     client._session.request = request_mock
     return client, request_mock
 
 
-def test_FtRestClient_init():
-    client = FtRestClient('http://localhost:8080', 'tradescoper', 'password')
+def test_TsRestClient_init():
+    client = TsRestClient('http://localhost:8080', 'tradescoper', 'password')
     assert client is not None
     assert client._serverurl == 'http://localhost:8080'
     assert client._session is not None
@@ -30,7 +30,7 @@ def test_FtRestClient_init():
 
 
 @pytest.mark.parametrize('method', ['GET', 'POST', 'DELETE'])
-def test_FtRestClient_call(method):
+def test_TsRestClient_call(method):
     client, mock = get_rest_client()
     client._call(method, '/dummytest')
     assert mock.call_count == 1
@@ -39,7 +39,7 @@ def test_FtRestClient_call(method):
     assert mock.call_count == 2
 
 
-def test_FtRestClient_call_invalid(caplog):
+def test_TsRestClient_call_invalid(caplog):
     client, _ = get_rest_client()
     with pytest.raises(ValueError):
         client._call('PUTTY', '/dummytest')
@@ -108,7 +108,7 @@ def test_FtRestClient_call_invalid(caplog):
     ('sysinfo', []),
     ('health', []),
 ])
-def test_FtRestClient_call_explicit_methods(method, args):
+def test_TsRestClient_call_explicit_methods(method, args):
     client, mock = get_rest_client()
     exec = getattr(client, method)
     exec(*args)
@@ -127,7 +127,7 @@ def test_ts_client(mocker, capsys, caplog):
     captured = capsys.readouterr()
     assert 'Possible commands' in captured.out
 
-    mock = mocker.patch('tradescope_client.ts_client.FtRestClient._call')
+    mock = mocker.patch('tradescope_client.ts_client.TsRestClient._call')
     args = add_arguments([
         '--config',
         'tests/testdata/testconfigs/main_test_config.json',

@@ -135,7 +135,7 @@ class TradescopeBot(LoggingMixin):
                     t = str(time(time_slot, minutes, 2))
                     self._schedule.every().day.at(t).do(update)
 
-        self.strategy.ft_bot_start()
+        self.strategy.ts_bot_start()
         # Initialize protections AFTER bot start - otherwise parameters are not loaded.
         self.protections = ProtectionManager(self.config, self.strategy.protections)
 
@@ -166,7 +166,7 @@ class TradescopeBot(LoggingMixin):
             logger.warning(f'Exception during cleanup: {e.__class__.__name__} {e}')
 
         finally:
-            self.strategy.ft_bot_cleanup()
+            self.strategy.ts_bot_cleanup()
 
         self.rpc.cleanup()
         if self.emc:
@@ -348,19 +348,19 @@ class TradescopeBot(LoggingMixin):
         logger.info(f"Updating {len(orders)} open orders.")
         for order in orders:
             try:
-                fo = self.exchange.fetch_order_or_stoploss_order(order.order_id, order.ft_pair,
-                                                                 order.ft_order_side == 'stoploss')
+                fo = self.exchange.fetch_order_or_stoploss_order(order.order_id, order.ts_pair,
+                                                                 order.ts_order_side == 'stoploss')
                 if not order.trade:
                     # This should not happen, but it does if trades were deleted manually.
                     # This can only incur on sqlite, which doesn't enforce foreign constraints.
                     logger.warning(
                         f"Order {order.order_id} has no trade attached. "
                         "This may suggest a database corruption. "
-                        f"The expected trade ID is {order.ft_trade_id}. Ignoring this order."
+                        f"The expected trade ID is {order.ts_trade_id}. Ignoring this order."
                     )
                     continue
                 self.update_trade_state(order.trade, order.order_id, fo,
-                                        stoploss_order=(order.ft_order_side == 'stoploss'))
+                                        stoploss_order=(order.ts_order_side == 'stoploss'))
 
             except InvalidOrderException as e:
                 logger.warning(f"Error updating Order {order.order_id} due to {e}.")
@@ -399,7 +399,7 @@ class TradescopeBot(LoggingMixin):
                         f"for order {order.order_id}."
                     )
                     self.update_trade_state(trade, order.order_id,
-                                            stoploss_order=order.ft_order_side == 'stoploss',
+                                            stoploss_order=order.ts_order_side == 'stoploss',
                                             send_msg=False)
 
         trades = Trade.get_open_trades_without_assigned_fees()
@@ -425,16 +425,16 @@ class TradescopeBot(LoggingMixin):
         for order in trade.orders:
             logger.info(f"Trying to refind {order}")
             fo = None
-            if not order.ft_is_open:
+            if not order.ts_is_open:
                 logger.debug(f"Order {order} is no longer open.")
                 continue
             try:
-                fo = self.exchange.fetch_order_or_stoploss_order(order.order_id, order.ft_pair,
-                                                                 order.ft_order_side == 'stoploss')
+                fo = self.exchange.fetch_order_or_stoploss_order(order.order_id, order.ts_pair,
+                                                                 order.ts_order_side == 'stoploss')
                 if fo:
                     logger.info(f"Found {order} for trade {trade}.")
                     self.update_trade_state(trade, order.order_id, fo,
-                                            stoploss_order=order.ft_order_side == 'stoploss')
+                                            stoploss_order=order.ts_order_side == 'stoploss')
 
             except ExchangeError:
                 logger.warning(f"Error updating {order.order_id}.")
@@ -476,7 +476,7 @@ class TradescopeBot(LoggingMixin):
                 # Trade was just closed
                 trade.close_date = trade.date_last_filled_utc
                 self.order_close_notify(trade, order_obj,
-                                        order_obj.ft_order_side == 'stoploss',
+                                        order_obj.ts_order_side == 'stoploss',
                                         send_msg=prev_trade_state != trade.is_open)
             else:
                 trade.exit_reason = prev_exit_reason
@@ -777,7 +777,7 @@ class TradescopeBot(LoggingMixin):
             leverage=leverage
         )
         order_obj = Order.parse_from_ccxt_object(order, pair, side, amount, enter_limit_requested)
-        order_obj.ft_order_tag = enter_tag
+        order_obj.ts_order_tag = enter_tag
         order_id = order['id']
         order_status = order.get('status')
         logger.info(f"Order {order_id} was created for {pair} and status is {order_status}.")
@@ -1349,7 +1349,7 @@ class TradescopeBot(LoggingMixin):
                 if not_closed:
                     if (
                         fully_cancelled or (
-                            open_order and self.strategy.ft_check_timed_out(
+                            open_order and self.strategy.ts_check_timed_out(
                                 trade, open_order, datetime.now(timezone.utc)
                             )
                         )
@@ -1521,7 +1521,7 @@ class TradescopeBot(LoggingMixin):
                     f"as the filled amount of {filled_val} would result in an unexitable trade.")
                 return False
             corder = self.exchange.cancel_order_with_result(order_id, trade.pair, trade.amount)
-            order_obj.ft_cancel_reason = reason
+            order_obj.ts_cancel_reason = reason
             # if replacing, retry fetching the order 3 times if the status is not what we need
             if replacing:
                 retry_count = 0
@@ -1542,10 +1542,10 @@ class TradescopeBot(LoggingMixin):
         else:
             # Order was cancelled already, so we can reuse the existing dict
             corder = order
-            if order_obj.ft_cancel_reason is None:
-                order_obj.ft_cancel_reason = constants.CANCEL_REASON['CANCELLED_ON_EXCHANGE']
+            if order_obj.ts_cancel_reason is None:
+                order_obj.ts_cancel_reason = constants.CANCEL_REASON['CANCELLED_ON_EXCHANGE']
 
-        logger.info(f'{side} order {order_obj.ft_cancel_reason} for {trade}.')
+        logger.info(f'{side} order {order_obj.ts_cancel_reason} for {trade}.')
 
         # Using filled to determine the filled amount
         filled_amount = safe_value_fallback2(corder, order, 'filled', 'filled')
@@ -1553,12 +1553,12 @@ class TradescopeBot(LoggingMixin):
             was_trade_fully_canceled = True
             # if trade is not partially completed and it's the only order, just delete the trade
             open_order_count = len([
-                order for order in trade.orders if order.ft_is_open and order.order_id != order_id
+                order for order in trade.orders if order.ts_is_open and order.order_id != order_id
                 ])
             if open_order_count < 1 and trade.nr_of_successful_entries == 0 and not replacing:
                 logger.info(f'{side} order fully cancelled. Removing {trade} from database.')
                 trade.delete()
-                order_obj.ft_cancel_reason += f", {constants.CANCEL_REASON['FULLY_CANCELLED']}"
+                order_obj.ts_cancel_reason += f", {constants.CANCEL_REASON['FULLY_CANCELLED']}"
             else:
                 self.update_trade_state(trade, order_id, corder)
                 logger.info(f'{side} Order timeout for {trade}.')
@@ -1568,11 +1568,11 @@ class TradescopeBot(LoggingMixin):
             self.update_trade_state(trade, order_id, corder)
 
             logger.info(f'Partial {trade.entry_side} order timeout for {trade}.')
-            order_obj.ft_cancel_reason += f", {constants.CANCEL_REASON['PARTIALLY_FILLED']}"
+            order_obj.ts_cancel_reason += f", {constants.CANCEL_REASON['PARTIALLY_FILLED']}"
 
         self.wallets.update()
         self._notify_enter_cancel(trade, order_type=self.strategy.order_types['entry'],
-                                  reason=order_obj.ft_cancel_reason)
+                                  reason=order_obj.ts_cancel_reason)
         return was_trade_fully_canceled
 
     def handle_cancel_exit(
@@ -1607,7 +1607,7 @@ class TradescopeBot(LoggingMixin):
                         sub_trade=trade.amount != order['amount']
                     )
                     return False
-            order_obj.ft_cancel_reason = reason
+            order_obj.ts_cancel_reason = reason
             try:
                 order = self.exchange.cancel_order_with_result(
                     order['id'], trade.pair, trade.amount)
@@ -1626,21 +1626,21 @@ class TradescopeBot(LoggingMixin):
                 trade.exit_reason = exit_reason_prev
             cancelled = True
         else:
-            if order_obj.ft_cancel_reason is None:
-                order_obj.ft_cancel_reason = constants.CANCEL_REASON['CANCELLED_ON_EXCHANGE']
+            if order_obj.ts_cancel_reason is None:
+                order_obj.ts_cancel_reason = constants.CANCEL_REASON['CANCELLED_ON_EXCHANGE']
             trade.exit_reason = None
 
         self.update_trade_state(trade, order['id'], order)
 
         logger.info(
-            f'{trade.exit_side.capitalize()} order {order_obj.ft_cancel_reason} for {trade}.')
+            f'{trade.exit_side.capitalize()} order {order_obj.ts_cancel_reason} for {trade}.')
         trade.close_rate = None
         trade.close_rate_requested = None
 
         self._notify_exit_cancel(
             trade,
             order_type=self.strategy.order_types['exit'],
-            reason=order_obj.ft_cancel_reason, order_id=order['id'],
+            reason=order_obj.ts_cancel_reason, order_id=order['id'],
             sub_trade=trade.amount != order['amount']
         )
         return cancelled
@@ -1760,7 +1760,7 @@ class TradescopeBot(LoggingMixin):
             return False
 
         order_obj = Order.parse_from_ccxt_object(order, trade.pair, trade.exit_side, amount, limit)
-        order_obj.ft_order_tag = exit_reason
+        order_obj.ts_order_tag = exit_reason
         trade.orders.append(order_obj)
 
         trade.exit_order_status = ''
@@ -1948,13 +1948,13 @@ class TradescopeBot(LoggingMixin):
                 self.strategy.order_filled, default_retval=None)(
                 pair=trade.pair, trade=trade, order=order, current_time=datetime.now(timezone.utc))
             # If a entry order was closed, force update on stoploss on exchange
-            if order.ft_order_side == trade.entry_side:
+            if order.ts_order_side == trade.entry_side:
                 trade = self.cancel_stoploss_on_exchange(trade)
                 if not self.edge:
                     # TODO: should shorting/leverage be supported by Edge,
                     # then this will need to be fixed.
                     trade.adjust_stop_loss(trade.open_rate, self.strategy.stoploss, initial=True)
-            if order.ft_order_side == trade.entry_side or (trade.amount > 0 and trade.is_open):
+            if order.ts_order_side == trade.entry_side or (trade.amount > 0 and trade.is_open):
                 # Must also run for partial exits
                 # TODO: Margin will need to use interest_rate as well.
                 # interest_rate = self.exchange.get_interest_rate()
@@ -1974,7 +1974,7 @@ class TradescopeBot(LoggingMixin):
                     current_rate = self.exchange.get_rate(
                         trade.pair, side='exit', is_short=trade.is_short, refresh=True)
                     profit = trade.calc_profit_ratio(current_rate)
-                    self.strategy.ft_stoploss_adjust(current_rate, trade,
+                    self.strategy.ts_stoploss_adjust(current_rate, trade,
                                                      datetime.now(timezone.utc), profit, 0,
                                                      after_fill=True)
             # Updating wallets when order is closed
@@ -1985,7 +1985,7 @@ class TradescopeBot(LoggingMixin):
             self, trade: Trade, order: Order, stoploss_order: bool, send_msg: bool):
         """send "fill" notifications"""
 
-        if order.ft_order_side == trade.exit_side:
+        if order.ts_order_side == trade.exit_side:
             # Exit notification
             if send_msg and not stoploss_order and order.order_id not in trade.open_orders_ids:
                 self._notify_exit(trade, order.order_type, fill=True,
@@ -2030,11 +2030,11 @@ class TradescopeBot(LoggingMixin):
         """
         self.wallets.update()
         amount_ = trade.amount
-        if order_obj.ft_order_side == trade.exit_side or order_obj.ft_order_side == 'stoploss':
+        if order_obj.ts_order_side == trade.exit_side or order_obj.ts_order_side == 'stoploss':
             # check against remaining amount!
             amount_ = trade.amount - amount
 
-        if trade.nr_of_successful_entries >= 1 and order_obj.ft_order_side == trade.entry_side:
+        if trade.nr_of_successful_entries >= 1 and order_obj.ts_order_side == trade.entry_side:
             # In case of rebuy's, trade.amount doesn't contain the amount of the last entry.
             amount_ = trade.amount + amount
 
@@ -2052,7 +2052,7 @@ class TradescopeBot(LoggingMixin):
         try:
             fee_abs = self.get_real_amount(trade, order, order_obj)
             if fee_abs is not None:
-                order_obj.ft_fee_base = fee_abs
+                order_obj.ts_fee_base = fee_abs
         except DependencyException as exception:
             logger.warning("Could not update trade amount: %s", exception)
 
@@ -2070,7 +2070,7 @@ class TradescopeBot(LoggingMixin):
         if (
             trade.fee_updated(order.get('side', ''))
             or order['status'] == 'open'
-            or order_obj.ft_fee_base
+            or order_obj.ts_fee_base
         ):
             return None
 
@@ -2079,7 +2079,7 @@ class TradescopeBot(LoggingMixin):
         if self.exchange.order_has_fee(order):
             fee_cost, fee_currency, fee_rate = self.exchange.extract_cost_curr_rate(
                 order['fee'], order['symbol'], order['cost'], order_obj.safe_filled)
-            logger.info(f"Fee for Trade {trade} [{order_obj.ft_order_side}]: "
+            logger.info(f"Fee for Trade {trade} [{order_obj.ts_order_side}]: "
                         f"{fee_cost:.8g} {fee_currency} - rate: {fee_rate}")
             if fee_rate is None or fee_rate < 0.02:
                 # Reject all fees that report as > 2%.

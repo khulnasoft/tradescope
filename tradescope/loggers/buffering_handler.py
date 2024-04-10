@@ -1,7 +1,7 @@
 from logging.handlers import BufferingHandler
 
 
-class FTBufferingHandler(BufferingHandler):
+class TSBufferingHandler(BufferingHandler):
     def flush(self):
         """
         Override Flush behaviour - we keep half of the configured capacity

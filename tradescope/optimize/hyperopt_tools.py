@@ -11,7 +11,7 @@ import tabulate
 from colorama import Fore, Style
 from pandas import isna, json_normalize
 
-from tradescope.constants import FTHYPT_FILEVERSION, Config
+from tradescope.constants import TSHYPT_FILEVERSION, Config
 from tradescope.enums import HyperoptState
 from tradescope.exceptions import OperationalException
 from tradescope.misc import deep_merge_dicts, round_dict, safe_value_fallback2
@@ -72,7 +72,7 @@ class HyperoptTools:
         final_params = {
             'strategy_name': strategy_name,
             'params': final_params,
-            'ft_stratparam_v': 1,
+            'ts_stratparam_v': 1,
             'export_time': datetime.now(timezone.utc),
         }
         logger.info(f"Dumping parameters to {filename}")
@@ -93,7 +93,7 @@ class HyperoptTools:
 
     @staticmethod
     def try_export_params(config: Config, strategy_name: str, params: Dict):
-        if params.get(FTHYPT_FILEVERSION, 1) >= 2 and not config.get('disableparamexport', False):
+        if params.get(TSHYPT_FILEVERSION, 1) >= 2 and not config.get('disableparamexport', False):
             # Export parameters ...
             fn = HyperoptTools.get_strategy_filename(config, strategy_name)
             if fn:

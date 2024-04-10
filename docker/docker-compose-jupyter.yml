@@ -1,7 +1,7 @@
 ---
 version: '3'
 services:
-  ft_jupyterlab:
+  ts_jupyterlab:
     build:
       context: ..
       dockerfile: docker/Dockerfile.jupyter
