@@ -1,20 +1,20 @@
 from math import ceil
 
 from tradescope.exceptions import OperationalException
-from tradescope.util import FtPrecise
+from tradescope.util import TsPrecise
 
 
-one = FtPrecise(1.0)
-four = FtPrecise(4.0)
-twenty_four = FtPrecise(24.0)
+one = TsPrecise(1.0)
+four = TsPrecise(4.0)
+twenty_four = TsPrecise(24.0)
 
 
 def interest(
     exchange_name: str,
-    borrowed: FtPrecise,
-    rate: FtPrecise,
-    hours: FtPrecise
-) -> FtPrecise:
+    borrowed: TsPrecise,
+    rate: TsPrecise,
+    hours: TsPrecise
+) -> TsPrecise:
     """
     Equation to calculate interest on margin trades
 
@@ -31,9 +31,9 @@ def interest(
     """
     exchange_name = exchange_name.lower()
     if exchange_name == "binance":
-        return borrowed * rate * FtPrecise(ceil(hours)) / twenty_four
+        return borrowed * rate * TsPrecise(ceil(hours)) / twenty_four
     elif exchange_name == "kraken":
         # Rounded based on https://kraken-fees-calculator.github.io/
-        return borrowed * rate * (one + FtPrecise(ceil(hours / four)))
+        return borrowed * rate * (one + TsPrecise(ceil(hours / four)))
     else:
         raise OperationalException(f"Leverage not available on {exchange_name} with tradescope")

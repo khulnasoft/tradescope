@@ -14,7 +14,7 @@ from tradescope.exchange.common import (BAD_EXCHANGES, EXCHANGE_HAS_OPTIONAL, EX
 from tradescope.exchange.exchange_utils_timeframe import (timeframe_to_minutes,
                                                           timeframe_to_prev_date)
 from tradescope.types import ValidExchangesType
-from tradescope.util import FtPrecise
+from tradescope.util import TsPrecise
 
 
 CcxtModuleType = Any
@@ -145,7 +145,7 @@ def amount_to_contracts(amount: float, contract_size: Optional[float]) -> float:
     :return: num-contracts
     """
     if contract_size and contract_size != 1:
-        return float(FtPrecise(amount) / FtPrecise(contract_size))
+        return float(TsPrecise(amount) / TsPrecise(contract_size))
     else:
         return amount
 
@@ -159,7 +159,7 @@ def contracts_to_amount(num_contracts: float, contract_size: Optional[float]) ->
     """
 
     if contract_size and contract_size != 1:
-        return float(FtPrecise(num_contracts) * FtPrecise(contract_size))
+        return float(TsPrecise(num_contracts) * TsPrecise(contract_size))
     else:
         return num_contracts
 
@@ -275,10 +275,10 @@ def price_to_precision(
                                               ))
 
         if precisionMode == TICK_SIZE:
-            precision = FtPrecise(price_precision)
-            price_str = FtPrecise(price)
+            precision = TsPrecise(price_precision)
+            price_str = TsPrecise(price)
             missing = price_str % precision
-            if not missing == FtPrecise("0"):
+            if not missing == TsPrecise("0"):
                 if rounding_mode == ROUND_UP:
                     res = price_str - missing + precision
                 elif rounding_mode == ROUND_DOWN:

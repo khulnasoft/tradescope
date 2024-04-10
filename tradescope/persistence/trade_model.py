@@ -24,7 +24,7 @@ from tradescope.leverage import interest
 from tradescope.misc import safe_value_fallback
 from tradescope.persistence.base import ModelBase, SessionType
 from tradescope.persistence.custom_data import CustomDataWrapper, _CustomData
-from tradescope.util import FtPrecise, dt_from_ts, dt_now, dt_ts, dt_ts_none
+from tradescope.util import TsPrecise, dt_from_ts, dt_now, dt_ts, dt_ts_none
 
 
 logger = logging.getLogger(__name__)
@@ -913,8 +913,8 @@ class LocalTrade:
         Calculate the open_rate including open_fee.
         :return: Price in of the open trade incl. Fees
         """
-        open_trade = FtPrecise(amount) * FtPrecise(open_rate)
-        fees = open_trade * FtPrecise(self.fee_open)
+        open_trade = TsPrecise(amount) * TsPrecise(open_rate)
+        fees = open_trade * TsPrecise(self.fee_open)
         if self.is_short:
             return float(open_trade - fees)
         else:
@@ -927,30 +927,30 @@ class LocalTrade:
         """
         self.open_trade_value = self._calc_open_trade_value(self.amount, self.open_rate)
 
-    def calculate_interest(self) -> FtPrecise:
+    def calculate_interest(self) -> TsPrecise:
         """
         Calculate interest for this trade. Only applicable for Margin trading.
         """
-        zero = FtPrecise(0.0)
+        zero = TsPrecise(0.0)
         # If nothing was borrowed
         if self.trading_mode != TradingMode.MARGIN or self.has_no_leverage:
             return zero
 
         open_date = self.open_date.replace(tzinfo=None)
         now = (self.close_date or datetime.now(timezone.utc)).replace(tzinfo=None)
-        sec_per_hour = FtPrecise(3600)
-        total_seconds = FtPrecise((now - open_date).total_seconds())
+        sec_per_hour = TsPrecise(3600)
+        total_seconds = TsPrecise((now - open_date).total_seconds())
         hours = total_seconds / sec_per_hour or zero
 
-        rate = FtPrecise(self.interest_rate)
-        borrowed = FtPrecise(self.borrowed)
+        rate = TsPrecise(self.interest_rate)
+        borrowed = TsPrecise(self.borrowed)
 
         return interest(exchange_name=self.exchange, borrowed=borrowed, rate=rate, hours=hours)
 
-    def _calc_base_close(self, amount: FtPrecise, rate: float, fee: Optional[float]) -> FtPrecise:
+    def _calc_base_close(self, amount: TsPrecise, rate: float, fee: Optional[float]) -> TsPrecise:
 
-        close_trade = amount * FtPrecise(rate)
-        fees = close_trade * FtPrecise(fee or 0.0)
+        close_trade = amount * TsPrecise(rate)
+        fees = close_trade * TsPrecise(fee or 0.0)
 
         if self.is_short:
             return close_trade + fees
@@ -966,7 +966,7 @@ class LocalTrade:
         if rate is None and not self.close_rate:
             return 0.0
 
-        amount1 = FtPrecise(amount or self.amount)
+        amount1 = TsPrecise(amount or self.amount)
         trading_mode = self.trading_mode or TradingMode.SPOT
 
         if trading_mode == TradingMode.SPOT:
@@ -1085,12 +1085,12 @@ class LocalTrade:
         return float(f"{profit_ratio:.8f}")
 
     def recalc_trade_from_orders(self, *, is_closing: bool = False):
-        ZERO = FtPrecise(0.0)
-        current_amount = FtPrecise(0.0)
-        current_stake = FtPrecise(0.0)
-        max_stake_amount = FtPrecise(0.0)
+        ZERO = TsPrecise(0.0)
+        current_amount = TsPrecise(0.0)
+        current_stake = TsPrecise(0.0)
+        max_stake_amount = TsPrecise(0.0)
         total_stake = 0.0  # Total stake after all buy orders (does not subtract!)
-        avg_price = FtPrecise(0.0)
+        avg_price = TsPrecise(0.0)
         close_profit = 0.0
         close_profit_abs = 0.0
         # Reset funding fees
@@ -1101,11 +1101,11 @@ class LocalTrade:
             if o.ft_is_open or not o.filled:
                 continue
             funding_fees += (o.funding_fee or 0.0)
-            tmp_amount = FtPrecise(o.safe_amount_after_fee)
-            tmp_price = FtPrecise(o.safe_price)
+            tmp_amount = TsPrecise(o.safe_amount_after_fee)
+            tmp_price = TsPrecise(o.safe_price)
 
             is_exit = o.ft_order_side != self.entry_side
-            side = FtPrecise(-1 if is_exit else 1)
+            side = TsPrecise(-1 if is_exit else 1)
             if tmp_amount > ZERO and tmp_price is not None:
                 current_amount += tmp_amount * side
                 price = avg_price if is_exit else tmp_price

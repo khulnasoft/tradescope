@@ -2,12 +2,12 @@ import pytest
 
 from tradescope.exceptions import OperationalException
 from tradescope.leverage import interest
-from tradescope.util import FtPrecise
+from tradescope.util import TsPrecise
 
 
-ten_mins = FtPrecise(1 / 6)
-five_hours = FtPrecise(5.0)
-twentyfive_hours = FtPrecise(25.0)
+ten_mins = TsPrecise(1 / 6)
+five_hours = TsPrecise(5.0)
+twentyfive_hours = TsPrecise(25.0)
 
 
 @pytest.mark.parametrize('exchange,interest_rate,hours,expected', [
@@ -22,12 +22,12 @@ twentyfive_hours = FtPrecise(25.0)
     ('kraken', 0.00025, twentyfive_hours, 0.12),
 ])
 def test_interest(exchange, interest_rate, hours, expected):
-    borrowed = FtPrecise(60.0)
+    borrowed = TsPrecise(60.0)
 
     assert pytest.approx(float(interest(
         exchange_name=exchange,
         borrowed=borrowed,
-        rate=FtPrecise(interest_rate),
+        rate=TsPrecise(interest_rate),
         hours=hours
     ))) == expected
 
@@ -36,7 +36,7 @@ def test_interest_exception():
     with pytest.raises(OperationalException, match=r"Leverage not available on .* with tradescope"):
         interest(
             exchange_name='bitmex',
-            borrowed=FtPrecise(60.0),
-            rate=FtPrecise(0.0005),
+            borrowed=TsPrecise(60.0),
+            rate=TsPrecise(0.0005),
             hours=ten_mins
         )

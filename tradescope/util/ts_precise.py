@@ -5,7 +5,7 @@ To have imports from tradescope - and support float initializers
 from ccxt import Precise
 
 
-class FtPrecise(Precise):
+class TsPrecise(Precise):
     def __init__(self, number, decimals=None):
         if not isinstance(number, str):
             number = str(number)

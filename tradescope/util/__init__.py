@@ -2,9 +2,9 @@ from tradescope.util.datetime_helpers import (dt_floor_day, dt_from_ts, dt_human
                                               dt_ts_def, dt_ts_none, dt_utc, format_date,
                                               format_ms_time, shorten_date)
 from tradescope.util.formatters import decimals_per_coin, fmt_coin, round_value
-from tradescope.util.ft_precise import FtPrecise
 from tradescope.util.periodic_cache import PeriodicCache
 from tradescope.util.template_renderer import render_template, render_template_with_fallback  # noqa
+from tradescope.util.ts_precise import TsPrecise
 
 
 __all__ = [
@@ -18,7 +18,7 @@ __all__ = [
     'dt_utc',
     'format_date',
     'format_ms_time',
-    'FtPrecise',
+    'TsPrecise',
     'PeriodicCache',
     'shorten_date',
     'decimals_per_coin',
